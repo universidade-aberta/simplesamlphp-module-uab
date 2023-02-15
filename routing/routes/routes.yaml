@@ -1,0 +1,9 @@
+uab-hello:
+    path:       /hello
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\UAbController::main' }
+uab-sp-assertionConsumerService:
+    path:       /sp/saml2-acs.php/{sourceId}
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\ServiceProvider::assertionConsumerService' }
+uab-sp-singleLogoutService:
+    path:       /sp/saml2-logout.php/{sourceId}
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\ServiceProvider::singleLogoutService' }

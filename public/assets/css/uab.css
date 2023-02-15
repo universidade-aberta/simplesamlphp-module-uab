@@ -1,0 +1,99 @@
+.UAb{
+    --bg-color: rgb(65, 34, 142);
+}
+
+#header,
+#footer{
+    height: auto;
+    background: var(--bg-color);
+}
+
+#header a:is(:scope, :link, :visited),
+#footer a:is(:scope, :link, :visited){
+    color: rgb(255, 255, 255);
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+}
+
+#header a:is(:focus, :hover, :active),
+#footer a:is(:hover, :focus, :visited:hover, :visited:focus){
+    color: rgb(227, 240, 245);
+}
+
+a:is(:scope, :link, :visited, :focus, :hover, :active):not(.pure-button,.pure-menu-link){
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    color: var(--bg-color);
+}
+a:is(:scope, :link, :visited):not(.pure-button),
+#footer  a:is(:scope, :link, :visited):not(.pure-button){
+    text-decoration: none;
+}
+a:is(:focus, :hover, :active):not(.pure-button),
+#footer  a:is(:focus, :hover, :active):not(.pure-button){
+    text-decoration: underline;
+}
+
+.pure-button{
+    margin-left: 0;
+    white-space: normal;
+}
+.pure-button-red{
+    background-color: var(--bg-color);
+}
+
+.logo-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    max-width: none;
+}
+.language-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: auto;
+    padding: 1rem;
+}
+#languageform .language-menu{
+    display: block;
+    max-width: 100%;
+    min-width: auto;
+    width: auto;
+    height: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+    line-height: 1.5rem;
+    padding: 0.4rem;
+}
+
+#header .wrap{
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+}
+
+@media screen and (min-width: 550px) {
+    .logo-header {
+        justify-content: left;
+    }
+    .language-bar {
+        justify-content: right;
+    }
+    #header .wrap{
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+ul.multi-auth-sources {
+    padding: 0;
+    list-style-type: none;
+    display: flex;
+    gap: 1rem;
+}

@@ -1,0 +1,14 @@
+.project
+/nbproject/
+/.vscode/
+.directory
+/*/.gitignore
+.git
+.gitattributes
+.dockerignore
+.sass-cache
+/_tmp/
+/.docker
+/.docker/.data
+/.docker/root
+Dockerfile

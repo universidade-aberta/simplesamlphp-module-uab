@@ -1,0 +1,111 @@
+.phpunit.result.cache
+composer.lock
+composer.phar
+/vendor/
+
+.docker/root/*/**
+
+/*/.gitignore
+vendor/*
+!/vendor/autoload.php
+!/vendor/composer/
+!/vendor/symfony/
+!/vendor/tecnickcom/
+/vendor/tecnickcom/*
+!/vendor/tecnickcom/tcpdf/
+!/vendor/phpmailer/
+/vendor/phpmailer/*
+!/vendor/phpmailer/phpmailer/
+/uploads/*
+!/uploads/.htaccess
+.tests/*
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+
+#-------------------------
+# Operating Specific Junk Files
+#-------------------------
+
+# OS X
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# OS X Thumbnails
+._*
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Recycle Bin used on file shares
+
+.tests/*
+
+
+#-------------------------
+# Operating Specific Junk Files
+#-------------------------
+
+# OS X
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# OS X Thumbnails
+._*
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# Linux
+*~
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+php_errors.log
+
+#-------------------------
+# Test Files
+#-------------------------
+tests/coverage*
+
+# Don't save phpunit under version control.
+phpunit
+
+#-------------------------
+# Composer
+#-------------------------
+vendor/
+
+# phpenv local config
+.php-version
+
+/results/
+/phpunit*.xml
+/.phpunit.*.cache

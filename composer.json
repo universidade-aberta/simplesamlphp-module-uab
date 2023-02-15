@@ -1,0 +1,53 @@
+{
+    "name": "uab/simplesamlphp-module-uab",
+    "description": "UAb customization module for SimpleSAMLphp",
+    "homepage": "https://labs.si.uab.pt/dsi/simplesamlphp-module-uab/",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "uab"],
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Cláudio Esperança",
+            "email": "cesperanc@gmail.com",
+            "role": "Developer",
+            "homepage": "https://www.uab.pt/"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "simplesamlphp/composer-module-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\uab\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": "^8.0",
+        "ext-ldap": "*",
+
+        "simplesamlphp/assert": "~0.8",
+        "simplesamlphp/composer-module-installer": "^1.3.2",
+        "simplesamlphp/simplesamlphp": "^2.0.0-rc2",
+        "symfony/ldap": "^5.4 || ^6.0"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp-test-framework": "^1.2.1"
+    },
+    "support": {
+        "issues": "https://labs.si.uab.pt/dsi/simplesamlphp-module-uab/-/issues",
+        "source": "https://labs.si.uab.pt/dsi/simplesamlphp-module-uab/",
+        "email": "suporte@uab.pt"
+    }
+}
