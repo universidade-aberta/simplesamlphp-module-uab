@@ -250,6 +250,7 @@ mkdir -p "'${WORK_DIR}'/null"\n\
 mount --bind "'${WWW_DIR}'" "'${MIRROR_DIR}'/www"\n\
 mount --make-shared "'${MIRROR_DIR}'/www"\n\
 mount --bind "'${WORK_DIR}'/null" "'${MIRROR_DIR}'/www/'${PROJECT_FOLDER}'/modules/uab"\n\
+touch "'${MIRROR_DIR}'/www/.gitkeep"\n\
 \n\
 while true; do\n\
   sleep 1\n\
