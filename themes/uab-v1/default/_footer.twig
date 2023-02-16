@@ -1,11 +1,15 @@
 <footer id="footer">
   <div class="wrap">
-    <div class="center copyrights">&copy;{{ ("2019-"~year)|replace({(year~"-"): ""}) }} <a href="https://www.uab.pt/" target="_blank" rel="noopener">Universidade Aberta</a>
-    </div>{#<
-    <div class="logo-footer-space show-for-large">
-      div class="logo-footer">
-        <img class="pure-img" src="{{ asset("icons/ssplogo-fish-small.png") }}" alt="Small fish logo">
+    <div class="copyrights">&copy;{{ ("2019-"~year)|replace({(year~"-"): ""}) }} <a href="https://www.uab.pt/" target="_blank" rel="noopener">Universidade Aberta</a></div>
+    <div class="meta-footer-wrapper">
+      <div class="meta-footer-wrapper-column">
+        <div id="co-funded-by-label" class="co-funded-by-label">{{ 'Co-funded by:'|trans()|e('html_attr') }}</div>
+        <ul class="funding" aria-labelledby="co-funded-by-label">
+          <li><img loading="lazy" src="{{ asset("img/logos/Compete2020.svg", "uab") }}" alt="{{ 'Compete 2020'|trans()|e('html_attr') }}" width="153" height="45"></li>
+          <li><img loading="lazy" src="{{ asset("img/logos/Portugal2020.svg", "uab") }}" alt="{{ 'Portugal 2020'|trans()|e('html_attr') }}" width="148" height="45"></li>
+          <li><img loading="lazy" src="{{ asset("img/logos/UE.svg", "uab") }}" alt="{{ 'European Union'|trans()|e('html_attr') }}" width="174" height="45"></li>
+        </ul>
       </div>
-    </div>#}
+    </div>
   </div>
 </footer>

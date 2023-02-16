@@ -191,24 +191,6 @@ server { \n\
 	# Cache management \n\
 	expires $expires; \n\
 	\n\
-	location ~* \.(?:eot|woff|woff2|ttf|svg|otf) { \n\
-			access_log        off; \n\
-			log_not_found     off; \n\
-	\n\
-			expires           1y; \n\
-			add_header        Cache-Control "public"; \n\
-	\n\
-			# allow CORS requests \n\
-			add_header        Access-Control-Allow-Origin *; \n\
-\n\
-			types     {font/opentype otf;} \n\
-			types     {application/vnd.ms-fontobject eot;} \n\
-			types     {font/truetype ttf;} \n\
-			types     {application/font-woff woff;} \n\
-			types     {font/x-woff woff2;} \n\
-			types     {image/svg+xml svg;} \n\
-	} \n\
-\n\
     # Strip the site subpath \n\
     if (!-e $request_filename) { \n\
         rewrite ^(/phpmyadmin/?.*)$ $1 break; \n\

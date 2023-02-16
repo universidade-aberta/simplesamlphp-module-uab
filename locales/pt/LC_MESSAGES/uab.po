@@ -37,3 +37,15 @@ msgid ""
 msgstr ""
 "A fonte de autenticação escolhida será usada para o autenticar e criar "
 "uma sessão válida."
+
+msgid "European Union"
+msgstr "União Europeia"
+
+msgid "Compete 2020"
+msgstr "Compete 2020"
+
+msgid "Portugal 2020"
+msgstr "Portugal 2020"
+
+msgid "Co-funded by:"
+msgstr "Cofinanciado por:"

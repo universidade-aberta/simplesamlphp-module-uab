@@ -41,3 +41,15 @@ msgid ""
 "The selected authentication source will be used to authenticate you and and "
 "to create a valid session."
 msgstr ""
+
+msgid "European Union"
+msgstr "European Union"
+
+msgid "Compete 2020"
+msgstr "Compete 2020"
+
+msgid "Portugal 2020"
+msgstr "Portugal 2020"
+
+msgid "Co-funded by:"
+msgstr "Co-funded by:"

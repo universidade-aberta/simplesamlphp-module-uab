@@ -71,10 +71,12 @@ a:is(:focus, :hover, :active):not(.pure-button),
     padding: 0.4rem;
 }
 
-#header .wrap{
+#header .wrap,
+#footer .wrap{
     max-width: none;
     display: flex;
     flex-direction: column;
+    gap: 2rem;
 }
 
 @media screen and (min-width: 550px) {
@@ -84,10 +86,25 @@ a:is(:focus, :hover, :active):not(.pure-button),
     .language-bar {
         justify-content: right;
     }
-    #header .wrap{
+    #header .wrap,
+    #footer .wrap{
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+    }
+}
+
+.copyrights{
+    text-align: center;
+    height: auto;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+}
+@media screen and (max-width: 40em){
+    #footer .copyrights {
+        height: auto;
+        padding: 0.5rem 1rem;
     }
 }
 
@@ -95,5 +112,45 @@ ul.multi-auth-sources {
     padding: 0;
     list-style-type: none;
     display: flex;
+    gap: 0.4rem;
+}
+
+
+.meta-footer-wrapper{
+    display: inline-block;
+}
+.meta-footer-wrapper-column{
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+}
+.co-funded-by-label{
+    margin-bottom: 1rem;
+    font-size: .8rem;
+}
+ul.funding{
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     gap: 1rem;
+    margin-bottom: 1rem;
+}
+ul.funding img{
+    max-height: 30px;
+    width: auto;
+}
+@media screen and (min-width: 550px) {
+    .meta-footer-wrapper-column{
+        align-items: start;
+    }
+    ul.funding{
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+    .copyrights{
+        text-align: left;
+    }
 }
