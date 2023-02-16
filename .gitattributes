@@ -1,8 +1,6 @@
 .gitattributes merge=ours
 package.json merge=ours
 README.md merge=ours
-screenshot.jpg merge=ours
-style.css merge=ours
 
 *.directory export-ignore
 *.git export-ignore
@@ -10,7 +8,7 @@ style.css merge=ours
 *.gitattributes export-ignore
 .gitmodules export-ignore
 *.distignore export-ignore
-.docker export-ignore
+.docker/ export-ignore
 .dockerignore export-ignore
 Dockerfile export-ignore
 docker-compose.yml export-ignore
@@ -33,6 +31,15 @@ composer.lock export-ignore
 phpcs.xml export-ignore
 behat.yml export-ignore
 .editorconfig export-ignore
-nbproject export-ignore
 .vscode export-ignore
 *scss export-ignore
+
+certs/ export-ignore
+config/ export-ignore
+metadata/ export-ignore
+.markdownlintignore export-ignore
+.markdownlintrc export-ignore
+.php_cs.dist export-ignore
+codecov.yml export-ignore
+phpunit.xml export-ignore
+psalm.xml export-ignore
