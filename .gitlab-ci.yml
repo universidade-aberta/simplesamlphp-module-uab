@@ -1,9 +1,43 @@
+image: ubuntu:latest
+variables:
+  ARTIFACT_NAME: "${CI_PROJECT_NAME}"
 stages:
-  - deploy
+  - archive
+  - deploy-composer-package
 
-deploy:
-  stage: deploy
+archive:
+  stage: archive
+  rules:
+    - if: $CI_COMMIT_TAG
+  before_script:
+    - apt-get update -qq && apt-get install -yqq --no-install-recommends git-core tar zip perl curl ca-certificates
+    - curl -L -k -s --output /usr/local/bin/release-cli "https://release-cli-downloads.s3.amazonaws.com/latest/release-cli-linux-amd64" && chmod +x /usr/local/bin/release-cli
+    - mkdir -p "${ARTIFACT_NAME}/"
+    - rm -rf "${ARTIFACT_NAME}/*"
   script:
-    - apk add curl
+    #- git archive --prefix "${ARTIFACT_NAME}/" --format=zip "${CI_COMMIT_REF_NAME}" --output="${ARTIFACT_NAME}.zip"
+    - git archive --prefix="${ARTIFACT_NAME}/" --format=tar "${CI_COMMIT_REF_NAME}" | (tar xf -)
+    # - perl -i -0pe 's/(\/\*.*?^.*?Version\s*:\s*)(v?([0-9]+\.?)+)(.*?$.*?\*\/)/\1$ENV{CI_COMMIT_REF_NAME}\4/ims' "${ARTIFACT_NAME}/wp-plugin--frame-w.php"
+  after_script:
+    - rm -rf "${ARTIFACT_NAME}/*"
+  artifacts:
+    name: "${ARTIFACT_NAME}_${CI_COMMIT_REF_NAME}"
+    paths:
+      - "${ARTIFACT_NAME}"
+    when: on_success
+  release:
+    tag_name: "$CI_COMMIT_TAG"
+    description: "$CI_COMMIT_MESSAGE"
+    assets:
+      links:
+        - name: "${ARTIFACT_NAME}_${CI_BUILD_REF_NAME}.zip"
+          url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/jobs/artifacts/${CI_BUILD_REF_NAME}/download?job=${CI_JOB_NAME}"
+          link_type: 'package' 
+
+
+deploy-composer-package:
+  stage: deploy-composer-package
+  script:
+    - apt-get update -qq && apt-get install -yqq --no-install-recommends curl ca-certificates
     - 'curl --header "Job-Token: $CI_JOB_TOKEN" --data tag=<tag> "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
   environment: production
