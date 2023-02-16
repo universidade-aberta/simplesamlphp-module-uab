@@ -1,6 +1,11 @@
 uab-hello:
     path:       /hello
-    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\UAbController::main' }
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\HelloController::discovery' }
+
+uab-multiauth-discovery:
+    path:       /discovery
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\MultiAuthDiscoController::discovery' }
+
 uab-sp-assertionConsumerService:
     path:       /sp/saml2-acs.php/{sourceId}
     defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\ServiceProvider::assertionConsumerService' }

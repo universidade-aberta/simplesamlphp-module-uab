@@ -36,10 +36,6 @@ If required, the developer can execute commands inside the container by using th
 docker exec -it simplesamlphp-module-uab bash
 ```
 
-## Framework Updates
-
-`composer update` whenever there is a new release of the framework.
-
 # Installation
 
 Once you have installed SimpleSAMLphp, installing this module is very simple.
@@ -47,7 +43,8 @@ Just execute the following command in the root of your SimpleSAMLphp
 installation:
 
 ```bash
-composer.phar require uab/simplesamlphp-module-uab:dev-master
+composer config repositories.repo-name vcs ssh://git@labs.si.uab.pt:2222/dsi/simplesamlphp-module-uab.git
+composer require dsi/simplesamlphp-module-uab:dev-master
 ```
 
 where `dev-master` instructs Composer to install the `master` branch from the
@@ -62,3 +59,6 @@ search for the `module.enable` key and set `uab` to true:
          …
     ],
 ```
+# Updates
+
+`composer update` whenever there is a new release of the framework or UAb module.

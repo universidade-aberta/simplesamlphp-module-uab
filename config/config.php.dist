@@ -350,7 +350,7 @@ $config = [
      * loggingdir above to 'null'.
      */
     'logging.level' => SimpleSAML\Logger::DEBUG,
-    'logging.handler' => 'syslog',
+    'logging.handler' => 'errorlog',
 
     /*
      * Specify the format of the logs. Its use varies depending on the log handler used (for instance, you cannot
@@ -379,6 +379,7 @@ $config = [
      *
      */
     //'logging.format' => '%date{M j H:i:s} %process %level %stat[%trackid] %msg',
+    'logging.format' => "%level %stat[%trackid] %msg",
 
     /*
      * Choose which facility should be used when logging with syslog.
@@ -596,7 +597,7 @@ $config = [
      * Example:
      *  'session.cookie.path' => '/simplesaml/',
      */
-    'session.cookie.path' => '/auth/v1',
+    'session.cookie.path' => '/',
 
     /*
      * Cookie domain.

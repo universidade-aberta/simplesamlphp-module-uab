@@ -19,7 +19,7 @@ use SimpleSAML\XHTML\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class UAbController{
+class HelloController{
     const DEFAULT_AUTHENTICATOR = 'UAb.defaultAuthenticator';
 
     /** @var \SimpleSAML\Configuration */
@@ -88,7 +88,7 @@ class UAbController{
      * @return \SimpleSAML\XHTML\Template|\SimpleSAML\HTTP\RunnableResponse
      *   An HTML template or a redirection if we are not authenticated.
      */
-    public function main(Request $request){
+    public function discovery(Request $request){
         $as =  $this->config->getValue(self::DEFAULT_AUTHENTICATOR);
         if ($as === null):
             throw new \Exception('Could not find authentication source with id ' . $as);
@@ -98,10 +98,12 @@ class UAbController{
         $params = [
             'ErrorURL' => $url,
             'ReturnTo' => $url,
+            Auth\State::RESTART => $url,
             //'ReturnCallback' => '',
         ];
 
         $authsource = new $this->authSimple($as);
+        
         if (!is_null($request->query->get('logout'))):
             return new RunnableResponse([$authsource, 'logout'], [$params /*$this->config->getBasePath() . 'logout.php'*/]);
         elseif (!is_null($request->query->get(Auth\State::EXCEPTION_PARAM))):
@@ -118,7 +120,7 @@ class UAbController{
 
         $attributes = $authsource->getAttributes();
         $authData = $authsource->getAuthDataArray();
-        $nameId = $authsource->getAuthData('saml:sp:NameID') ?? false;
+        $nameId = $authsource->getAuthData('uab:sp:NameID') ?? false;
 
         $httpUtils = new Utils\HTTP();
         $t = new Template($this->config, 'uab:status.twig');

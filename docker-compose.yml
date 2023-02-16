@@ -44,11 +44,11 @@ services:
       - ./config/authsources.php.dist:${WWW_DIR}/${PROJECT_FOLDER}/config/authsources.php
       - ./config/config.php.dist:${WWW_DIR}/${PROJECT_FOLDER}/config/config.php
       - ./metadata/saml20-idp-remote.php.dist:${WWW_DIR}/${PROJECT_FOLDER}/metadata/saml20-idp-remote.php
-      # - type: bind
-      #   source: ./.docker/root
-      #   target: ${WORK_DIR}/mirror
-      #   bind:
-      #     propagation: shared
+      - type: bind
+        source: ./.docker/www
+        target: ${WORK_DIR}/mirror/www
+        bind:
+          propagation: shared
       #- fs_data:${WWW_DIR}:rw
       - db_data:/var/lib/mysql
     networks:

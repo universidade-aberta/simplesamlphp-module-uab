@@ -6,7 +6,8 @@ RUN apt-get update -yqq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -yqq --no-install-recommends \
 	nginx openssl \
 	mariadb-server mariadb-client \
-	php-fpm php-cli php-mysql php-gd php-zip php-bcmath php-curl php-imagick php-xml php-mbstring php-xml php-intl php-xdebug php-sqlite3 \
+	php-fpm php-cli php-mysql php-gd php-zip php-bcmath php-curl php-imagick php-xml php-mbstring php-xml php-intl php-xdebug \
+    php-sqlite3 php-ldap php-redis php-predis php-memcached memcached \
 	supervisor \
     git curl ca-certificates less nano unzip \
     phpmyadmin \
@@ -29,6 +30,7 @@ ARG PROJECT_URL=${PROJECT_URL:-localhost}
 
 ARG WORK_DIR=${WORK_DIR:-/app/data}
 ARG WWW_DIR=${WWW_DIR:-${WORK_DIR}/www}
+ARG MIRROR_DIR=${MIRROR_DIR:-${WORK_DIR}/mirror}
 
 ARG MYSQL_HOST=${MYSQL_HOST:-localhost}
 ARG MYSQL_DATABASE=${MYSQL_DATABASE:-app_db}
@@ -45,7 +47,7 @@ ENV WORK_DIR=${WORK_DIR} \
     DEBIAN_FRONTEND=${DEBIAN_FRONTEND:-noninteractive} \
     SIMPLESAMLPHP_VERSION=${SIMPLESAMLPHP_VERSION} \
     SIMPLESAMLPHP_BRANCH=${SIMPLESAMLPHP_BRANCH} \
-    ENVS="WORK_DIR WWW_DIR MYSQL_HOST MYSQL_DATABASE MYSQL_USER MYSQL_PASSWORD SIMPLESAMLPHP_BRANCH SIMPLESAMLPHP_VERSION DEBIAN_FRONTEND"
+    ENVS="WORK_DIR WWW_DIR MIRROR_DIR MYSQL_HOST MYSQL_DATABASE MYSQL_USER MYSQL_PASSWORD SIMPLESAMLPHP_BRANCH SIMPLESAMLPHP_VERSION DEBIAN_FRONTEND"
 
 
 # Prepare the working directory
@@ -250,6 +252,29 @@ catch_workers_output = yes \n\
 
 RUN phpdismod xdebug
 
+# Mirror WWW_DIR
+RUN echo '#!/usr/bin/env bash\n\
+\n\
+function unmount {\n\
+  umount "'${MIRROR_DIR}'/www/'${PROJECT_FOLDER}'/modules/uab"\n\
+  umount "'${MIRROR_DIR}'/www"\n\
+  exit 0\n\
+} \n\
+\n\
+trap unmount SIGTERM\n\
+\n\
+mkdir -p "'${MIRROR_DIR}'/www"\n\
+mkdir -p "'${WORK_DIR}'/null"\n\
+mount --bind "'${WWW_DIR}'" "'${MIRROR_DIR}'/www"\n\
+mount --make-shared "'${MIRROR_DIR}'/www"\n\
+mount --bind "'${WORK_DIR}'/null" "'${MIRROR_DIR}'/www/'${PROJECT_FOLDER}'/modules/uab"\n\
+\n\
+while true; do\n\
+  sleep 1\n\
+done\n\
+' \
+> "${WORK_DIR}"/bind_mount.bash && chmod +x "${WORK_DIR}"/bind_mount.bash
+
 # Configure supervisord
 RUN export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") && echo '\
 [unix_http_server] \n\
@@ -301,10 +326,27 @@ autorestart=true \n\
 redirect_stderr=true \n\
 priority=40 \n\
 \n\
-[group:web] \n\
-programs=mariadb,php-fpm,nginx \n\
-priority=999 \n\
+[program:memcached]\n\
+command=memcached -m 128 -p 11211 -u memcache -l 127.0.0.1\n\
+autostart=true\n\
+autorestart=true\n\
+startsecs=10\n\
+startretries=3\n\
+user=root\n\
+redirect_stderr=true\n\
+stdout_logfile=/dev/stdout\n\
+stdout_logfile_maxbytes=0\n\
 \n\
+[program:bindmount]\n\
+command="'${WORK_DIR}'/bind_mount.bash" \n\
+user=root \n\
+stdout_logfile=/proc/self/fd/1 \n\
+stdout_logfile_maxbytes=0 \n\
+redirect_stderr=true \n\
+\n\
+[group:web] \n\
+programs=bindmount,memcached,mariadb,php-fpm,nginx \n\
+priority=999 \n\
 \n\
 ' \
 > "${WORK_DIR}/supervisord.conf" && ln -sf "${WORK_DIR}/supervisord.conf" /etc/supervisor/supervisord.conf \
@@ -356,8 +398,8 @@ RUN git config --global --add advice.detachedHead false \
 
 RUN cd "${PROJECT_FOLDER_ABSOLUTE}" \
     && composer config version "${SIMPLESAMLPHP_VERSION}" \
-    && composer update \
-    && composer require simplesamlphp/simplesamlphp-module-ldap
+    && composer update --no-progress \
+    && composer require simplesamlphp/simplesamlphp-module-ldap --no-progress
 
 RUN mkdir -p "${PROJECT_FOLDER_ABSOLUTE}/modules/uab"
 
