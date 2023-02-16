@@ -2,6 +2,17 @@
     --bg-color: rgb(65, 34, 142);
 }
 
+body{
+    display: flex;
+    flex-direction: column;
+}
+
+#layout{
+    margin: 0;
+    flex-grow: 1;
+    min-height: auto;
+}
+
 #header,
 #footer{
     height: auto;
