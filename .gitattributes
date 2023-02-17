@@ -12,6 +12,8 @@ README.md merge=ours
 .dockerignore export-ignore
 Dockerfile export-ignore
 docker-compose.yml export-ignore
+docker-compose--dev-overrides.yml export-ignore
+-dev-overrides.yml export-ignore
 .tests export-ignore
 .npmrc export-ignore
 .env export-ignore
@@ -34,7 +36,7 @@ behat.yml export-ignore
 .vscode export-ignore
 *scss export-ignore
 
-certs/ export-ignore
+cert/ export-ignore
 config/ export-ignore
 metadata/ export-ignore
 .markdownlintignore export-ignore

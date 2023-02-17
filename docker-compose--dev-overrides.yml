@@ -1,0 +1,63 @@
+version: '3.7'
+
+volumes:
+  db_data:
+  #fs_data:
+
+secrets:
+  db_pwd:
+    file: ./.docker/secrets/db_pwd.txt
+  db_root_pwd:
+    file: ./.docker/secrets/db_root_pwd.txt
+
+networks:
+  site:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 10.124.2.1/30
+
+services:
+  project:
+    extends:
+      file: docker-compose.yml
+      service: project
+    user: root
+    volumes:
+      - ./-dev-overrides/:${WWW_DIR}/${PROJECT_FOLDER}/-dev-overrides
+      - ./-dev-overrides/cert/saml:${WWW_DIR}/${PROJECT_FOLDER}/cert
+    #   - ./-dev-overrides/config:${WWW_DIR}/${PROJECT_FOLDER}/config
+    #   - ./-dev-overrides/metadata:${WWW_DIR}/${PROJECT_FOLDER}/metadata
+    #   - ./-dev-overrides/cert/ssl:/etc/nginx/certs-overrides
+    #   - ./-dev-overrides/nginx:/etc/nginx/sites-overrides
+    #   - ./-dev-overrides/config/authsources.php:${WWW_DIR}/${PROJECT_FOLDER}/config/authsources.php
+    #   - ./-dev-overrides/config/config.php:${WWW_DIR}/${PROJECT_FOLDER}/config/config.php
+    #   - ./-dev-overrides/metadata/saml20-idp-remote2.php:${WWW_DIR}/${PROJECT_FOLDER}/metadata/saml20-idp-remote.php
+    command: >-
+      /bin/bash -c '
+        declare -A paths=(
+          ["${WWW_DIR}/${PROJECT_FOLDER}/-dev-overrides/config"]="${WWW_DIR}/${PROJECT_FOLDER}/config"
+          ["${WWW_DIR}/${PROJECT_FOLDER}/-dev-overrides/metadata"]="${WWW_DIR}/${PROJECT_FOLDER}/metadata"
+          ["${WWW_DIR}/${PROJECT_FOLDER}/-dev-overrides/cert/ssl"]="/etc/nginx/certs-overrides"
+          ["${WWW_DIR}/${PROJECT_FOLDER}/-dev-overrides/nginx"]="/etc/nginx/sites-overrides"
+        );
+        for path in "$${!paths[@]}"; do
+          if [ -d "$$path" ]; then
+            files=$$(find "$$path" -type f ! -name ".gitkeep" -printf "%P ")
+            for file in $$files; do
+              #echo "Inserting file \"$$path/$$file\" in \"$${paths[$$path]}/$$file\""
+              if [ ! -d "$${paths[$$path]}" ]; then
+                mkdir -p "$${paths[$$path]}"
+              fi
+              touch "$${paths[$$path]}/$$file"
+              mount --bind "$$path/$$file" "$${paths[$$path]}/$$file"
+            done;
+          elif [ -e "$$path" ]; then
+            echo "$$path"
+            #mount -o bind "$$path" "$${paths[$$path]}"
+          fi
+        done;
+        /usr/bin/start_container_services.bash'
+

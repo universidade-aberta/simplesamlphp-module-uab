@@ -65,6 +65,9 @@ RUN mkdir -p "${PROJECT_FOLDER_ABSOLUTE}" \
 RUN mkdir -p /run/php \
     && mkdir -p /var/log/php-fpm
 
+# Create the required PHP-FPM directories
+RUN mkdir -p /etc/nginx/sites-overrides
+
 # Create SSL certificate
 RUN export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") && echo '[dn]\n\
 CN='${PROJECT_URL}'\n\
@@ -119,7 +122,7 @@ location /phpmyadmin { \n\
     location ~ ^/phpmyadmin/(.+\.php)$ { \n\
         try_files $uri =404; \n\
         root /usr/share/; \n\
-        fastcgi_pass unix:/run/php/php'${PHP_VERSION}'-fpm.sock; \n\
+        fastcgi_pass unix:/var/run/php-fpm.sock; \n\
         fastcgi_index index.php; \n\
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; \n\
         fastcgi_param PATH_INFO $fastcgi_path_info; \n\
@@ -138,6 +141,9 @@ location /phpmyadmin { \n\
 > /etc/nginx/snippets/phpmyadmin.conf
 
 RUN rm /etc/nginx/sites-enabled/default && export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") && echo '\
+# Include custom overrides from host \n\
+include /etc/nginx/sites-overrides/*;\n\
+\n\
 # Expires map \n\
 map_hash_max_size 128; \n\
 map_hash_bucket_size 128; \n\
@@ -205,7 +211,7 @@ server { \n\
             alias $CUSTOM_ROOT;\n\
             try_files $phpfile =404;\n\
             #root /usr/share/;\n\
-            fastcgi_pass unix:/run/php/php'${PHP_VERSION}'-fpm.sock;\n\
+            fastcgi_pass unix:/var/run/php-fpm.sock;\n\
             fastcgi_index index.php;\n\
             fastcgi_param SCRIPT_FILENAME $CUSTOM_ROOT$phpfile;\n\
             #fastcgi_param PATH_INFO $fastcgi_path_info;\n\
@@ -229,6 +235,7 @@ server { \n\
 
 RUN export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") && echo '\n\
 catch_workers_output = yes \n\
+listen = /var/run/php-fpm.sock \n\
 ' \
 >> "/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf"
 

@@ -3,7 +3,24 @@ composer.lock
 composer.phar
 /vendor/
 
-.docker/root/*/**
+-dev-overrides/*
+!-dev-overrides/cert/
+-dev-overrides/cert/*
+!-dev-overrides/cert/saml/
+-dev-overrides/cert/saml/*
+!-dev-overrides/cert/saml/.gitkeep
+!-dev-overrides/cert/ssl/
+-dev-overrides/cert/ssl/*
+!-dev-overrides/cert/ssl/.gitkeep
+!-dev-overrides/config/
+-dev-overrides/config/*
+!-dev-overrides/config/.gitkeep
+!-dev-overrides/metadata/
+-dev-overrides/metadata/*
+!-dev-overrides/metadata/.gitkeep
+!-dev-overrides/nginx/
+-dev-overrides/nginx/*
+!-dev-overrides/nginx/.gitkeep
 
 /*/.gitignore
 vendor/*

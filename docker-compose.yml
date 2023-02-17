@@ -40,7 +40,7 @@ services:
     volumes:
       - .:${WWW_DIR}/${PROJECT_FOLDER}/modules/uab
       - ${WWW_DIR}/${PROJECT_FOLDER}/modules/uab/.docker
-      - ./certs:${WWW_DIR}/${PROJECT_FOLDER}/certs
+      - ./cert:${WWW_DIR}/${PROJECT_FOLDER}/cert
       - ./config/authsources.php.dist:${WWW_DIR}/${PROJECT_FOLDER}/config/authsources.php
       - ./config/config.php.dist:${WWW_DIR}/${PROJECT_FOLDER}/config/config.php
       - ./metadata/saml20-idp-remote.php.dist:${WWW_DIR}/${PROJECT_FOLDER}/metadata/saml20-idp-remote.php
