@@ -7,6 +7,39 @@
 
 This module provides UAb customizations for SimpleSAMLphp.
 
+## Dependencies
+
+### SimpleSAMLphp
+
+This module is compatible with SimpleSAMLphp 2.0 (RC 3 as the time of this info). If you want to use the development branch `simplesamlphp-2.0` of SimpleSAMLphp, you can to it with the following command: 
+```bash
+git clone -b simplesamlphp-2.0 --single-branch -o upstream https://github.com/simplesamlphp/simplesamlphp.git
+```
+
+If you want to use the development branch, you should also set the version in your composer file with the following command: 
+```bash
+composer config version v2.0.0-rc3
+composer update
+```
+
+This will help to install the correct version of the module dependencies. 
+
+### LDAP
+
+LDAP is a soft dependency, which means you probably can configure your instance to work without it. However in our implementation we use it, so you can install it with the following command: 
+```bash
+composer require simplesamlphp/simplesamlphp-module-ldap
+```
+Please refer to [module documentation](https://github.com/simplesamlphp/simplesamlphp-module-ldap) for more information about the module requirements and settings.
+
+### WebAuthn
+
+WebAuthn is a optional but usefull if you want to enable two factor authentication. You can install it with the following command: 
+```bash
+composer require simplesamlphp/simplesamlphp-module-webauthn:2.0.0-rc2
+```
+
+Please refer to [module documentation](https://github.com/simplesamlphp/simplesamlphp-module-webauthn) for more information about the module requirements (e.g., database and other settings).
 
 ## Installation
 

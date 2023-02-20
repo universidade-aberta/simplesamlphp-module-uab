@@ -371,6 +371,37 @@ echo "CREATE USER /*M!100103 IF NOT EXISTS */ \\"'${MYSQL_USER}'\\"@\\"'${MYSQL_
 	  GRANT ALL ON \\`'${MYSQL_DATABASE}'\\`.* TO \\"'${MYSQL_USER}'\\"@\\"'${MYSQL_HOST}'\\" WITH GRANT OPTION ; \
 	  FLUSH PRIVILEGES;" | /usr/bin/mysql \n\
 \n\
+echo " \n\
+    USE \\`'${MYSQL_DATABASE}'\\`;\n\
+    CREATE TABLE IF NOT EXISTS \\`credentials\\` ( \n\
+        \\`creation_date\\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \n\
+        \\`user_id\\` VARCHAR(80) NOT NULL, \n\
+        \\`credentialId\\` VARCHAR(500) NOT NULL, \n\
+        \\`credential\\` MEDIUMBLOB NOT NULL, \n\
+        \\`signCounter\\` INT NOT NULL, \n\
+        \\`friendlyName\\` VARCHAR(100) DEFAULT \\"Unnamed Token\\", \n\
+        UNIQUE (\\`user_id\\`,\\`credentialId\\`) \n\
+    ); \n\
+" | /usr/bin/mysql \n\
+\n\
+echo " \n\
+    USE \\`'${MYSQL_DATABASE}'\\`;\n\
+    ALTER TABLE \\`credentials\\` ADD COLUMN \\`algo\\` INT DEFAULT NULL AFTER \\`credential\\`; \n\
+    ALTER TABLE \\`credentials\\` ADD COLUMN \\`presenceLevel\\` INT DEFAULT NULL AFTER \\`algo\\`; \n\
+" | /usr/bin/mysql \n\
+\n\
+# GRANT SELECT,INSERT,UPDATE,DELETE ON  \\`'${MYSQL_DATABASE}'\\`.\\`credentials\\` TO \\"...dbuser\\"@\\"1.2.3.4\\" IDENTIFIED BY \\"...dbpass\\";\n\
+\n\
+echo " \n\
+    USE \\`'${MYSQL_DATABASE}'\\`;\n\
+    CREATE TABLE \\`userstatus\\` ( \n\
+        \\`user_id\\` VARCHAR(80) NOT NULL, \n\
+        \\`fido2Status\\` ENUM(\\"FIDO2Disabled\\",\\"FIDO2Enabled\\") NOT NULL DEFAULT \\"FIDO2Disabled\\", \n\
+        UNIQUE (\\`user_id\\`) \n\
+    ); \n\
+" | /usr/bin/mysql \n\
+# GRANT SELECT ON  \\`'${MYSQL_DATABASE}'\\`.\\`userstatus\\` TO \\"...dbuser\\"@\\"1.2.3.4\\" IDENTIFIED BY \\"...dbpass\\";\n\
+\n\
 mysqladmin shutdown \n\
 ' \
 > "${WORK_DIR}"/prepare-db.bash && chmod +x "${WORK_DIR}"/prepare-db.bash && "${WORK_DIR}"/prepare-db.bash && rm -f "${WORK_DIR}"/prepare-db.bash
@@ -389,7 +420,8 @@ RUN git config --global --add advice.detachedHead false \
 RUN cd "${PROJECT_FOLDER_ABSOLUTE}" \
     && composer config version "${SIMPLESAMLPHP_VERSION}" \
     && composer update --no-progress \
-    && composer require simplesamlphp/simplesamlphp-module-ldap --no-progress
+    && composer require simplesamlphp/simplesamlphp-module-ldap"${SIMPLESAMLPHP_VERSION_LDAP}" --no-progress \
+    && composer require simplesamlphp/simplesamlphp-module-webauthn"${SIMPLESAMLPHP_VERSION_WEBAUTHN}" --no-progress
 
 RUN mkdir -p "${PROJECT_FOLDER_ABSOLUTE}/modules/uab"
 
