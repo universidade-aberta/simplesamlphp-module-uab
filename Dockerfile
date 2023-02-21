@@ -116,7 +116,7 @@ DNS.5 = 127.0.0.1\n\
 
 ## Configure PHPmyAdmin
 RUN export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") && echo '\
-location /phpmyadmin { \n\
+location ~ ^/phpmyadmin { \n\
     root /usr/share/; \n\
     index index.php index.html index.htm; \n\
     location ~ ^/phpmyadmin/(.+\.php)$ { \n\
@@ -394,13 +394,39 @@ echo " \n\
 \n\
 echo " \n\
     USE \\`'${MYSQL_DATABASE}'\\`;\n\
-    CREATE TABLE \\`userstatus\\` ( \n\
+    CREATE TABLE IF NOT EXISTS \\`userstatus\\` ( \n\
         \\`user_id\\` VARCHAR(80) NOT NULL, \n\
         \\`fido2Status\\` ENUM(\\"FIDO2Disabled\\",\\"FIDO2Enabled\\") NOT NULL DEFAULT \\"FIDO2Disabled\\", \n\
         UNIQUE (\\`user_id\\`) \n\
     ); \n\
 " | /usr/bin/mysql \n\
 # GRANT SELECT ON  \\`'${MYSQL_DATABASE}'\\`.\\`userstatus\\` TO \\"...dbuser\\"@\\"1.2.3.4\\" IDENTIFIED BY \\"...dbpass\\";\n\
+\n\
+echo " \n\
+    USE \\`'${MYSQL_DATABASE}'\\`;\n\
+    \n\
+    CREATE TABLE IF NOT EXISTS \\`uab_user_attributes_matching__tbl\\` ( \n\
+        \\`identity_ID\\` bigint(20) DEFAULT NULL COMMENT \\"Refers to a common identity ID (if aplicable)\\", \n\
+        \\`auth_source_primary\\` varchar(100) DEFAULT \\"ldap\\" COMMENT \\"1st attribute source\\", \n\
+        \\`auth_source_primary_match_field\\` varchar(250) DEFAULT \\"sAMAccountName\\" COMMENT \\"1st attribute to match\\", \n\
+        \\`auth_source_primary_match_value\\` varchar(250) NOT NULL COMMENT \\"1st attribute value to match\\", \n\
+        \\`auth_source_secondary\\` varchar(100) NOT NULL DEFAULT \\"autenticacao_gov\\" COMMENT \\"2nd attribute source\\", \n\
+        \\`auth_source_secondary_match_field\\` varchar(250) NOT NULL DEFAULT \\"NIF\\" COMMENT \\"2nd attribute to match\\", \n\
+        \\`auth_source_secondary_match_value\\` varchar(250) NOT NULL COMMENT \\"2nd attribute to match\\", \n\
+        \\`_inserted\\` datetime NOT NULL DEFAULT current_timestamp(), \n\
+        \\`_last_update\\` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(), \n\
+        UNIQUE KEY \\`unique_id_map\\` (\n\
+            \\`identity_ID\\`,\n\
+            \\`auth_source_primary\\`,\n\
+            \\`auth_source_primary_match_field\\`,\n\
+            \\`auth_source_primary_match_value\\`,\n\
+            \\`auth_source_secondary\\`,\n\
+            \\`auth_source_secondary_match_field\\`,\n\
+            \\`auth_source_secondary_match_value\\`\n\
+        ) \n\
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT=\\"Associate attributes of multiple IDP identities\\"; \n\
+ \n\
+" | /usr/bin/mysql \n\
 \n\
 mysqladmin shutdown \n\
 ' \

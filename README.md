@@ -66,6 +66,27 @@ search for the `module.enable` key and set `uab` to true:
          …
     ],
 ```
+
+### Database Installation
+
+If you want to match a Autenticação.gov attribute with an attribute of your internal IDP (e.g. LDAP), you will need the create a MySQL table to store this association: 
+```sql
+    CREATE TABLE IF NOT EXISTS `uab_user_attributes_matching__tbl` (
+        `identity_ID` bigint(20) DEFAULT NULL COMMENT 'Refers to a common ID (if aplicable)',
+        `auth_source_primary` varchar(50) DEFAULT 'ldap' COMMENT '1st attribute source',
+        `auth_source_primary_match_field` varchar(50) DEFAULT 'sAMAccountName' COMMENT '1st attribute to match',
+        `auth_source_primary_match_value` varchar(150) NOT NULL COMMENT '1st attribute value to match',
+        `auth_source_secondary` varchar(50) NOT NULL DEFAULT 'autenticacao_gov' COMMENT '2nd attribute source',
+        `auth_source_secondary_match_field` varchar(50) NOT NULL DEFAULT 'NIF' COMMENT '2nd attribute to match',
+        `auth_source_secondary_match_value` varchar(150) NOT NULL COMMENT '2nd attribute to match',
+        `_inserted` datetime NOT NULL DEFAULT current_timestamp(),
+        `_last_update` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+        UNIQUE KEY `unique_id_map` (`identity_ID`,`auth_source_primary`,`auth_source_primary_match_field`,`auth_source_primary_match_value`,`auth_source_secondary`,`auth_source_secondary_match_field`,`auth_source_secondary_match_value`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Associate attributes of multiple IDP identities';
+```
+
+The processing filter `uab:usermatch` will use this table to match and associate two identities, for example a `NIF` from Autenticação.gov with `sAMAccountName` of a LDAP server. By using this processing filter, when a user autenticates using Autenticação.gov, if match for `NIF` is found with the respective `sAMAccountName`, the user is authenticated; however, if no match is found the system asks the user to authenticate with his/her LDAP credentials to associate both accounts for future usage. If you don't want this functionality, you will not need this requirement. 
+
 ## Updates
 
 `composer update` whenever there is a new release of the framework or UAb module.

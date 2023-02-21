@@ -12,3 +12,11 @@ uab-sp-assertionConsumerService:
 uab-sp-singleLogoutService:
     path:       /sp/saml2-logout.php/{sourceId}
     defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\ServiceProvider::singleLogoutService' }
+    
+uab-primary-auth-notice:
+    path:       /primary-auth-notice
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\UserMatchController::primaryAuthNotice' }
+   
+uab-primary-auth:
+    path:       /primary-auth
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\UserMatchController::primaryAuth' }

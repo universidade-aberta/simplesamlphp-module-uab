@@ -464,13 +464,13 @@ $config = [
      * Ensure that you have the required PDO database driver installed
      * for your connection string.
      */
-    'database.dsn' => 'mysql:host=localhost;dbname=auth_db',
+    'database.dsn' => 'mysql:host=localhost;dbname=app_db',
 
     /*
      * SQL database credentials
      */
-    'database.username' => '[username]',
-    'database.password' => '[password]',
+    'database.username' => 'app_db_user',
+    'database.password' => 'app_db_pwd',
     'database.options' => [],
 
     /*

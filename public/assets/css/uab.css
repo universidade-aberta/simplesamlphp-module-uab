@@ -165,3 +165,14 @@ ul.funding img{
         text-align: left;
     }
 }
+
+.pure-form-aligned .pure-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+@media screen and (min-width: 550px) {
+    .pure-form-aligned .pure-control-group {
+        flex-direction: row;
+    }
+}

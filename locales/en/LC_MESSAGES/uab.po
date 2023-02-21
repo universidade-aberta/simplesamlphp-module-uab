@@ -53,3 +53,18 @@ msgstr "Portugal 2020"
 
 msgid "Co-funded by:"
 msgstr "Co-funded by:"
+
+msgid "%main Account Not Found"
+msgstr "%main Account Not Found"
+
+msgid "The %main account for \"%secondaryAccount\" was not found, so you must authenticate with your %main account to continue."
+msgstr "The %main account for \"%secondaryAccount\" was not found, so you must authenticate with your %main account to continue."
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Continue"
+msgstr "Continue"
+
+msgid "Are you sure you want to cancel?"
+msgstr "Are you sure you want to cancel?"

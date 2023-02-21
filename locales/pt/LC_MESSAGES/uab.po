@@ -49,3 +49,18 @@ msgstr "Portugal 2020"
 
 msgid "Co-funded by:"
 msgstr "Cofinanciado por:"
+
+msgid "%main Account Not Found"
+msgstr "Conta %main não encontrada"
+
+msgid "The %main account for \"%secondaryAccount\" was not found, so you must authenticate with your %main account to continue."
+msgstr "A conta %main para \"%secondaryAccount\" não foi encontrada, pelo que deve iniciar sessão com a sua conta %main para continuar."
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Continue"
+msgstr "Continuar"
+
+msgid "Are you sure you want to cancel?"
+msgstr "Tem a certeza que pretende cancelar?"
