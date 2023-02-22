@@ -44,6 +44,11 @@ vendor/*
 !.yarn/sdks
 !.yarn/versions
 
+.docker/*
+!.docker/www/
+.docker/www/*
+!.docker/www/.gitkeep
+
 
 #-------------------------
 # Operating Specific Junk Files
