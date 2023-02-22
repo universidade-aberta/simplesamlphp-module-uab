@@ -262,7 +262,7 @@ class UserMatchController{
             throw new Error\Exception(\sprintf('Field "%s" was not returned by the primary authentication source.', $stateData[UserMatch::CONFIG_auth_source_primary_match_field]));
         endif;
 
-        $state['Attributes'] = \array_merge($state['Attributes'], $authSource->getAttributes());
+        $state['Attributes'] = self::filterAttributes($authSource->getAttributes()); //\array_merge($state['Attributes'], $authSource->getAttributes());
         unset($state[self::AUTHID]);
         unset($state[self::AUTHID.'_data']);
         return new RunnableResponse([self::$ProcessingChain, 'resumeProcessing'], [$state]);
@@ -369,7 +369,13 @@ class UserMatchController{
    /**
     * Check if a LDAP account is disabled based on its 'userAccountControl' value
     */
-   public static function isLdapAccountDisabled(int $userAccountControl):bool {
+    public static function isLdapAccountDisabled(int $userAccountControl):bool {
        return (bool)($userAccountControl & 2);
-  }
+    }
+
+    public static function filterAttributes(array $attributes=[], array $attributesToRemove=['userAccountControl', 'accountExpires']):array{
+        return array_filter($attributes, function($key) use($attributesToRemove) {
+            return !\in_array($key, $attributesToRemove);
+        }, \ARRAY_FILTER_USE_KEY);
+    }
 }

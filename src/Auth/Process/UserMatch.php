@@ -184,11 +184,11 @@ class UserMatch extends Auth\ProcessingFilter {
                 return;
             endif;
 
-            $state['Attributes'] = \array_merge($state['Attributes'], $primaryAttributes);
+            $state['Attributes'] = UserMatchController::filterAttributes($primaryAttributes); //\array_merge($state['Attributes'], $primaryAttributes);
         else:
             Logger::debug(sprintf('%d primary accounts found for "%s". Presenting the primary account selection interface...', count($primaryAccounts), $secondaryValue));
 
-            die("@TODO");
+            die("@TODO: Present the primary account selection interface");
         endif;
     }
 }
