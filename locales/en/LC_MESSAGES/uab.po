@@ -68,3 +68,9 @@ msgstr "Continue"
 
 msgid "Are you sure you want to cancel?"
 msgstr "Are you sure you want to cancel?"
+
+msgid "%main Account Expired or Disabled"
+msgstr "%main Account Expired or Disabled"
+
+msgid "The %main account for \"%primaryAccount\" is disabled or it has expired. Please, contact technical support if you think this is an error."
+msgstr "The %main account for \"%primaryAccount\" is disabled or it has expired. Please, contact technical support if you think this is an error."

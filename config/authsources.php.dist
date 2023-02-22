@@ -172,19 +172,18 @@ $config = [
     //     ],
 
     //     20=> [
-    //         'class' => 'uab:UserMatch',
-    //         'config'=>[
-    //             'auth_source_primary_provider_name'=>'UAb',
-    //             'auth_source_primary'=>'uab-ldap',
-    //             'auth_source_primary_match_field'=>'sAMAccountName',
-    //             'auth_source_primary_match_value'=>'',
-    //             'auth_source_secondary'=>'autenticacao-gov-pt',
-    //             'auth_source_secondary_match_field'=>'NIF',
-    //             'auth_source_secondary_match_value'=>'',
+    //     'class' => 'uab:UserMatch',
+    //     'config'=>[
+    //         'auth_source_primary_provider_name'=>'UAb',
+    //         'auth_source_primary'=>'uab-ldap',
+    //         'auth_source_primary_match_field'=>'sAMAccountName',
+    //         'auth_source_primary_match_value'=>'',
+    //         'auth_source_secondary'=>'autenticacao-gov-pt',
+    //         'auth_source_secondary_match_field'=>'NIF',
+    //         'auth_source_secondary_match_value'=>'',
 
-    //             'mapping_table'=>'uab_user_attributes_matching__tbl',
-    //         ]
-    //     ],
+    //         'mapping_table'=>'uab_user_attributes_matching__tbl',
+    //     ]
     // ],
 
     // ],
@@ -294,130 +293,6 @@ $config = [
         'SingleLogoutService' => 'https://preprod.autenticacao.gov.pt/fa/Default.aspx',
 
     ],
-
-
-    /*
-    'example-sql' => [
-        'sqlauth:SQL',
-        'dsn' => 'pgsql:host=sql.example.org;port=5432;dbname=simplesaml',
-        'username' => 'simplesaml',
-        'password' => 'secretpassword',
-        'query' => 'SELECT uid, givenName, email, eduPersonPrincipalName FROM users WHERE uid = :username ' .
-            'AND password = SHA2(CONCAT((SELECT salt FROM users WHERE uid = :username), :password), 256);',
-    ],
-    */
-
-    /*
-    'example-static' => [
-        'exampleauth:StaticSource',
-        'uid' => ['testuser'],
-        'eduPersonAffiliation' => ['member', 'employee'],
-        'cn' => ['Test User'],
-    ],
-    */
-
-    /*
-    'example-userpass' => [
-        'exampleauth:UserPass',
-
-        // Give the user an option to save their username for future login attempts
-        // And when enabled, what should the default be, to save the username or not
-        //'remember.username.enabled' => false,
-        //'remember.username.checked' => false,
-
-        'student:studentpass' => [
-            'uid' => ['test'],
-            'eduPersonAffiliation' => ['member', 'student'],
-        ],
-        'employee:employeepass' => [
-            'uid' => ['employee'],
-            'eduPersonAffiliation' => ['member', 'employee'],
-        ],
-    ],
-    */
-
-    /*
-    'crypto-hash' => [
-        'authcrypt:Hash',
-        // hashed version of 'verysecret', made with bin/pwgen.php
-        'professor:{SSHA256}P6FDTEEIY2EnER9a6P2GwHhI5JDrwBgjQ913oVQjBngmCtrNBUMowA==' => [
-            'uid' => ['prof_a'],
-            'eduPersonAffiliation' => ['member', 'employee', 'board'],
-        ],
-    ],
-    */
-
-    /*
-    'htpasswd' => [
-        'authcrypt:Htpasswd',
-        'htpasswd_file' => '/var/www/foo.edu/legacy_app/.htpasswd',
-        'static_attributes' => [
-            'eduPersonAffiliation' => ['member', 'employee'],
-            'Organization' => ['University of Foo'],
-        ],
-    ],
-    */
-
-    /*
-    // This authentication source serves as an example of integration with an
-    // external authentication engine. Take a look at the comment in the beginning
-    // of modules/exampleauth/lib/Auth/Source/External.php for a description of
-    // how to adjust it to your own site.
-    'example-external' => [
-        'exampleauth:External',
-    ],
-    */
-
-    /*
-    'yubikey' => [
-        'authYubiKey:YubiKey',
-         'id' => '000',
-        // 'key' => '012345678',
-    ],
-    */
-
-    /*
-    'facebook' => [
-        'authfacebook:Facebook',
-        // Register your Facebook application on http://www.facebook.com/developers
-        // App ID or API key (requests with App ID should be faster; https://github.com/facebook/php-sdk/issues/214)
-        'api_key' => 'xxxxxxxxxxxxxxxx',
-        // App Secret
-        'secret' => 'xxxxxxxxxxxxxxxx',
-        // which additional data permissions to request from user
-        // see http://developers.facebook.com/docs/authentication/permissions/ for the full list
-        // 'req_perms' => 'email,user_birthday',
-        // Which additional user profile fields to request.
-        // When empty, only the app-specific user id and name will be returned
-        // See https://developers.facebook.com/docs/graph-api/reference/v2.6/user for the full list
-        // 'user_fields' => 'email,birthday,third_party_id,name,first_name,last_name',
-    ],
-    */
-
-    /*
-    // Twitter OAuth Authentication API.
-    // Register your application to get an API key here:
-    //  http://twitter.com/oauth_clients
-    'twitter' => [
-        'authtwitter:Twitter',
-        'key' => 'xxxxxxxxxxxxxxxx',
-        'secret' => 'xxxxxxxxxxxxxxxx',
-        // Forces the user to enter their credentials to ensure the correct users account is authorized.
-        // Details: https://dev.twitter.com/docs/api/1/get/oauth/authenticate
-        'force_login' => false,
-    ],
-    */
-
-    /*
-    // Microsoft Account (Windows Live ID) Authentication API.
-    // Register your application to get an API key here:
-    //  https://apps.dev.microsoft.com/
-    'windowslive' => [
-        'authwindowslive:LiveID',
-        'key' => 'xxxxxxxxxxxxxxxx',
-        'secret' => 'xxxxxxxxxxxxxxxx',
-    ],
-    */
     
     // Example of a LDAP authentication source.
     'uab-ldap' => [
@@ -479,7 +354,7 @@ $config = [
          * This can be an array of attribute names, or NULL, in which case
          * all attributes are fetched.
          */
-        'attributes' => ['sAMAccountName', 'mail'],
+        'attributes' => ['sAMAccountName', 'mail', 'givenName', 'sn', 'displayName', 'jpegPhoto', 'userAccountControl', 'accountExpires'],
 
         /**
          * Which attributes should be base64 encoded after retrieval from

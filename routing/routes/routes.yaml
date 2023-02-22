@@ -20,3 +20,12 @@ uab-primary-auth-notice:
 uab-primary-auth:
     path:       /primary-auth
     defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\UserMatchController::primaryAuth' }
+   
+uab-primary-auth-completed:
+    path:       /primary-auth-completed
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\UserMatchController::primaryAuthCompleted' }
+
+uab-primary-account-disabled-notice:
+    path:       /primary-account-disabled
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\UserMatchController::primaryAccountDisabledNotice' }
+   

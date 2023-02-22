@@ -45,12 +45,17 @@ class UserMatch extends Auth\ProcessingFilter {
      */
     public const AUTHID = UserMatchController::AUTHID;
 
-
     /** @var array */
     private array $config;
 
     /** @var \SimpleSAML\Utils\HTTP */
     private \SimpleSAML\Utils\HTTP $httpUtils;
+
+    /**
+     * @var \SimpleSAML\Utils\HTTP::class|string
+     * @psalm-var \SimpleSAML\Utils\HTTP::class|class-string
+     */
+    protected $HttpUtils = HTTP::class;
     
     /**
      * @var \SimpleSAML\Auth\Simple|string
@@ -65,19 +70,6 @@ class UserMatch extends Auth\ProcessingFilter {
     protected $authState = Auth\State::class;
 
     /**
-     * @var \SimpleSAML\Utils\HTTP::class|string
-     * @psalm-var \SimpleSAML\Utils\HTTP::class|class-string
-     */
-    protected $HttpUtils = HTTP::class;
-
-    /**
-     * @var \SimpleSAML\Database::class|string
-     * @psalm-var \SimpleSAML\Database::class|class-string
-     */
-    protected $database = \SimpleSAML\Database::class;
-
-
-    /**
      * Inject the \SimpleSAML\Auth\State dependency.
      *
      * @param \SimpleSAML\Auth\State $authState
@@ -85,7 +77,6 @@ class UserMatch extends Auth\ProcessingFilter {
     public function setAuthState(Auth\State $authState):void{
         $this->authState = $authState;
     }
-
 
     /**
      * Inject the \SimpleSAML\Utils\HTTP dependency.
@@ -127,9 +118,15 @@ class UserMatch extends Auth\ProcessingFilter {
     public function process(array &$state): void{
         Assert::keyExists($state, 'Attributes');
 
-        if (empty($this->config[self::CONFIG_auth_source_primary])):
-            throw new Error\Exception(\sprintf('No "%s" set in the filter configuration.', self::CONFIG_auth_source_primary));
-        endif;
+        $authSources = [
+            self::CONFIG_auth_source_primary,
+            self::CONFIG_auth_source_secondary,
+        ];
+        foreach ($authSources as $authSource): 
+            if (empty($this->config[$authSource])):
+                throw new Error\Exception(\sprintf('No "%s" set in the filter configuration.', $authSource));
+            endif;
+        endforeach;
 
         if (!isset($state['Attributes'][$this->config[self::CONFIG_auth_source_secondary_match_field]])):
             throw new Error\Exception(\sprintf('Missing attribute "%s".', $this->config[self::CONFIG_auth_source_secondary_match_field]));
@@ -140,7 +137,7 @@ class UserMatch extends Auth\ProcessingFilter {
             $secondaryValue = \reset($secondaryValue);
         endif;
 
-        $primaryAccounts = $this->getPrimaryAccounts($secondaryValue);
+        $primaryAccounts = UserMatchController::getPrimaryAccounts($secondaryValue, $this->config);
         if(count($primaryAccounts)<=0):
             Logger::debug(sprintf('No primary accounts found for "%s". Requesting primary account authentication...', $secondaryValue));
 
@@ -148,6 +145,9 @@ class UserMatch extends Auth\ProcessingFilter {
             $state[self::AUTHID.'_data'] = [
                 self::CONFIG_auth_source_primary_provider_name=>$this->config[self::CONFIG_auth_source_primary_provider_name],
                 self::CONFIG_auth_source_secondary_match_value=>$secondaryValue,
+                self::CONFIG_auth_source_primary=>$this->config[self::CONFIG_auth_source_primary],
+                self::CONFIG_auth_source_secondary=>$this->config[self::CONFIG_auth_source_secondary],
+                UserMatchController::USER_MATCH_CONFIG=>$this->config,
 
             ];
 
@@ -158,93 +158,37 @@ class UserMatch extends Auth\ProcessingFilter {
 
         elseif(count($primaryAccounts)===1):
             $primaryValue = $primaryAccounts[0][self::CONFIG_auth_source_primary_match_value];
-            Logger::debug(sprintf('One primary account map found for "%s": "%s". Authenticating primary account...', $secondaryValue, $primaryValue));
+            Logger::debug(sprintf('One primary account map found for "%s": "%s".', $secondaryValue, $primaryValue));
 
-            
-            return;
+            $authsourcePrimary = new $this->authSimple($this->config[self::CONFIG_auth_source_primary]);
+            $primaryAttributes = $authsourcePrimary->getAuthSource()->getAttributes($primaryValue);
+
+            $attributes = \array_map(function($attribute){
+                return \is_array($attribute)?\reset($attribute):$attribute;
+            }, $primaryAttributes);
+
+            $accountDisabled = isset($attributes['userAccountControl']) && UserMatchController::isLdapAccountDisabled((int)$attributes['userAccountControl']);
+            $accountExpired = isset($attributes['accountExpires']) && UserMatchController::isLdapAccountExpired((int)$attributes['accountExpires']);
+
+            if($accountDisabled || $accountExpired):
+                Logger::debug(sprintf('Account disabled or expired for "%s".', $primaryValue));
+
+                $state[self::AUTHID.'_data'] = [
+                    self::CONFIG_auth_source_primary_provider_name=>$this->config[self::CONFIG_auth_source_primary_provider_name],
+                    self::CONFIG_auth_source_primary_match_value=>$primaryValue,
+                ];
+
+                $id = $this->authState::saveState($state, self::STAGEID);
+                $url = Module::getModuleURL('uab/primary-account-disabled');
+                $this->httpUtils->redirectTrustedURL($url, ['StateId' => $id]);
+                return;
+            endif;
+
+            $state['Attributes'] = \array_merge($state['Attributes'], $primaryAttributes);
         else:
             Logger::debug(sprintf('%d primary accounts found for "%s". Presenting the primary account selection interface...', count($primaryAccounts), $secondaryValue));
 
-
+            die("@TODO");
         endif;
-        echo("<pre>".print_r($primaryAccounts, true)."</pre>");
-
-        // $authsourcePrimary = new $this->authSimple($this->config[self::CONFIG_auth_source_primary]);
-
-        // echo("<pre>".print_r(get_class_methods($authsourcePrimary->getAuthSource()), true)."</pre>");
-        // echo("<pre>".print_r(ConnectorFactory::fromAuthSource($authsourcePrimary->getAuthSource()->getAuthId()), true)."</pre>");
-
-        die("bu");
-        return; 
-
-        // if (
-        //     array_key_exists('Source', $state)
-        //     && array_key_exists('entityid', $state['Source'])
-        //     && in_array($state['Source']['entityid'], $this->ignoreEntities, true)
-        // ) {
-        //     Logger::debug('CardinalitySingle: Ignoring assertions from ' . $state['Source']['entityid']);
-        //     return;
-        // }
-
-        // //$authsource = new $this->authSimple($as);
-
-        // if (
-        //     array_key_exists('Source', $state)
-        //     && array_key_exists('entityid', $state['Source'])
-        //     && in_array($state['Source']['entityid'], $this->ignoreEntities, true)
-        // ) {
-        //     Logger::debug('CardinalitySingle: Ignoring assertions from ' . $state['Source']['entityid']);
-        //     return;
-        // }
-
-        // foreach ($state['Attributes'] as $k => $v) {
-        //     if (!is_array($v)) {
-        //         continue;
-        //     }
-        //     if (count($v) <= 1) {
-        //         continue;
-        //     }
-
-        //     if (in_array($k, $this->singleValued)) {
-        //         $state['core:cardinality:errorAttributes'][$k] = [count($v), '0 ≤ n ≤ 1'];
-        //         continue;
-        //     }
-        //     if (in_array($k, $this->firstValue)) {
-        //         $state['Attributes'][$k] = [array_shift($v)];
-        //         continue;
-        //     }
-        //     if (in_array($k, $this->flatten)) {
-        //         $state['Attributes'][$k] = [implode($this->flattenWith, $v)];
-        //         continue;
-        //     }
-        // }
-
-        // /* abort if we found a problematic attribute */
-        // if (array_key_exists('core:cardinality:errorAttributes', $state)) {
-        //     $id = Auth\State::saveState($state, 'core:cardinality');
-        //     $url = Module::getModuleURL('core/error/cardinality');
-        //     $this->httpUtils->redirectTrustedURL($url, ['StateId' => $id]);
-        //     return;
-        // }
-    }
-
-    protected function getPrimaryAccounts($secondaryValue){
-        $result = $this->database::getInstance()->read("
-            SELECT `".self::CONFIG_auth_source_primary_match_value."` 
-            FROM `{$this->config[self::CONFIG_table_name]}` 
-            WHERE `".self::CONFIG_auth_source_secondary_match_value."` = :secondaryValue
-                AND `".self::CONFIG_auth_source_secondary_match_field."` = :secondaryField
-                AND `".self::CONFIG_auth_source_secondary."` = :secondary
-                AND `".self::CONFIG_auth_source_primary_match_field."` = :primaryField
-                AND `".self::CONFIG_auth_source_primary."` = :primary
-        ", [
-            'secondaryValue' => (string) $secondaryValue,
-            'secondaryField' => (string) $this->config[self::CONFIG_auth_source_secondary_match_field],
-            'secondary' => (string) $this->config[self::CONFIG_auth_source_secondary],
-            'primaryField' => (string) $this->config[self::CONFIG_auth_source_primary_match_field],
-            'primary' => (string) $this->config[self::CONFIG_auth_source_primary],
-        ]);
-
-        return $result->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

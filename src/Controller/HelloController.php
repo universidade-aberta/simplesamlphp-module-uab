@@ -98,7 +98,7 @@ class HelloController{
         $params = [
             'ErrorURL' => $url,
             'ReturnTo' => $url,
-            Auth\State::RESTART => $url,
+            $this->authState::RESTART => $url,
             //'ReturnCallback' => '',
         ];
 
@@ -106,12 +106,12 @@ class HelloController{
         
         if (!is_null($request->query->get('logout'))):
             return new RunnableResponse([$authsource, 'logout'], [$params /*$this->config->getBasePath() . 'logout.php'*/]);
-        elseif (!is_null($request->query->get(Auth\State::EXCEPTION_PARAM))):
+        elseif (!is_null($request->query->get($this->authState::EXCEPTION_PARAM))):
             // This is just a simple example of an error
             /** @var array $state */
             $state = $this->authState::loadExceptionState();
-            Assert::keyExists($state, Auth\State::EXCEPTION_DATA);
-            throw $state[Auth\State::EXCEPTION_DATA];
+            Assert::keyExists($state, $this->authState::EXCEPTION_DATA);
+            throw $state[$this->authState::EXCEPTION_DATA];
         endif;
 
         if (!$authsource->isAuthenticated()) :
