@@ -9,6 +9,17 @@ This module provides UAb customizations for SimpleSAMLphp.
 
 ## Dependencies
 
+### OS Dependencies
+
+Depending of your goals and configuration you will need some packages installed on your OS. The following command lists some of the packages we use on our setup (based on Ubuntu Server). Adjust accordingly: 
+```bash
+apt install nginx openssl \
+	mariadb-server mariadb-client \
+	php-fpm php-cli php-gd php-zip php-bcmath php-curl php-imagick php-xml php-mbstring php-xml php-intl \
+    php-mysql php-ldap php-redis php-predis php-memcached memcached \
+    git curl ca-certificates unzip
+```
+
 ### SimpleSAMLphp
 
 This module is compatible with SimpleSAMLphp 2.0 (RC 3 as the time of this info). If you want to use the development branch `simplesamlphp-2.0` of SimpleSAMLphp, you can to it with the following command: 
@@ -31,15 +42,6 @@ LDAP is a soft dependency, which means you probably can configure your instance 
 composer require simplesamlphp/simplesamlphp-module-ldap
 ```
 Please refer to [module documentation](https://github.com/simplesamlphp/simplesamlphp-module-ldap) for more information about the module requirements and settings.
-
-### WebAuthn
-
-WebAuthn is a optional but usefull if you want to enable two factor authentication. You can install it with the following command: 
-```bash
-composer require simplesamlphp/simplesamlphp-module-webauthn:2.0.0-rc2
-```
-
-Please refer to [module documentation](https://github.com/simplesamlphp/simplesamlphp-module-webauthn) for more information about the module requirements (e.g., database and other settings).
 
 ## Installation
 
@@ -69,6 +71,18 @@ search for the `module.enable` key and set `uab` to true:
 
 ### Database Installation
 
+#### Base Database
+You can create a MySQL database to store auxiliary information. Example command to create a database named `auth_db` and an user `auth` with access to it: 
+```sql
+    CREATE DATABASE IF NOT EXISTS `auth_db`;
+    CREATE USER /*M!100103 IF NOT EXISTS */ "auth"@"localhost" IDENTIFIED BY "__pwd__";
+    GRANT ALL ON `auth_db`.* TO "auth"@"localhost" WITH GRANT OPTION;
+    FLUSH PRIVILEGES;
+
+    USE `auth_db`;
+```
+
+#### Table for Autenticação.gov
 If you want to match a Autenticação.gov attribute with an attribute of your internal IDP (e.g. LDAP), you will need the create a MySQL table to store this association: 
 ```sql
     CREATE TABLE IF NOT EXISTS `uab_user_attributes_matching__tbl` (
