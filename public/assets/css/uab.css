@@ -152,6 +152,7 @@ ul.funding{
 ul.funding img{
     max-height: 30px;
     width: auto;
+    filter: invert(1) hue-rotate(180deg);
 }
 @media screen and (min-width: 550px) {
     .meta-footer-wrapper-column{
