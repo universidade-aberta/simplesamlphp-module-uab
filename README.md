@@ -2,7 +2,8 @@
 
 # UAb SimpleSAMLphp Module <!-- omit in toc -->
 
-[![release](https://labs.si.uab.pt/dsi/simplesamlphp-module-uab/-/badges/release.svg)](https://labs.si.uab.pt/dsi/simplesamlphp-module-uab/-/releases/permalink/latest) [![License: GPL v3+](https://img.shields.io/badge/License-GPL%20v3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3+](https://img.shields.io/badge/License-GPL%20v3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Public Money, Public Code](public/assets/img/badges/public_money-public_code.svg)](https://publiccode.eu/)
 
 
 This module provides UAb customizations for SimpleSAMLphp.
@@ -148,3 +149,14 @@ If required, the developer can execute commands inside the container by using th
 ```console
 docker exec -it simplesamlphp-module-uab bash
 ```
+
+
+# Funding
+
+This project was funded by: 
+
+![Compete 2020](public/assets/img/logos/Compete2020.svg)
+![](public/assets/img/logos/spacer.svg)
+![Portugal 2020](public/assets/img/logos/Portugal2020.svg)
+![](public/assets/img/logos/spacer.svg)
+![União Europeia](public/assets/img/logos/UE.svg)
