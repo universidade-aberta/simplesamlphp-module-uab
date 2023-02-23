@@ -1,7 +1,7 @@
 {
     "name": "uab/simplesamlphp-module-uab",
     "description": "UAb customization module for SimpleSAMLphp",
-    "homepage": "https://labs.si.uab.pt/dsi/simplesamlphp-module-uab/",
+    "homepage": "https://github.com/universidade-aberta/simplesamlphp-module-uab",
     "type": "simplesamlphp-module",
     "keywords": ["simplesamlphp", "uab"],
     "license": "GPL-3.0+",
@@ -47,8 +47,8 @@
         "simplesamlphp/simplesamlphp-test-framework": "^1.2.1"
     },
     "support": {
-        "issues": "https://labs.si.uab.pt/dsi/simplesamlphp-module-uab/-/issues",
-        "source": "https://labs.si.uab.pt/dsi/simplesamlphp-module-uab/",
+        "issues": "https://github.com/universidade-aberta/simplesamlphp-module-uab/issues",
+        "source": "https://github.com/universidade-aberta/simplesamlphp-module-uab.git",
         "email": "suporte@uab.pt"
     }
 }

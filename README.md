@@ -63,7 +63,7 @@ Just execute the following command in the root of your SimpleSAMLphp
 installation:
 
 ```bash
-composer config repositories.repo-name vcs ssh://git@labs.si.uab.pt:2222/dsi/simplesamlphp-module-uab.git
+composer config repositories.repo-name vcs https://github.com/universidade-aberta/simplesamlphp-module-uab.git
 composer require --no-dev uab/simplesamlphp-module-uab:dev-master
 ```
 
