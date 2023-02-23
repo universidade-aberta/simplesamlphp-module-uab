@@ -29,8 +29,8 @@ git clone -b simplesamlphp-2.0 --single-branch -o upstream https://github.com/si
 
 If you want to use the development branch, you should also set the version in your composer file with the following command: 
 ```bash
-composer config version v2.0.0-rc3
-composer update
+composer config version v2.0.0
+composer update --no-dev
 ```
 
 This will help to install the correct version of the module dependencies. 
@@ -39,9 +39,21 @@ This will help to install the correct version of the module dependencies.
 
 LDAP is a soft dependency, which means you probably can configure your instance to work without it. However in our implementation we use it, so you can install it with the following command: 
 ```bash
-composer require simplesamlphp/simplesamlphp-module-ldap
+composer require --no-dev simplesamlphp/simplesamlphp-module-ldap
 ```
 Please refer to [module documentation](https://github.com/simplesamlphp/simplesamlphp-module-ldap) for more information about the module requirements and settings.
+
+
+### CAS Server
+
+CAS Server is a soft dependency, which means you probably can configure your instance to work without it. However in our implementation we use it, so you can install it with the following command: 
+```bash
+composer config repositories.repo-name vcs https://github.com/universidade-aberta/simplesamlphp-module-casserver.git
+composer require simplesamlphp/simplesamlphp-module-casserver dev-master
+```
+Please refer to [module documentation](https://github.com/universidade-aberta/simplesamlphp-module-casserver) for more information about the module requirements and settings.
+
+
 
 ## Installation
 
@@ -51,7 +63,7 @@ installation:
 
 ```bash
 composer config repositories.repo-name vcs ssh://git@labs.si.uab.pt:2222/dsi/simplesamlphp-module-uab.git
-composer require uab/simplesamlphp-module-uab:dev-master
+composer require --no-dev uab/simplesamlphp-module-uab:dev-master
 ```
 
 where `dev-master` instructs Composer to install the `master` branch from the
@@ -107,7 +119,7 @@ The processing filter `uab:usermatch` will use this table to match and associate
 
 ## Configuration
 
-An initial demo configuration is provided in the `config/*.dist` and  `metadata/*.dist`. This configuration is used in the docker container but it is provided as a reference (and probably won't work without some changes - e.g. LDAP server settings, SAML endpoints, etc.). You should adjust your SimpleSAMLphp configuration accordingly and consult the framework's documentation for reference. 
+An initial demo configuration is provided in the `config/dist.*` and  `metadata/dist.*`. This configuration is used in the docker container but it is provided as a reference (and probably won't work without some changes - e.g. LDAP server settings, SAML endpoints, etc.). You should adjust your SimpleSAMLphp configuration accordingly and consult the framework's documentation for reference. 
 
 ## Development instructions
 

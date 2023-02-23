@@ -39,15 +39,14 @@ $metadata['https://github.com/orgs/universidade-aberta'] = [
 /**
  * Moodle with the SAML plugin (https://moodle.org/plugins/auth_saml2).
  */
-$metadata['https://localhost:1234/auth/saml2/sp/metadata.php'] = [
+$metadata['https://localhost:4443/auth/saml2/sp/metadata.php'] = [
     'entityid' => 'https://login.uab.pt',
-    'audience' => ['https://localhost:1234/auth/saml2/sp/metadata.php'],
     'AssertionConsumerService' => [
         [
             'index' => 1,
             'isDefault' => true,
             'Location' =>
-                'https://localhost:1234/auth/saml2/sp/saml2-acs.php/localhost',
+                'https://localhost:4443/auth/saml2/sp/saml2-acs.php/localhost',
             'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
         ],
     ],
@@ -56,7 +55,7 @@ $metadata['https://localhost:1234/auth/saml2/sp/metadata.php'] = [
             'index' => 1,
             'isDefault' => true,
             'Location' =>
-                'https://localhost:1234/auth/saml2/sp/saml2-logout.php/localhost',
+                'https://localhost:4443/auth/saml2/sp/saml2-logout.php/localhost',
             'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
         ],
     ],

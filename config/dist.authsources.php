@@ -53,7 +53,8 @@ $config = [
 
         'core:AdminPassword',
     ],
-    // An authentication source which can authenticate against SAML 2.0 IdPs.
+
+    // // An authentication source which can authenticate against SAML 2.0 IdPs.
     // 'autenticacao-gov-pt' => [
     //     //'saml:SP',
     //     'uab:SP',
@@ -99,8 +100,8 @@ $config = [
     //     'ForceAuthn' => true,
     //     'IsPassive' => false,
     //     'ProviderName' => 'Universidade Aberta',
-    //     'certificate' => 'localhost.cer',
-    //     'privatekey' => 'localhost.key',
+    //     'certificate' => 'login.uab.pt.cer',
+    //     'privatekey' => 'login.uab.pt.key',
     //     //'privatekey_pass' => '',
     //     'sign.authnrequest' => true,
     //     'redirect.sign' => true,
@@ -159,34 +160,34 @@ $config = [
     //     'AssertionConsumerService' => 'https://preprod.autenticacao.gov.pt/fa/Default.aspx',
     //     'SingleLogoutService' => 'https://preprod.autenticacao.gov.pt/fa/Default.aspx',
 
+    //     'authproc' => [
 
-    // 'authproc' => [
+    //         10=> [
+    //             'class' => 'core:AttributeMap',
+    //             'http://interop.gov.pt/MDC/Cidadao/NIF' => 'NIF',
+    //             'http://interop.gov.pt/MDC/Cidadao/NIC' => 'NIC',
+    //             'http://interop.gov.pt/MDC/Cidadao/NomeCompleto' => 'fullname',
+    //             'http://interop.gov.pt/MDC/Cidadao/Morada' => 'address',
+    //             'http://interop.gov.pt/MDC/Cidadao/Foto' => 'photo',
+    //         ],
 
-    //     10=> [
-    //         'class' => 'core:AttributeMap',
-    //         'http://interop.gov.pt/MDC/Cidadao/NIF' => 'NIF',
-    //         'http://interop.gov.pt/MDC/Cidadao/NIC' => 'NIC',
-    //         'http://interop.gov.pt/MDC/Cidadao/NomeCompleto' => 'fullname',
-    //         'http://interop.gov.pt/MDC/Cidadao/Morada' => 'address',
-    //         'http://interop.gov.pt/MDC/Cidadao/Foto' => 'photo',
+    //         20=> [
+    //             'class' => 'uab:UserMatch',
+    //             'config'=>[
+    //                 'auth_source_primary_provider_name'=>'UAb',
+    //                 'auth_source_primary'=>'uab-ldap',
+    //                 'auth_source_primary_match_field'=>'sAMAccountName',
+    //                 'auth_source_primary_match_value'=>'',
+    //                 'auth_source_secondary'=>'autenticacao-gov-pt',
+    //                 'auth_source_secondary_match_field'=>'NIF',
+    //                 'auth_source_secondary_match_value'=>'',
+
+    //                 'mapping_table'=>'uab_user_attributes_matching__tbl',
+    //             ]
+    //         ],
     //     ],
-
-    //     20=> [
-    //     'class' => 'uab:UserMatch',
-    //     'config'=>[
-    //         'auth_source_primary_provider_name'=>'UAb',
-    //         'auth_source_primary'=>'uab-ldap',
-    //         'auth_source_primary_match_field'=>'sAMAccountName',
-    //         'auth_source_primary_match_value'=>'',
-    //         'auth_source_secondary'=>'autenticacao-gov-pt',
-    //         'auth_source_secondary_match_field'=>'NIF',
-    //         'auth_source_secondary_match_value'=>'',
-
-    //         'mapping_table'=>'uab_user_attributes_matching__tbl',
-    //     ]
     // ],
 
-    // ],
     'localhost' => [
         //'saml:SP',
         'uab:SP',

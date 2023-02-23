@@ -217,6 +217,7 @@ server { \n\
             #fastcgi_param PATH_INFO $fastcgi_path_info;\n\
             fastcgi_param SCRIPT_NAME $prefix$phpfile;\n\
             fastcgi_param PATH_INFO $pathinfo if_not_empty;\n\
+            fastcgi_param QUERY_STRING $is_args$args if_not_empty;\n\
             fastcgi_read_timeout 3600;\n\
             include fastcgi_params;\n\
             fastcgi_intercept_errors on;\n\

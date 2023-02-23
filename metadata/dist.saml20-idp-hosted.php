@@ -6,7 +6,7 @@
  * See: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-hosted
  */
 
-$metadata['https://login.uab.pt'] = [
+$metadata['https://localhost'] = [
     /*
      * The hostname of the server (VHOST) that will use this SAML entity.
      *
@@ -15,8 +15,8 @@ $metadata['https://login.uab.pt'] = [
     'host' => '__DEFAULT__',
 
     // X.509 key and certificate. Relative to the cert directory.
-    'privatekey' => 'login.uab.pt.key',
-    'certificate' => 'login.uab.pt.cer',
+    'privatekey' => 'localhost.key',
+    'certificate' => 'localhost.cer',
 
     'contacts' => [
         [
