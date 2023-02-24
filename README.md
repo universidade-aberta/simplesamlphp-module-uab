@@ -40,7 +40,7 @@ This will help to install the correct version of the module dependencies.
 
 LDAP is a soft dependency, which means you probably can configure your instance to work without it. However in our implementation we use it, so you can install it with the following command: 
 ```bash
-composer require --no-dev simplesamlphp/simplesamlphp-module-ldap
+composer require simplesamlphp/simplesamlphp-module-ldap
 ```
 Please refer to [module documentation](https://github.com/simplesamlphp/simplesamlphp-module-ldap) for more information about the module requirements and settings.
 
@@ -64,7 +64,7 @@ installation:
 
 ```bash
 composer config repositories.repo-name vcs https://github.com/universidade-aberta/simplesamlphp-module-uab.git
-composer require --no-dev uab/simplesamlphp-module-uab:dev-master
+composer require uab/simplesamlphp-module-uab:dev-master
 ```
 
 where `dev-master` instructs Composer to install the `master` branch from the
