@@ -1,9 +1,12 @@
 FROM ubuntu:latest AS development
 
+ENV DEBIAN_FRONTEND=${DEBIAN_FRONTEND:-noninteractive} 
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
 # Install all the dependencies
 RUN apt-get update -yqq \
 	&& apt-get upgrade -yqq \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -yqq --no-install-recommends \
+	&& apt-get install -yqq --no-install-recommends \
 	nginx openssl \
 	mariadb-server mariadb-client \
 	php-fpm php-cli php-mysql php-gd php-zip php-bcmath php-curl php-imagick php-xml php-mbstring php-xml php-intl php-xdebug \
@@ -44,10 +47,9 @@ ARG DATABASE_BACKUP_DIR=${DATABASE_BACKUP_DIR:-/app/backup/database_files}
 ENV WORK_DIR=${WORK_DIR} \
     MYSQL_HOST=${MYSQL_HOST} \
     MYSQL_DATABASE=${MYSQL_DATABASE} \
-    DEBIAN_FRONTEND=${DEBIAN_FRONTEND:-noninteractive} \
     SIMPLESAMLPHP_VERSION=${SIMPLESAMLPHP_VERSION} \
     SIMPLESAMLPHP_BRANCH=${SIMPLESAMLPHP_BRANCH} \
-    ENVS="WORK_DIR WWW_DIR MIRROR_DIR MYSQL_HOST MYSQL_DATABASE MYSQL_USER MYSQL_PASSWORD SIMPLESAMLPHP_BRANCH SIMPLESAMLPHP_VERSION DEBIAN_FRONTEND"
+    ENVS="WORK_DIR WWW_DIR MIRROR_DIR MYSQL_HOST MYSQL_DATABASE MYSQL_USER MYSQL_PASSWORD SIMPLESAMLPHP_BRANCH SIMPLESAMLPHP_VERSION"
 
 
 # Prepare the working directory

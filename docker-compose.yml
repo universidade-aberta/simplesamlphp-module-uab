@@ -41,7 +41,7 @@ services:
       - .:${WWW_DIR}/${PROJECT_FOLDER}/modules/uab
       - ${WWW_DIR}/${PROJECT_FOLDER}/modules/uab/.docker
       - ./cert:${WWW_DIR}/${PROJECT_FOLDER}/cert
-      - ./config/authsources.php:${WWW_DIR}/${PROJECT_FOLDER}/config/authsources.php
+      - ./config/dist.authsources.php:${WWW_DIR}/${PROJECT_FOLDER}/config/authsources.php
       - ./config/dist.config.php:${WWW_DIR}/${PROJECT_FOLDER}/config/config.php
       - ./metadata/dist.saml20-idp-remote.php:${WWW_DIR}/${PROJECT_FOLDER}/metadata/saml20-idp-remote.php
       - type: bind
