@@ -109,13 +109,15 @@
                         </button>
                     </li>
                     {% for key, source in sources %}
-                        {% set button = ('button-' ~ key) %}
-                        <li class="{{ source.css_class|default('') }} authsource authsource-{{ key|e('html_attr') }}">
-                            <input type="submit" formaction="{{ moduleURL('uab/discovery', {'AuthState': MultiAuthState, 'source':key}) }}" name="sourceChoice[{{ key }}]" class="pure-button" id="{{ button }}" value="{{ source.text is defined ? source.text|translateFromArray : key }}">
-                            {% if source.help is defined %}
-                                <p>{{ source.help|translateFromArray }}</p>
-                            {% endif %}
-                        </li>
+                        {% if currentSource is not empty and key!=currentSource.key %}
+                            {% set button = ('button-' ~ key) %}
+                            <li class="{{ source.css_class|default('') }} authsource authsource-{{ key|e('html_attr') }}">
+                                <input type="submit" formaction="{{ moduleURL('uab/discovery', {'AuthState': MultiAuthState, 'source':key}) }}" name="sourceChoice[{{ key }}]" class="pure-button" id="{{ button }}" value="{{ source.text is defined ? source.text|translateFromArray : key }}">
+                                {% if source.help is defined %}
+                                    <p>{{ source.help|translateFromArray }}</p>
+                                {% endif %}
+                            </li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
                 

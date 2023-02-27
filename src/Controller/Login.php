@@ -254,7 +254,7 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
         if(!empty($state[MultiAuth::SOURCESID]) && !empty($state[MultiAuth::SOURCESID][$currentAuthID])):
             $currentSource = $state[MultiAuth::SOURCESID][$currentAuthID];
             $currentSource['key'] = $currentAuthID;
-            unset($state[MultiAuth::SOURCESID][$currentAuthID]);
+            //unset($state[MultiAuth::SOURCESID][$currentAuthID]);
         endif;
         $t->data['sources'] = $state[MultiAuth::SOURCESID]??[];
         $t->data['preferred'] = null;
