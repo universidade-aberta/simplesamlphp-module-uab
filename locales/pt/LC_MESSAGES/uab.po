@@ -70,3 +70,12 @@ msgstr "A conta %main expirou ou está desativada"
 
 msgid "The %main account for \"%primaryAccount\" is disabled or it has expired. Please, contact technical support if you think this is an error."
 msgstr "A conta %main para \"%primaryAccount\" está desativada ou expirou. Por favor, contacte o apoio técnico se considerar que isto é um erro."
+
+msgid "The selected authentication source will be used to authenticate you and and to create a valid session."
+msgstr "A fonte de autenticação será utilizada na autenticação e para criar uma sessão válida."
+
+msgid "Processing..."
+msgstr "A processar..."
+
+msgid "Sign in"
+msgstr "Iniciar sessão"

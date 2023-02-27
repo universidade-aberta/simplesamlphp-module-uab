@@ -29,3 +29,6 @@ uab-primary-account-disabled-notice:
     path:       /primary-account-disabled
     defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\UserMatchController::primaryAccountDisabledNotice' }
    
+uab-loginuserpass:
+    path:       /loginuserpass
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\Login::loginuserpass' }

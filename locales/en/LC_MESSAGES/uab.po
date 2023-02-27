@@ -74,3 +74,12 @@ msgstr "%main Account Expired or Disabled"
 
 msgid "The %main account for \"%primaryAccount\" is disabled or it has expired. Please, contact technical support if you think this is an error."
 msgstr "The %main account for \"%primaryAccount\" is disabled or it has expired. Please, contact technical support if you think this is an error."
+
+msgid "The selected authentication source will be used to authenticate you and and to create a valid session."
+msgstr "The selected authentication source will be used to authenticate you and and to create a valid session."
+
+msgid "Processing..."
+msgstr "Processing..."
+
+msgid "Sign in"
+msgstr "Sign in"

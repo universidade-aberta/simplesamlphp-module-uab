@@ -43,7 +43,7 @@ $config = [
                 'css-class' => 'localhost',
             ],
         ],
-        // 'preselect' => 'uab-ldap',
+        'preselect' => 'uab-ldap',
     ],
 
     // This is a authentication source which handles admin authentication.
@@ -297,7 +297,7 @@ $config = [
     
     // Example of a LDAP authentication source.
     'uab-ldap' => [
-        'ldap:Ldap',
+        'uab:Ldap',
 
         /**
          * The connection string for the LDAP-server.
