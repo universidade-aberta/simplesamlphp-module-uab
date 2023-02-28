@@ -15,9 +15,11 @@ use SimpleSAML\Module\core\Auth\UserPassBase;
 use SimpleSAML\Module\core\Auth\UserPassOrgBase;
 use SimpleSAML\Utils;
 use SimpleSAML\XHTML\Template;
+use SimpleSAML\Logger;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Ldap\Exception\LdapException;
 
 use SimpleSAML\Module\uab\Auth\Source\MultiAuth;
 
@@ -96,7 +98,7 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
 
         $cookies = [];
         if ($organizations === null || $organization !== '') {
-            if (!empty($username) || !empty($password)) {
+            if (!empty($username) && !empty($password)) {
                 $httpUtils = new Utils\HTTP();
                 $sameSiteNone = $httpUtils->canSetSamesiteNone() ? Cookie::SAMESITE_NONE : null;
 
@@ -164,6 +166,18 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
                     } else {
                         UserPassBase::handleLogin($authStateId, $username, $password);
                     }
+                } catch(LdapException $ex){
+                    $e = new Error\Error('WRONGUSERPASS', $ex);
+                    // Login failed. Extract error code and parameters, to display the error
+                    $errorCode = $e->getErrorCode();
+                    $errorParams = $e->getParameters();
+                    $state['error'] = [
+                        'code' => $errorCode,
+                        'params' => $errorParams
+                    ];
+                    $authStateId = Auth\State::saveState($state, $source::STAGEID);
+
+                    Logger::debug(sprintf('LdapException: %s.', $ex->getMessage()));
                 } catch (Error\Error $e) {
                     // Login failed. Extract error code and parameters, to display the error
                     $errorCode = $e->getErrorCode();
@@ -178,6 +192,9 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
                 if (isset($state['error'])) {
                     unset($state['error']);
                 }
+            }elseif (!empty($username) || !empty($password)){
+                $errorCode = 'EMPTY_USERNAME_OR_PASSWORD';
+                $errorParams = [];
             }
         }
 
@@ -247,6 +264,14 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
         }
 
         // @UAb: Load the other auth sources
+        $t->data['errorcodes'] = array_merge_recursive($t->data['errorcodes'], [
+            'title'=>[
+                'EMPTY_USERNAME_OR_PASSWORD'=>'Empty username or password',
+            ],
+            'descr'=>[
+                'EMPTY_USERNAME_OR_PASSWORD'=>'You must provide an username and password to login',
+            ],
+        ]);
         $currentAuthID = $source->getAuthId();
         $currentSource = [];
         $multiAuthState = Auth\State::cloneState($state);

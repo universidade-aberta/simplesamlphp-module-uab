@@ -1,0 +1,149 @@
+{% set pagetitle = 'Sign in @%s'|trans({"%s": header}) %}
+
+{% extends "base.twig" %}
+
+{% block postload %}
+    <script src="{{ asset('js/loginuserpass.js', 'core') }}"></script>
+{% endblock %}
+
+{% block content %}
+
+    {#%- if not isProduction %}
+        <div class="message-box warning">
+        {% trans %}You are now accessing a pre-production system. This authentication setup is for testing and pre-production verification only. If someone sent you a link that pointed you here, and you are not <i>a tester</i> you probably got the wrong link, and should <b>not be here</b>.{% endtrans %}
+        </div>
+    {% endif -%#}
+
+
+
+    <h2 class="page-title">{{ 'Sign In With'|trans }}</h2>
+    
+    {% if sources is not empty %}
+        <form>
+            <ul class="auth-sources-list">
+                {% for key, source in sources %}
+                    {% set button = ('button-' ~ key) %}
+                    {% set label = (source.text is defined ? source.text|translateFromArray : key) %}
+                    <li class="{{ source.css_class|default('') }} focus-element-wrapper authsource authsource-{{ key|e('html_attr') }}{% if currentSource is not empty and currentSource.key==key %} authsource-current{% endif %}">
+                        <button class="auth-source-btn has-focus-element" type="submit" formmethod="post" formaction="{{ moduleURL('uab/discovery', {'AuthState': MultiAuthState, 'source':key}) }}" name="sourceChoice[{{ key }}]" id="{{ button }}" value="{{ label|e('html_attr') }}" aria-label="{{ label|e('html_attr') }}" title="{{ label|e('html_attr') }}"><span class="authsource-label">{{ label }}</span></button>
+                        <span class="focus-form-element"></span>
+                        {#% if source.help is defined %}
+                            <p>{{ source.help|translateFromArray }}</p>
+                        {% endif %#}
+                    </li>
+                {% endfor %}
+            </ul>
+        </form>
+    {% endif %}
+
+    {% if errorcode -%}
+        <div class="message-box error">
+
+            {% set errtitles = errorcodes['title'] %}
+            {% set errtitle = errtitles[errorcode] %}
+
+            <h3 class="font-semi-bold">{{ errtitle|trans(errorparams) }}</h3>
+
+            {% set errdescs = errorcodes['descr'] %}
+            {% set errdesc = errdescs[errorcode] %}
+
+            <p>{{ errdesc|trans(errorparams) }}</p>
+
+        </div>
+    {%- endif %}
+
+    <div class="login-form-wrapper">
+        <form id="f" class="login-form" action="{{ moduleURL('uab/loginuserpass', {'AuthState': AuthState}) }}" method="post" name="f" spellcheck="false">
+            <div class="login-form-group username-wrapper order-1">
+                <label for="username">{{ 'Username'|trans }}</label>
+                <div class="focus-element-wrapper">
+                    <input id="username" {{ forceUsername ? 'disabled' }} type="text" name="username" class="has-focus-element"
+                        {%- if not forceUsername %} value="{{ username }}" autocomplete="username" {% endif %}
+                        {%- if not forceUsername and not username %} autofocus {% endif %} required >
+                    <span class="focus-form-element"></span>
+                </div>
+            </div>
+
+            <div class="login-form-group password-wrapper order-3">
+                <label for="password">{{ 'Password'|trans}}</label>
+                <div class="focus-element-wrapper">
+                    <input id="password" type="password" name="password" class="has-focus-element" autocomplete="current-password"
+                        {%- if forceUsername or username %} autofocus {% endif %} required >
+                    <span class="focus-form-element"></span>
+                </div>
+            </div>
+
+            {% if organizations is defined -%}
+                <div class="login-form-group organization-wrapper order-4">
+                    <label for="organization">{{ 'Organization'|trans }}</label>
+                    <div class="focus-element-wrapper">
+                        <select class="has-focus-element" name="organization" id="organization">
+                            {{ selectedOrg ?: null }}
+                            {%- for id, orgDesc in organizations -%}
+                                {% if id == selectedOrg -%}
+                                    {%- set selected = 'selected="selected"' %}
+                                {%- else -%}
+                                    {% set selected = '' -%}
+                                {% endif -%}
+                                {% if orgDesc -%}
+                                    <option value="{{ id }}" {{ selected }}>{{ orgDesc|trans }}</option>
+                                {% endif -%}
+                            {% endfor %}
+                        </select>
+                        <span class="focus-form-element"></span>
+                    </div>
+                    {% if rememberOrganizationEnabled is defined -%}
+                    <div class="login-form-group">
+                        <label for="remember_organization" class="checkbox-wrapper">
+ 	                    <input type="checkbox" id="remember_organization" name="remember_organization" value="Yes"
+                                {{ rememberOrganizationChecked ? 'checked="checked"' }} >
+                            <small>{{ 'Remember my organization'|trans }}</small>
+                        </label>
+                    </div>
+                    {%- endif %}
+                </div>
+            {%- endif %}
+
+            {% if rememberUsernameEnabled and not forceUsername -%}
+                <div class="login-form-group remember_username-wrapper cuddle-above order-2">
+                    <label for="remember_username" class="checkbox-wrapper">
+                        <input id="remember_username" type="checkbox"
+                                {{ rememberUsernameChecked ? 'checked' }} name="remember_username" value="Yes">
+                        <small>{{ 'Remember my username'|trans }}</small>
+                    </label>
+                </div>
+            {%- endif %}
+
+            {% if rememberMeEnabled -%}
+            <div class="login-form-group remember-wrapper cuddle-above order-5">
+                <label for="remember_me" class="checkbox-wrapper">
+                <input id="remember_me" type="checkbox"
+                        {{ rememberMeChecked ? 'checked="checked"' }} name="remember_me" value="Yes">
+                    <small>{{ 'Remember me'|trans }}</small>
+                </label>
+            </div>
+            {%- endif %}
+
+            <div class="login-form-group focus-element-wrapper sign-in-btn-wrapper order-6">
+                <button class="sign-in-btn has-focus-element" id="submit_button" type="submit" data-processing="{% trans %}Processing...{% endtrans %}">
+                    {% trans %}Sign in{% endtrans %}
+                </button>
+                <span class="focus-form-element"></span>
+            </div>
+        </form>
+    </div>
+    {% if links is not empty -%}
+        <ul class="auth-links">
+            {% for link in links -%}
+                <li><a href="{{ link.href }}">{{ link['text']|trans }}</a></li>
+            {% endfor %}
+        </ul>
+    {%- endif %}
+    {#
+    <br><br>
+    <div class="pure-form-message">
+        <strong>{{ 'Help! I don\'t remember my password.'|trans }}</strong>
+        <p>{{ 'Without your username and password you cannot authenticate yourself for access to the service. There may be someone that can help you. Consult the help desk at your organization!'|trans }}</p>
+    </div>
+    #}
+{% endblock %}

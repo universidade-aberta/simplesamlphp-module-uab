@@ -30,8 +30,8 @@ $config = [
             ],
             // 'autenticacao-gov-pt' => [
             //     'text' => [
-            //         'en' => 'Autenticação Gov',
-            //         'pt' => 'Autenticação Gov',
+            //         'en' => 'Autenticação.Gov',
+            //         'pt' => 'Autenticação.Gov',
             //     ],
             //     'css-class' => 'gov-auth',
             // ],

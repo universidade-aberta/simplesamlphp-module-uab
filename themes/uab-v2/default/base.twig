@@ -1,0 +1,94 @@
+{% apply spaceless %}
+<!DOCTYPE html>
+<html lang="{{ currentLanguage }}" dir="{{ isRTL ? 'rtl' : 'ltr' }}">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>
+      {{ pagetitle }}
+    </title>
+    {% if logout is defined %}
+      <link rel="preload"
+        href="{{ asset('fonts/fa-solid-900.woff2') }}"
+        as="font"
+        crossorigin>
+    {% endif %}
+    <link rel="stylesheet" href="{{ asset('css/stylesheet.css') }}">
+    <link rel="stylesheet" href="{{ asset('fonts/montserrat/montserrat.css', 'uab') }}">
+    <link rel="stylesheet" href="{{ asset('fonts/poppins/poppins.css', 'uab') }}">
+    <link rel="stylesheet" href="{{ asset('css/uab-v2.css', 'uab') }}">
+    <link rel="icon"
+      type="image/svg+xml"
+      href="{{ asset('icons/favicon.svg', 'uab') }}">
+    <meta name="robots" content="noindex, nofollow">
+    {{ include('_head.twig', ignore_missing = true) }}
+    {% block preload %}
+
+    {% endblock %}
+  </head>
+  <body id="{{ templateId }}" class="UAb">
+    <div class="background">
+      <div class="elements">
+        <div class="square sq1"></div>
+        <div class="square sq2"></div>
+        <div class="square sq3"></div>
+      </div> 
+    </div>
+    <div class="wrapper">
+      <div class="login-container">
+        <div class="login-wrapper">
+          {% block header %}
+            {% include '_header.twig' %}
+          {% endblock %}
+          <main class="w-100">
+            <div id="content">
+              {% block contentwrapper %}
+                {% block content %}
+                {% endblock %}
+              {% endblock %}
+            <div id="push"></div>
+          </main>
+
+          <div id="foot" class="w-100">
+            {% block footer %}
+              {% include '_footer.twig' %}
+            {% endblock %}
+          </div>
+        </div>
+
+        {% block funding %}
+          {% include '_funding.twig' %}
+        {% endblock %}
+      </div>
+    </div>
+    {#
+    <div id="layout">
+      {% block header %}
+        {% include '_header.twig' %}
+      {% endblock %}
+      <main>
+        <div id="content">
+          <div class="wrap">
+            {% block contentwrapper %}
+              {% block content %}
+              {% endblock %}
+            {% endblock %}
+          </div>
+        </div>
+        <div id="push"></div>
+      </main>
+    </div>
+    <div id="foot">
+      {% block footer %}
+        {% include '_footer.twig' %}
+      {% endblock %}
+    </div>
+    #}
+    <script src="{{ asset('js/bundle.js') }}"></script>
+    <script src="{{ asset('js/uab-v2.js', 'uab') }}"></script>
+    {% block postload %}
+
+    {% endblock %}
+  </body>
+</html>
+{% endapply %}

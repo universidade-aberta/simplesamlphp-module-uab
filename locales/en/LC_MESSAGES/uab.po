@@ -83,3 +83,36 @@ msgstr "Processing..."
 
 msgid "Sign in"
 msgstr "Sign in"
+
+msgid "Change language"
+msgstr "Change language"
+
+msgid "Language"
+msgstr "Language"
+
+msgid "Sign in page of %s"
+msgstr "Sign in page of %s"
+
+msgid "Sign in @%s"
+msgstr "Sign in @%s"
+
+msgid "Sign In With"
+msgstr "Sign In With"
+
+msgid "Remember my username"
+msgstr "Remember my username"
+
+msgid "Remember me"
+msgstr "Remember me"
+
+msgid "Remember my organization"
+msgstr "Remember my organization"
+
+msgid "Empty username or password"
+msgstr "Empty username or password"
+
+msgid "You must provide an username and password to login"
+msgstr "You must provide an username and password to login"
+
+msgid "Authentication data"
+msgstr "Authentication data"

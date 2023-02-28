@@ -79,3 +79,36 @@ msgstr "A processar..."
 
 msgid "Sign in"
 msgstr "Iniciar sessão"
+
+msgid "Change language"
+msgstr "Alterar language"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Sign in page of %s"
+msgstr "Início de sessão de %s"
+
+msgid "Sign in @%s"
+msgstr "Início de sessão @%s"
+
+msgid "Sign In With"
+msgstr "Iniciar sessão com"
+
+msgid "Remember my username"
+msgstr "Memorizar nome de utilizador"
+
+msgid "Remember me"
+msgstr "Memorizar-me"
+
+msgid "Remember my organization"
+msgstr "Memorizar organização"
+
+msgid "Empty username or password"
+msgstr "Nome de utilizador ou senha inválido"
+
+msgid "You must provide an username and password to login"
+msgstr "Deve fornecer um nome de utilizador e senha para iniciar sessão"
+
+msgid "Authentication data"
+msgstr "Dados de autenticação"
