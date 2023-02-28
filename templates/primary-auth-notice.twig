@@ -1,6 +1,6 @@
 {% set pagetitle = '%main Account Not Found'|trans({"%main": MainAccountProvider}) %}
 
-{% extends "@core/base.twig" %}
+{% extends "base.twig" %}
 
 {% block postload %}
     {#<script src="{{ asset('js/loginuserpass.js', 'core') }}"></script>#}
@@ -8,7 +8,7 @@
 
 {% block content %}
     
-    <h1>{{ '%main Account Not Found'|trans({"%main": MainAccountProvider}) }}</h1>
+    <h2 class="page-title">{{ '%main Account Not Found'|trans({"%main": MainAccountProvider}) }}</h2>
 
     <p>{{ 'The %main account for "%secondaryAccount" was not found, so you must authenticate with your %main account to continue.'|trans({"%main": MainAccountProvider, "%secondaryAccount": SecondaryAccount}) }}</p>
     <div class="center-form login-form-start">

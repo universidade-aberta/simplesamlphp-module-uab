@@ -448,6 +448,7 @@ ul.institutional-links{
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+.pure-button-red,
 .auth-sources-list li.authsource.authsource-current .auth-source-btn{
     background-color: var(--transition-color-dark, #207299);
     color: white;
