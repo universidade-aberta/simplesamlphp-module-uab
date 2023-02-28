@@ -14,7 +14,7 @@ use SimpleSAML\Module;
 use SimpleSAML\Module\core\Auth\UserPassBase;
 use SimpleSAML\Module\core\Auth\UserPassOrgBase;
 use SimpleSAML\Utils;
-use SimpleSAML\XHTML\Template;
+use SimpleSAML\Locale\Translate;
 use SimpleSAML\Logger;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Ldap\Exception\LdapException;
 
 use SimpleSAML\Module\uab\Auth\Source\MultiAuth;
+use SimpleSAML\Module\uab\Template;
 
 use function array_key_exists;
 use function substr;
@@ -246,7 +247,7 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
                 $t->data['organizations'] = $organizations;
             }
         } else {
-            $t->data['links'] = $source->getLoginLinks();
+            //$t->data['links'] = $source->getLoginLinks();
         }
 
         $t->data['errorcode'] = $errorCode;
@@ -264,6 +265,7 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
         }
 
         // @UAb: Load the other auth sources
+        $t->data['links'] = \array_merge_recursive($t->data['links'], $source->getLoginLinks());
         $t->data['errorcodes'] = array_merge_recursive($t->data['errorcodes'], [
             'title'=>[
                 'EMPTY_USERNAME_OR_PASSWORD'=>'Empty username or password',

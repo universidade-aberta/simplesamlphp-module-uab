@@ -43,13 +43,6 @@ $metadata['https://localhost'] = [
     'attributes.NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
     'authproc' => [
         
-        55 => [
-            'class' => 'ldap:AttributeAddUsersGroups',
-            'authsource' => 'uab-ldap',
-            'ldap.product' => 'ActiveDirectory',
-            'attribute.username' => 'sAMAccountName',
-        ],
-        
         // Convert LDAP names to oids.
         100 => ['class' => 'core:AttributeMap', 'name2oid'],
 

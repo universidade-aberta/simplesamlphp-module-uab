@@ -116,3 +116,9 @@ msgstr "You must provide an username and password to login"
 
 msgid "Authentication data"
 msgstr "Authentication data"
+
+msgid "Go to content"
+msgstr "Go to content"
+
+msgid "Change language"
+msgstr "Change language"

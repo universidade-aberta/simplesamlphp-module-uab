@@ -112,3 +112,9 @@ msgstr "Deve fornecer um nome de utilizador e senha para iniciar sessão"
 
 msgid "Authentication data"
 msgstr "Dados de autenticação"
+
+msgid "Go to content"
+msgstr "Ir para o conteúdo"
+
+msgid "Change language"
+msgstr "Alterar idioma"

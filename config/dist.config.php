@@ -641,14 +641,14 @@ $config = [
     /*
      * Options to override the default settings for php sessions.
      */
-    'session.phpsession.cookiename' => 'UAbSAML',
+    'session.phpsession.cookiename' => 'UAbAuth',
     'session.phpsession.savepath' => null,
     'session.phpsession.httponly' => true,
 
     /*
      * Option to override the default settings for the auth token cookie
      */
-    'session.authtoken.cookiename' => 'UAbSAMLAuthToken',
+    'session.authtoken.cookiename' => 'UAbAuthToken',
 
     /*
      * Options for remember me feature for IdP sessions. Remember me feature
@@ -1265,5 +1265,28 @@ $config = [
      */
     'proxymode.passAuthnContextClassRef' => false,
 
-    'UAb.defaultAuthenticator' => 'UAb-multi',
+    'UAb.defaultAuthenticator' => 'UAb-multi','uab:loginpage_links'=>[
+        [
+            'href'=>[
+                'en' => 'uab:uab/accessibility',
+                'pt' => 'uab:uab/acessibilidade',
+            ],
+            'text'=>[
+                'en' => 'Accessibility',
+                'pt' => 'Acessibilidade',
+            ],
+            'accesskey'=>'a',
+        ],
+        // [
+        //     'href'=>'https://portal.uab.pt/politica_privacidade/',
+        //     'text'=>[
+        //         'en' => 'Privacy Policy',
+        //         'pt' => 'Política de Privacidade',
+        //     ],
+        //     'target'=>'_blank',
+        //     'rel'=>'noopener',
+        //     'classes' => 'privacy-policy footer-link'
+        // ],
+    
+    ],
 ];

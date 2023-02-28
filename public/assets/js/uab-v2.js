@@ -1,3 +1,6 @@
+document.documentElement.classList.toggle('no-js', false);
+document.documentElement.classList.toggle('js', true);
+
 document.addEventListener("DOMContentLoaded", ()=>{
     const randomDelay = Math.round(Math.random()*100)/100;
     document.querySelectorAll('body, .background').forEach(el=>{

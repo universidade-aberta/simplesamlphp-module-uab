@@ -235,6 +235,7 @@ class MultiAuth extends Auth\Source
      */
     public function setPreviousSource(string $source): void
     {
+        return; // We don't want to save the previous source cookie
         $cookieName = 'uab-multiauth_source_' . $this->authId;
 
         $config = Configuration::getInstance();

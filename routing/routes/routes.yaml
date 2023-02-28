@@ -32,3 +32,9 @@ uab-primary-account-disabled-notice:
 uab-loginuserpass:
     path:       /loginuserpass
     defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\Login::loginuserpass' }
+   
+uab-accessibility:
+    path:       
+        en: /accessibility
+        pt: /acessibilidade
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\Accessibility::page' }

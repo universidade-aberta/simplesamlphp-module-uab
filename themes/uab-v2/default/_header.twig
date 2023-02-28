@@ -29,11 +29,11 @@
                 {% endif %}
               {% endfor %}
               </select>
-              <noscript>
-                <button type="submit" class="pure-button">
+              {#<noscript>#}
+                <button type="submit" class="pure-button hide-if-js">
                   {% trans %}Change language{% endtrans %}
                 </button>
-              </noscript>
+              {#</noscript>#}
             </div>
             {% endif %}
           </form>

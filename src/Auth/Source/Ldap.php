@@ -12,9 +12,7 @@ use SimpleSAML\Error;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\Module\core\Auth\UserPassBase;
 use SimpleSAML\Module\uab\ConnectorFactory;
-use SimpleSAML\Module\ldap\ConnectorInterface;
-use Symfony\Component\Ldap\Adapter\ExtLdap\Query;
-use Symfony\Component\Ldap\Entry;
+use SAML2\Constants;
 
 /**
  * LDAP authentication source.
@@ -43,6 +41,10 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
     public function __construct(array $info, array $config){
         // Call the parent constructor first, as required by the interface
         UserPassBase::__construct($info, $config);
+
+        if (isset($config['uab:loginpage_links'])):
+            $this->loginLinks = $config['uab:loginpage_links'];
+        endif;
 
         $this->ldapConfig = Configuration::loadFromArray(
             $config,

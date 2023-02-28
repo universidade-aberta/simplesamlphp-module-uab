@@ -23,12 +23,43 @@ h1,h2,h3,h4,h5,h6 {
     box-sizing: border-box;
 }
 
+.accessibility-links {
+    z-index: 9999999;
+    position: fixed;
+    top: 40px;
+    left: 20px;
+}
+.js .hide-if-js,
+.visually-hidden, 
+.visually-hidden-focusable:not(:focus):not(:focus-within) {
+    position: absolute!important;
+    width: 1px!important;
+    height: 1px!important;
+    padding: 0!important;
+    margin: -1px!important;
+    overflow: hidden!important;
+    clip: rect(0,0,0,0)!important;
+    white-space: nowrap!important;
+    border: 0!important;
+}
+.visually-hidden-focusable, 
+.visually-hidden-focusable:focus, 
+.visually-hidden-focusable:focus-within {
+    background-color: var(--visually-hidden-focusable--bg-color, white);
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    display: block;
+    color: var(--visually-hidden-focusable--color, var(--transition-color-dark, #666));
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px var(--visually-hidden-focusable--shadow-color, 666);
+}
+
 .w-100{
     width: 100%;
 }
 
 a {
-    color: #666;
+    color: var(--transition-color-dark, #666);
     margin: 0;
     transition: all .3s;
 }
@@ -39,7 +70,7 @@ a:is(:focus, :hover,:active) {
     border-color: #1797d2
 }
 
-a:is(:scope, :link, :visited, :focus, :hover, :active):not(.pure-button,.pure-menu-link){
+a:is(:scope, :link, :visited, :focus, :hover, :active):not(.pure-button,.pure-menu-link, .visually-hidden, .visually-hidden-focusable){
     padding: 0;
     margin: 0;
     background-color: transparent;
@@ -58,6 +89,7 @@ body{
     --transition-color-start:#1797D2;
     --transition-color-middle:#4687D0;
     --transition-color-end:#6A75C6;
+    --transition-color-dark:#3C6392;
 }
 @keyframes color-change {
     0% { color: var(--transition-color-end, #864fe1); }
@@ -184,7 +216,8 @@ body{
     flex-direction: column;
 }
 
-.login-wrapper {
+.login-wrapper,
+.meta-footer-wrapper {
     background: #fff;
     border-radius: 10px;
     position: relative;
@@ -198,6 +231,12 @@ body{
     width: 100%;
 }
 
+.meta-footer-wrapper{
+    background-color: rgba(0,0,0, 0.05);
+    margin-top: 1rem;
+    padding:0;
+}
+
 @media(min-width: 576px) {
     .login-wrapper {
         padding: 62px 60px .75rem;
@@ -207,6 +246,9 @@ body{
 @media(min-width: 768px) {
     .login-wrapper {
         padding: 62px 110px .75rem;
+    }
+    .login-wrapper,
+    .meta-footer-wrapper {
         width: 730px;
     }
 }
@@ -260,8 +302,11 @@ a.color-change:is(:hover, :active, :focus){
     padding-top: .75rem;
     height: auto;
     font-size: .8rem;
+    text-align: center;
 }
-
+.copyright-text{
+    color: #212529;
+}
 .meta-footer-wrapper{
     display: inline-block;
 }
@@ -292,6 +337,16 @@ ul.funding img{
     width: auto;
     filter: invert(1) hue-rotate(180deg);
 }
+ul.institutional-links{
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 @media screen and (min-width: 550px) {
     .meta-footer-wrapper-column{
         align-items: center;
@@ -300,8 +355,21 @@ ul.funding img{
         flex-direction: row;
         gap: 1.5rem;
     }
-    .copyrights{
-        text-align: center;
+    ul.institutional-links{
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 0;
+    }
+    ul.institutional-links li{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    ul.institutional-links li:not(:last-child):after{
+        content: '\00B7';
+        display: block;
+        padding: 0 0.5rem;
     }
 }
 
@@ -324,7 +392,7 @@ ul.funding img{
     text-align: center;
     font-weight: 500;
     border-bottom: 0 none;
-    margin-bottom: 3rem;
+    margin: 1rem 0 1rem;
 }
 
 /* authentication form */
@@ -381,7 +449,7 @@ ul.funding img{
     text-overflow: ellipsis;
 }
 .auth-sources-list li.authsource.authsource-current .auth-source-btn{
-    background-color: var(--transition-color-middle, #207299);
+    background-color: var(--transition-color-dark, #207299);
     color: white;
 }
 .auth-source-btn:before{
