@@ -157,7 +157,7 @@ body{
 
 @keyframes movingSquares {
     0% {
-        transform: rotate(0deg);
+        transform: rotate(var(--initial-rotation, 0deg));
         opacity: 0.5;
     }
 
@@ -167,27 +167,27 @@ body{
     }
 
     100% {
-        transform: rotate(1000deg);
+        transform: rotate(calc(var(--initial-rotation, 0deg) + 360deg ));
         opacity: 1;
     }
 }
 
 .sq1 {
-    width: calc(var(--scale-multiplier, 1) * 20vw);
+    width: calc(var(--scale-multiplier, 1) * 50vw);
     height: calc(var(--scale-multiplier, 1) * 70vh);
-    animation-duration: var(--animation-duration, 100s);
+    animation-duration: var(--animation-duration, 43s);
 }
 
 .sq2 {
     width: calc(var(--scale-multiplier, 1) * 60vw);
     height: calc(var(--scale-multiplier, 1) * 160vh);
-    animation-duration: var(--animation-duration, 180s);
+    animation-duration: var(--animation-duration, 90s);
 }
 
 .sq3 {
-    width: calc(var(--scale-multiplier, 1) * 25vw);
+    width: calc(var(--scale-multiplier, 1) * 65vw);
     height: calc(var(--scale-multiplier, 1) * 80vh);
-    animation-duration: var(--animation-duration, 120s);
+    animation-duration: var(--animation-duration, 60s);
 }
 
 @media (prefers-reduced-motion: reduce) {
