@@ -122,3 +122,6 @@ msgstr "Go to content"
 
 msgid "Change language"
 msgstr "Change language"
+
+msgid "Accessibility"
+msgstr "Accessibility"

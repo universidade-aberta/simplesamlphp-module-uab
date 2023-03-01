@@ -1,12 +1,365 @@
 {% set pagetitle = 'Accessibility'|trans %}
 
-{% extends "base.twig" %}
+{% extends 'base.twig' %}
 
-{% block postload %}{% endblock %}
+{% block postload %}
+
+{% endblock %}
+
+{% block preload %}
+  <style>
+    h3{ font-weight: 700; margin-top: 1.5rem; } h4{ font-weight: 600;
+    margin-top: 1.5rem; } p+p { margin-top: 0; } strong, b{ font-weight: 500;
+    color: #555, } dl{ display: grid; grid-template-columns: min-content 1fr;
+    gap: 0 1rem; align-items: center; } dl dt{ font-weight: 500; color: #555;
+    white-space: nowrap; } dl, ul{ padding: 1rem 1rem; }
+  </style>
+{% endblock %}
 
 {% block content %}
-    
-    <h2 class="page-title">{{ 'Accessibility'|trans }}</h2>
-    {% trans %}@TODO{% endtrans %}
-    
+  <h2 class="page-title">
+    {{ 'Accessibility'|trans }}
+  </h2>
+
+  {% if currentLanguage == 'pt' %}
+    <h3 style="font-weight: 700;">
+      Declaração de Acessibilidade e Usabilidade
+    </h3>
+    <p>
+      A <span class="mr mr-e-name">Universidade Aberta</span> compromete-se a disponibilizar
+      <span class="target-type">o sítio Web</span> <a href="https://login.uab.pt/"
+        class="siteurl">
+        Autenticação UAb
+      </a>, em conformidade com o Decreto-Lei n.º 83/2018, de 19 de outubro, que
+      transpõe a Diretiva (UE) 2016/2102 do Parlamento Europeu e do Conselho,
+      relativa à acessibilidade dos sítios Web e das aplicações móveis.
+    </p>
+    <h4 id="n1">
+      I. Estado de conformidade
+    </h4>
+    <p class="capFL">
+      O sítio Web 
+      <a href="https://login.uab.pt/" class="siteurl">
+        <span class="target-name">Autenticação UAb</span>
+      </a>
+      da <span>Universidade Aberta</span> está
+      <span class="mr mr-conformance-status">
+        <span class="conformance-output">plenamente conforme</span>
+      </span> para com o Decreto-Lei n.º 83/2018 de 19 de outubro.
+    </p>
+    <h4 id="n2">
+      II. Elaboração da presente declaração de acessibilidade e usabilidade
+    </h4>
+    <p>
+      Esta declaração foi atualizada a <span class="mr mr-date">
+        <span>2023-02-28</span>
+      </span>.
+    </p>
+    <p>
+      De acordo com o artigo 9º do Decreto-Lei n.º 83/2018, as entidades devem
+      adotar os procedimentos de monitorização a seguir apresentados. Os
+      procedimentos A) e B) são obrigatórios. O procedimento C) é recomendado.
+    </p>
+    <p>
+      <strong>A. Avaliações automáticas levadas a efeito</strong>
+    </p>
+    <div class="mr mr-automatic-summary">
+      <ol>
+        <li>
+          (2023-02-28). Relatório: <a href="{{ asset('reports/v2/UAb_login-AccessMonitor_Evaluation.pdf', 'uab') }}" target="_blank" rel="noopener">Relatório
+            de práticas de acessibilidade Web (WCAG 2.1 do W3C) de
+            https://login.uab.pt/</a><ul>
+            <li>Ferramenta utilizada: AccessMonitor Plus</li><li>
+              Amostra: 2 páginas.
+            </li><li>
+              Principais resultados (sumário): Na página de autenticação do
+              serviço foi obtida uma pontuação de 10 na escala do AccessMonitor
+              (1-10) não se tendo identificado inconformidades em qualquer nível
+              das WCAG 2.1.
+            </li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+    <p>
+      <strong>B. Avaliações manuais levadas a efeito:</strong>
+    </p>
+    <div class="mr mr-manual-summary">
+      <ol>
+        <li>
+          (2023-02-28). Relatório: <a href="{{ asset('reports/v2/10_critical_aspects_of_functional_accessibility-UAb_login.pdf', 'uab') }}" target="_blank" rel="noopener">10
+            aspetos críticos de acessibilidade funcional</a><ul>
+            <li>Amostra: 2 páginas.</li><li>Principais resultados (heurísticas
+              satisfeitas/total heurísticas aplicadas): 16/16</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+    <p>
+      <strong>C. Testes de usabilidade com pessoas com deficiência:</strong>
+    </p>
+    <p class="capFL">
+      <span class="target-type">O sítio Web</span> ainda não foi alvo de testes com
+      utilizadores com deficiência.
+    </p>
+    <h4 id="n3">
+      III. Contacto e solicitação de informação relativa
+      <span class="target-type nType">ao sítio Web</span>
+    </h4>
+    <p>
+      Para contactar, enviar sugestões, efetuar reclamações ou solicitar
+      informação adicional relativamente aos conteúdos e/ou funcionalidades
+      presentes n<span class="target-type">o sítio Web</span>
+      d<span data-printfilter="lowerfirst" class="lowFL">a</span>
+      <span>Universidade Aberta</span>, utilize, por favor, os seguintes meios:
+    </p>
+    <div class="mr mr-contacts">
+      <dl>
+        <dt>
+          Formulário de Contacto:
+        </dt><dd>
+          <a href="https://sitcon.uab.pt/Mensagens/form/18"
+            target="blank"
+            rel="noopener">
+            https://sitcon.uab.pt/Mensagens/form/18
+          </a>
+        </dd><dt>
+          E-mail:
+        </dt><dd>
+          <a href="mailto:gcri@uab.pt" target="blank" rel="noopener">
+            gcri@uab.pt
+          </a>
+        </dd>
+      </dl>
+    </div>
+    <h4 id="n4">
+      IV. Outras evidências<!--  / esforços para tornar os conteúdos
+				mais acessíveis e mais usáveis -->
+    </h4>
+    <div></div>
+    <p>
+      <span id="accstmnt_seal_summary_empty">
+        <span>A</span>
+        <span>
+          Universidade Aberta
+        </span> não apresentou, aquando do preenchimento da presente Declaração,
+        outras evidências ou esforços para tornar o seu sítio Web conforme para com
+        os requisitos de acessibilidade constantes do Decreto-Lei n.º 83/2018, de
+        19 de outubro.
+      </span>
+    </p>
+    <h4 id="n5">
+      V. Denúncia de situações de discriminação
+    </h4>
+    <p>
+      De acordo com o n.º 1 do artigo 13.º do Decreto-Lei n.º 83/2018, de 19 de
+      outubro, sempre que uma pessoa com deficiência seja objeto de um
+      tratamento menos favorável do que aquele que é, tenha sido ou venha a ser
+      dado a outra pessoa em situação comparável, que consubstancie uma prática
+      discriminatória contra pessoas com deficiência, prevista e punida nos
+      termos do
+      <a href="http://data.dre.pt/eli/lei/46/2006/08/28/p/dre/pt/html"
+        target="_blank"
+        rel="noopener">
+        artigo 4.º da Lei n.º 46/2006, de 28 de agosto
+      </a>, pode, essa pessoa, apresentar queixa, de acordo com o disposto no
+      <a href="https://data.dre.pt/eli/dec-lei/34/2007/02/15/p/dre/pt/html"
+        target="_blank"
+        rel="noopener">
+        Decreto-Lei n.º 34/2007, de 15 de fevereiro
+      </a>.
+    </p>
+    <p>
+      O Instituto Nacional para a Reabilitação (INR, I.P.), disponibiliza um
+      <a href="http://www.inr.pt/resultados-de-pesquisa/-/journal_content/56/11309/45065?p_p_auth=wje2GjQi"
+        target="_blank"
+        rel="noopener">
+        formulário para denunciar situações de discriminação
+      </a>, encaminhando as queixas apresentadas às entidades competentes.
+      Anualmente, o INR, I.P. elabora um relatório anual sobre a aplicação da
+      lei que proíbe e pune a discriminação em razão da deficiência e da
+      existência de risco agravado de saúde (Lei n.o 46/2006, de 28 de agosto).
+    </p>
+    <hr aria-hidden="true" />
+    <p>
+      A presente Declaração de Acessibilidade e Usabilidade foi criada com o
+      auxílio do
+      <a href="https://www.acessibilidade.gov.pt/gerador"
+        target="_blank"
+        rel="noopener">
+        Gerador WAI-Tools PT v1.5
+      </a>, desenvolvido no âmbito do projeto
+      <a href="https://w3.org/WAI/Tools" target="_blank" rel="noopener">
+        WAI-Tools
+      </a>, de cujo consórcio a AMA é parte integrante. A Declaração foi
+      concebida em conformidade com o Decreto-Lei n.º 83/2018, de 19 de outubro.
+    </p>
+
+  {% else %}
+
+    <h3 style="font-weight: 700;">
+      Statement of Accessibility and Usability
+    </h3>
+    <p>
+      The <span class="mr mr-e-name">Universidade Aberta</span> undertakes to provide
+      the Website <a href="https://login.uab.pt/"
+        class="siteurl">
+        UAb Login
+      </a>, in accordance with the Decree-Law no. 83/2018, of 19 October, which
+      transposes Directive (EU) 2016/2102 of the European Parliament and Council
+      on the accessibility of websites and mobile applications.
+    </p>
+    <h4 id="n1">
+      I. Status of compliance
+    </h4>
+    <p class="capFL">
+      <span class="target-type">The Website</span>
+      <a href="https://login.uab.pt/" class="siteurl">
+        <span class="target-name">UAb Login</span>
+      </a> of <span>Universidade Aberta</span> is <span class="mr mr-conformance-status">
+        <span class="conformance-output">fully compliant</span>
+      </span> with the Decree-law no. 83/2018, of 19 October.
+    </p>
+    <h4 id="n2">
+      II. Preparation of this statement of accessibility
+    </h4>
+    <p>
+      This statement was updated on <span class="mr mr-date">
+        <span>2023-02-28</span>
+      </span>.
+    </p>
+    <p>
+      In accordance with div 9 of the DL no. 83/2018, entities must adopt the
+      following monitoring procedures. Procedures A) and B) are mandatory.
+      Procedure C) is recommended.
+    </p>
+    <p>
+      <strong>A. Automatic assessments carried out</strong>
+    </p>
+    <div class="mr mr-automatic-summary">
+      <ol>
+        <li>
+          (2023-02-28). Report: <a href="{{ asset('reports/v2/UAb_login-AccessMonitor_Evaluation.pdf', 'uab') }}" target="_blank" rel="noopener">Relatório
+            de práticas de acessibilidade Web (WCAG 2.1 do W3C) de
+            https://login.uab.pt/</a><ul>
+            <li>Tool used: AccessMonitor Plus</li><li>Sample: 2 pages.</li><li>
+              Main results (summary): In the login page a score of 10 in the
+              AccessMonitor scale (1-10), and no compliance error was identified
+              at any level of WCAG 2.1.
+            </li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+    <p>
+      <strong>B. Manual assessments carried out:</strong>
+    </p>
+    <div class="mr mr-manual-summary">
+      <ol>
+        <li>
+          (2023-02-28). Report: <a href="{{ asset('reports/v2/10_critical_aspects_of_functional_accessibility-UAb_login.pdf', 'uab') }}" target="_blank" rel="noopener">10
+            aspetos críticos de acessibilidade funcional</a><ul>
+            <li>Sample: 2 pages.</li><li>Main results (heuristics met/total
+              applied heuristics): 16/16</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+    <p>
+      <strong>C. Usability tests with people with disabilities:</strong>
+    </p>
+    <div>
+      <p class="capFL">
+        <span class="target-type">The Website</span> has not yet been tested with
+        disabled users.
+      </p>
+    </div>
+    <h4 id="n3">
+      III. Contact and request of information regarding <span class="target-type">the
+        Website</span>
+    </h4>
+    <p>
+      To contact, send suggestions, make complaints or request additional
+      information regarding the contents and/or functionalities present on the <span class="target-type">
+        the Website
+      </span> of <span>Universidade Aberta</span>, please use the following
+      means:
+    </p>
+    <div class="mr mr-contacts">
+      <dl>
+        <dt>
+          Contact Form:
+        </dt><dd>
+          <a href="https://sitcon.uab.pt/Mensagens/form/18"
+            target="blank"
+            rel="noopener">
+            https://sitcon.uab.pt/Mensagens/form/18
+          </a>
+        </dd><dt>
+          E-mail:
+        </dt><dd>
+          <a href="mailto:gcri@uab.pt" target="blank" rel="noopener">
+            gcri@uab.pt
+          </a>
+        </dd>
+      </dl>
+    </div>
+    <h4 id="n4">
+      IV. Other evidence <!-- / efforts to make content more accessible and usable -->
+    </h4>
+    <div></div>
+    <p>
+      <span id="accstmnt_seal_summary_empty">
+        The <span>Universidade Aberta</span> did not submit, upon the filling of
+        this Statement, other evidence or efforts to make its Website compliance
+        with the accessibility requirements on DL no. 83/2018, of 19 October.
+      </span>
+    </p>
+    <h4 id="n5">
+      V. Denunciation of situations of discrimination
+    </h4>
+    <p>
+      According to div 13.1 of Decree-Law no. 83/2018, of 19 October, whenever a
+      person with disability is treated less favourably than another person in a
+      comparable situation has been or will be treated, which constitutes a
+      discriminatory practice against persons with disabilities, provided for
+      and punished under the terms of
+
+      <a href="http://data.dre.pt/eli/lei/46/2006/08/28/p/dre/pt/html"
+        target="_blank"
+        rel="noopener">
+        div 4 of Law no. 46/2006, of 28 August
+      </a>, that person may, in accordance with the provisions of
+      <a href="https://data.dre.pt/eli/dec-lei/34/2007/02/15/p/dre/pt/html"
+        target="_blank"
+        rel="noopener">
+        Decree-Law no. 34/2007, of 15 February
+      </a>, file a complaint.
+    </p>
+    <p>
+      The National Institute for Rehabilitation (INR, I.P.), provides a <a href="http://www.inr.pt/resultados-de-pesquisa/-/journal_content/56/11309/45065?p_p_auth=wje2GjQi"
+        target="_blank"
+        rel="noopener">
+        form to report situations of discrimination
+      </a>, forwarding the complaints submitted to the competent authorities.
+      Every year, the INR, I.P. prepares an annual report on the application of
+      the law that prohibits and punishes discrimination on the grounds of
+      disability and the existence of an aggravated health risk (Law no.
+      46/2006, of 28 August).
+    </p>
+    <hr aria-hidden="true" />
+    <p>
+      This Statement of Accessibility and Usability was created with the help of
+      the
+      <a href="https://www.acessibilidade.gov.pt/gerador"
+        target="_blank"
+        rel="noopener">
+        WAI-Tools PT v1.5 Generator
+      </a>, developed in the scope of the
+      <a href="https://w3.org/WAI/Tools" target="_blank" rel="noopener">
+        WAI-Tools
+      </a> project, of which AMA is an integral part. The Statement was conceived
+      in accordance with Decree-Law no. 83/2018, of 19 October.
+    </p>
+  {% endif %}
 {% endblock %}

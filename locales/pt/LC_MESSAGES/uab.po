@@ -118,3 +118,6 @@ msgstr "Ir para o conteúdo"
 
 msgid "Change language"
 msgstr "Alterar idioma"
+
+msgid "Accessibility"
+msgstr "Acessibilidade"
