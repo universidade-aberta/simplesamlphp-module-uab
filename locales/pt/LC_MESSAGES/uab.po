@@ -74,6 +74,9 @@ msgstr "A conta %main para \"%primaryAccount\" está desativada ou expirou. Por 
 msgid "The selected authentication source will be used to authenticate you and and to create a valid session."
 msgstr "A fonte de autenticação será utilizada na autenticação e para criar uma sessão válida."
 
+msgid "Authentication Form"
+msgstr "Formulário de autenticação"
+
 msgid "Processing..."
 msgstr "A processar..."
 
@@ -122,10 +125,16 @@ msgstr "Alterar idioma"
 msgid "Accessibility"
 msgstr "Acessibilidade"
 
+msgid "Incorrect username or password"
+msgstr "Utilizador ou senha incorretos"
+
 msgid ""
 "Either no user with the given username could be found, or the password "
 "you gave was wrong. Please check the username and try again."
 msgstr ""
-"O nome de utilizar não foi encontrado ou a palavra-passe "
+"O nome de utilizador não foi encontrado ou a senha "
 "que forneceu estava incorreta. Por favor, verifique os dados fornecidos e tente novamente."
+
+msgid "Error: The field \"%s\" is empty"
+msgstr "Erro: O campo \"%s\" está vazio"
 

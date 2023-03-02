@@ -78,6 +78,9 @@ msgstr "The %main account for \"%primaryAccount\" is disabled or it has expired.
 msgid "The selected authentication source will be used to authenticate you and and to create a valid session."
 msgstr "The selected authentication source will be used to authenticate you and and to create a valid session."
 
+msgid "Authentication Form"
+msgstr "Authentication Form"
+
 msgid "Processing..."
 msgstr "Processing..."
 
@@ -125,3 +128,6 @@ msgstr "Change language"
 
 msgid "Accessibility"
 msgstr "Accessibility"
+
+msgid "Error: The field \"%s\" is empty"
+msgstr "Error: The field \"%s\" is empty"

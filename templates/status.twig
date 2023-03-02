@@ -13,7 +13,7 @@
         } %}Your session is valid for %remaining% seconds from now.{% endtrans %}</p>
     {% endif %}
 
-    <h2 class="page-title">{{ 'Your attributes'|trans }}</h2>
+    <h1 class="page-title">{{ 'Your attributes'|trans }}</h1>
 
     {% set items = attributes %}
 
@@ -35,11 +35,11 @@
 
     {%- if nameid or authData %}
 
-    <h2 class="page-title">{% trans %}Technical information{% endtrans %}</h2>
+    <h1 class="page-title">{% trans %}Technical information{% endtrans %}</h1>
     {% endif %}
     {%- if nameid %}
 
-    <h3>{% trans %}SAML Subject{% endtrans %}</h3>
+    <h2>{% trans %}SAML Subject{% endtrans %}</h2>
       {%  set items = {'NameId' : nameid.value} %}
 
       {% if not nameid.value %}
