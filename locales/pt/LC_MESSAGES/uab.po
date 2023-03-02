@@ -121,3 +121,11 @@ msgstr "Alterar idioma"
 
 msgid "Accessibility"
 msgstr "Acessibilidade"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"O nome de utilizar não foi encontrado ou a palavra-passe "
+"que forneceu estava incorreta. Por favor, verifique os dados fornecidos e tente novamente."
+

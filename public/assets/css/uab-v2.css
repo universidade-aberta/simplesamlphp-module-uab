@@ -454,13 +454,17 @@ ul.institutional-links{
 .sign-in-btn{
     background-color: #333;
     color: #fff;
+    text-shadow: none;
 }
 .sign-in-btn-wrapper{
     margin-top: 1rem;
 }
 #submit_button.sign-in-btn:disabled{
-    filter: grayscale(1);
     cursor: not-allowed;
+    box-shadow: none;
+    text-shadow: none;
+    color: #fff;
+    background-color: #90979d;
 }
 .focus-element-wrapper #submit_button.sign-in-btn.has-focus-element:is(:hover, :active):disabled+.focus-form-element{
     display: none;

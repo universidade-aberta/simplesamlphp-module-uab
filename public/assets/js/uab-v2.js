@@ -86,5 +86,7 @@ window.addEventListener('load',()=>{
         if(!!submitButton){
             submitButton.onclick = ()=>{};
         }
+
+        updateFormValidity(loginForm);
     }
 });

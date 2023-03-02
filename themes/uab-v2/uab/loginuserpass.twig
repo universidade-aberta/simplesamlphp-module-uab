@@ -36,7 +36,7 @@
     {% endif %}
 
     {% if errorcode -%}
-        <div class="message-box error">
+        <div id="error-message" class="message-box error" role="alert" aria-live="assertive">
 
             {% set errtitles = errorcodes['title'] %}
             {% set errtitle = errtitles[errorcode] %}
@@ -46,7 +46,7 @@
             {% set errdescs = errorcodes['descr'] %}
             {% set errdesc = errdescs[errorcode] %}
 
-            <p id="error-message" role="alert">{{ errdesc|trans(errorparams) }}</p>
+            <p>{{ errdesc|trans(errorparams) }}</p>
 
         </div>
     {%- endif %}
