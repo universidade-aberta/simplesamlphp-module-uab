@@ -26,9 +26,9 @@
                         <div role="presentation" class="focus-element-wrapper">
                             <button class="auth-source-btn has-focus-element {{ source.css_class|default('') }} authsource authsource-{{ key|e('html_attr') }}{% if currentSource is not empty and currentSource.key==key %} authsource-current{% endif %}" aria-pressed="{{ (currentSource is not empty and currentSource.key==key)?'true':'false' }}" type="submit" formmethod="post" formaction="{{ moduleURL('uab/discovery', {'AuthState': MultiAuthState, 'source':key}) }}" name="sourceChoice[{{ key }}]" id="{{ button }}" value="{{ label|e('html_attr') }}" aria-label="{{ label|e('html_attr') }}" title="{{ label|e('html_attr') }}"><span {% if currentSource is not empty and currentSource.key==key %} id="authsource-{{ key|e('html_attr') }}"{% endif %} class="authsource-label">{{ label }}</span></button>
                             <span class="focus-form-element"></span>
-                            {% if source.help is defined %}
+                            {#% if source.help is defined %}
                                 <p>{{ source.help|translateFromArray }}</p>
-                            {% endif %}
+                            {% endif %#}
                         </div>
                     {% endfor %}
                 </div>
@@ -53,7 +53,7 @@
 
         <div class="login-form-wrapper">
             <form id="f" class="login-form uab-login-form" action="{{ moduleURL('uab/loginuserpass', {'AuthState': AuthState}) }}" method="post" name="f" spellcheck="false" 
-                aria-label="{{ 'Authentication Form'|trans()|e('html_attr') }}" 
+                aria-label="{{ 'Authentication'|trans()|e('html_attr') }}" 
                 aria-describedby="page-title {% if currentSource is not empty %}authsource-{{ currentSource.key|e('html_attr') }}{% endif %}"
                 {% if errorcode -%} aria-invalid="true" aria-errormessage="error-message" {%- endif %} 
                 >

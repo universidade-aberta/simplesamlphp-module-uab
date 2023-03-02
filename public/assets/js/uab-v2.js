@@ -146,7 +146,14 @@ window.addEventListener('load',()=>{
         });
         loginForm.setAttribute('tabindex', '-1');
         loginForm.setAttribute('novalidate', '');
-        loginForm.focus();
+
+        let errorMessageEl;
+        if(loginForm.getAttribute('aria-invalid')=='true' && (loginForm.hasAttribute('aria-errormessage')) && (errorMessageEl=document.getElementById(loginForm.getAttribute('aria-errormessage')))){
+            errorMessageEl.setAttribute('tabindex', '-1');
+            errorMessageEl.focus();
+        }else{
+            loginForm.focus();
+        }
         //updateSubmitButtonState(submitButton, loginForm.checkValidity());
 
     }

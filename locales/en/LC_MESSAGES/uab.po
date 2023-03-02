@@ -78,8 +78,8 @@ msgstr "The %main account for \"%primaryAccount\" is disabled or it has expired.
 msgid "The selected authentication source will be used to authenticate you and and to create a valid session."
 msgstr "The selected authentication source will be used to authenticate you and and to create a valid session."
 
-msgid "Authentication Form"
-msgstr "Authentication Form"
+msgid "Authentication"
+msgstr "Authentication"
 
 msgid "Processing..."
 msgstr "Processing..."

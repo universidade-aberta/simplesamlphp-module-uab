@@ -74,8 +74,8 @@ msgstr "A conta %main para \"%primaryAccount\" está desativada ou expirou. Por 
 msgid "The selected authentication source will be used to authenticate you and and to create a valid session."
 msgstr "A fonte de autenticação será utilizada na autenticação e para criar uma sessão válida."
 
-msgid "Authentication Form"
-msgstr "Formulário de autenticação"
+msgid "Authentication"
+msgstr "Autenticação"
 
 msgid "Processing..."
 msgstr "A processar..."
