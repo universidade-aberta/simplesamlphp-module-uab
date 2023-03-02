@@ -12,6 +12,7 @@ use SimpleSAML\Error;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\Module\core\Auth\UserPassBase;
 use SimpleSAML\Module\uab\ConnectorFactory;
+use SimpleSAML\Logger;
 use SAML2\Constants;
 
 /**
@@ -22,6 +23,7 @@ use SAML2\Constants;
  */
 
 class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
+
     /**
      * Username we should force.
      *

@@ -337,8 +337,7 @@ $config = [
              *   0x02 (FINDING) or 0x03 (ALWAYS).
              */
             'referrals' => 0x00,
-
-            'network_timeout' => 3,
+            'timeout' => 10,
         ],
 
         /**
@@ -355,7 +354,10 @@ $config = [
          * This can be an array of attribute names, or NULL, in which case
          * all attributes are fetched.
          */
-        'attributes' => ['sAMAccountName', 'mail', 'givenName', 'sn', 'displayName', 'jpegPhoto', 'userAccountControl', 'accountExpires'],
+        'attributes' => [
+            'sAMAccountName', 'mail', 'givenName', 'sn', 'displayName', 'extensionAttribute5', 'jpegPhoto', 'userAccountControl', 'accountExpires', 
+            //'distinguishedName', 'groups', 'member', 'memberOf', 'name','objectClass',
+        ],
 
         /**
          * Which attributes should be base64 encoded after retrieval from
@@ -425,6 +427,106 @@ $config = [
          */
         'search.username' => 'univ-ab\[user]',
         'search.password' => '[password]',
+
+
+        // 'uab:loginpage_links' => [],
+
+        // 'authproc' => [
+            
+        //     40 => [
+        //         'class' => 'core:AttributeMap',
+        //         'extensionAttribute5' => 'AccountRecoveryEmail',
+        //     ],
+
+        //     50 => [
+        //         'class' => 'uab:AttributeAddUsersGroups',
+        //         'authsource' => 'uab-ldap',
+
+        //         /**
+        //          * The base DNs used to search LDAP. May not be needed if searching
+        //          * LDAP using the standard method, meaning that no Product is specified.
+        //          *
+        //          * Default: []
+        //          * Required: No
+        //          * AuthSource: search.base
+        //          */
+        //         // 'ldap.basedn' => [
+        //         //     'OU=Staff,DC=example,DC=org',
+        //         //     'OU=Students,DC=example,DC=org'
+        //         // ],
+
+
+        //         /**
+        //          * Set to TRUE to enable LDAP debug level. Passed to
+        //          * the LDAP connection class.
+        //          *
+        //          * Default: FALSE
+        //          * Required: No
+        //          * AuthSource: debug
+        //          */
+        //         'ldap.debug' => true,
+
+
+        //         /**
+        //          * Set to TRUE to force the LDAP connection to use TLS.
+        //          *
+        //          * Note: If ldaps:// is specified in the hostname then it
+        //          *       will automatically use TLS.
+        //          *
+        //          * Default: FALSE
+        //          * Required: No
+        //          * AuthSource: enable_tls
+        //          */
+        //         'ldap.enable_tls' => false,
+
+
+        //         'ldap.product' => 'ActiveDirectory',
+        //         'ldap.timeout' => 30,
+        //         'timeout' => 30,
+
+
+        //         /**
+        //          * The following attribute.* and type.* configuration options
+        //          * define the LDAP schema and should only be defined/modified
+        //          * if the schema has been modified or the LDAP product used
+        //          * uses other attribute names. By default, the schema is setup
+        //          * for ActiveDirectory.
+        //          *
+        //          * Defaults: Listed Below
+        //          * Required: No
+        //          */
+        //         'attribute.dn' => 'distinguishedName',
+        //         'attribute.groups' => 'groups',
+        //         // Also noted above
+        //         'attribute.member' => 'member',
+        //         'attribute.memberOf' => 'memberOf',
+        //         'attribute.groupname' => 'name',
+        //         'attribute.return' => 'distinguishedName',
+        //         'attribute.type' => 'objectClass',
+        //         'attribute.username' => 'sAMAccountName',
+
+
+        //         /**
+        //          * As mentioned above, these can be changed if the LDAP schema
+        //          * has been modified. These list the Object/Entry Type for a given
+        //          * DN, in relation to the 'attribute.type' config option above.
+        //          * These are used to determine the type of entry.
+        //          *
+        //          * Defaults: Listed Below
+        //          * Required: No
+        //          */
+        //         'type.group' => 'group',
+        //         'type.user' => 'user',
+
+
+        //         /**
+        //          * LDAP search filters to be added to the base filters for this
+        //          * authproc-filter. It's an array of key => value pairs that will
+        //          * be translated to (key=value) in the ldap query.
+        //          */
+        //         'additional_filters' => [],
+        //     ]
+        // ],
     ],
 
 ];

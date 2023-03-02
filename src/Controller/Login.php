@@ -163,9 +163,9 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
 
                 try {
                     if ($source instanceof UserPassOrgBase) {
-                        UserPassOrgBase::handleLogin($authStateId, $username, $password, $organization);
+                        MultiAuth::handleLoginOrgBase($authStateId, $username, $password, $organization);
                     } else {
-                        UserPassBase::handleLogin($authStateId, $username, $password);
+                        MultiAuth::handleLoginBase($authStateId, $username, $password);
                     }
                 } catch(LdapException $ex){
                     $e = new Error\Error('WRONGUSERPASS', $ex);

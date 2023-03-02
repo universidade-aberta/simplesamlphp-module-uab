@@ -9,10 +9,16 @@ use SAML2\Exception\Protocol\NoAuthnContextException;
 use Exception;
 use SimpleSAML\Assert\Assert;
 use SimpleSAML\Auth;
+use SimpleSAML\Auth\ProcessingChain;
+use SimpleSAML\Auth\Source;
+use SimpleSAML\Auth\State;
+use SimpleSAML\Logger;
 use SimpleSAML\Configuration;
 use SimpleSAML\Error;
 use SimpleSAML\HTTP\RunnableResponse;
 use SimpleSAML\Module;
+use SimpleSAML\Module\core\Auth\UserPassBase;
+use SimpleSAML\Module\core\Auth\UserPassOrgBase;
 use SimpleSAML\Session;
 use SimpleSAML\Utils;
 
@@ -22,8 +28,7 @@ use SimpleSAML\Utils;
  *
  * @package SimpleSAML\Module\uab
  */
-class MultiAuth extends Auth\Source
-{
+class MultiAuth extends UserPassBase {
     /**
      * The key of the AuthId field in the state.
      */
@@ -201,6 +206,23 @@ class MultiAuth extends Auth\Source
         Auth\Source::completeAuth($state);
     }
 
+    /**
+     * Attempt to log in using the given username and password.
+     *
+     * On a successful login, this function should return the users attributes. On failure,
+     * it should throw an exception/error. If the error was caused by the user entering the wrong
+     * username or password, a \SimpleSAML\Error\Error('WRONGUSERPASS') should be thrown.
+     *
+     * Note that both the username and the password are UTF-8 encoded.
+     *
+     * @param string $username  The username the user wrote.
+     * @param string $password  The password the user wrote.
+     * @return array Associative array with the user's attributes.
+     */
+    protected function login(string $username, string $password): array{
+        throw new \SimpleSAML\Error\Error('WRONGUSERPASS');
+    }
+
 
     /**
      * Log out from this authentication source.
@@ -236,19 +258,19 @@ class MultiAuth extends Auth\Source
     public function setPreviousSource(string $source): void
     {
         return; // We don't want to save the previous source cookie
-        $cookieName = 'uab-multiauth_source_' . $this->authId;
+        // $cookieName = 'uab-multiauth_source_' . $this->authId;
 
-        $config = Configuration::getInstance();
-        $params = [
-            // We save the cookies for 90 days
-            'lifetime' => 7776000, //60*60*24*90
-            // The base path for cookies. This should be the installation directory for SimpleSAMLphp.
-            'path' => $config->getBasePath(),
-            'httponly' => false,
-        ];
+        // $config = Configuration::getInstance();
+        // $params = [
+        //     // We save the cookies for 90 days
+        //     'lifetime' => 7776000, //60*60*24*90
+        //     // The base path for cookies. This should be the installation directory for SimpleSAMLphp.
+        //     'path' => $config->getBasePath(),
+        //     'httponly' => false,
+        // ];
 
-        $httpUtils = new Utils\HTTP();
-        $httpUtils->setCookie($cookieName, $source, $params, false);
+        // $httpUtils = new Utils\HTTP();
+        // $httpUtils->setCookie($cookieName, $source, $params, false);
     }
 
 
@@ -267,5 +289,135 @@ class MultiAuth extends Auth\Source
         } else {
             return null;
         }
+    }
+
+    /**
+     * Handle login request.
+     *
+     * This function is used by the login form (core/loginuserpass) when the user
+     * enters a username and password. On success, it will not return. On wrong
+     * username/password failure, and other errors, it will throw an exception.
+     *
+     * @param string $authStateId  The identifier of the authentication state.
+     * @param string $username  The username the user wrote.
+     * @param string $password  The password the user wrote.
+     * 
+     * @see \SimpleSAML\Module\core\Auth\UserPassBase::handleLogin()
+     */
+    use tConfig;
+    public static function handleLoginBase(string $authStateId, string $username, string $password): void
+    {
+        // Here we retrieve the state array we saved in the authenticate-function.
+        $state = State::loadState($authStateId, UserPassBase::STAGEID);
+
+        // Retrieve the authentication source we are executing.
+        Assert::keyExists($state, UserPassBase::AUTHID);
+
+        /** @var \SimpleSAML\Module\core\Auth\UserPassBase|null $source */
+        $source = Source::getById($state[UserPassBase::AUTHID]);
+        if ($source === null) {
+            throw new Exception('Could not find authentication source with id ' . $state[UserPassBase::AUTHID]);
+        }
+        // Attempt to log in
+        try {
+            $attributes = $source->login($username, $password);
+        } catch (Exception $e) {
+            Logger::stats('Unsuccessful login attempt from ' . $_SERVER['REMOTE_ADDR'] . '.');
+            throw $e;
+        }
+
+        Logger::stats('XXXX User \'' . $username . '\' successfully authenticated from ' . $_SERVER['REMOTE_ADDR']);
+
+        // Save the attributes we received from the login-function in the $state-array
+        $state['Attributes'] = $attributes;
+
+        // @UAb: enable attribute processing chain
+        self::processingChain($source, $state);
+
+        // Return control to SimpleSAMLphp after successful authentication.
+        Source::completeAuth($state);
+    }
+    /**
+     * Handle login request.
+     *
+     * This function is used by the login form (core/loginuserpassorg) when the user
+     * enters a username and password. On success, it will not return. On wrong
+     * username/password failure, and other errors, it will throw an exception.
+     *
+     * @param string $authStateId  The identifier of the authentication state.
+     * @param string $username  The username the user wrote.
+     * @param string $password  The password the user wrote.
+     * @param string $organization  The id of the organization the user chose.
+     * 
+     * @see \SimpleSAML\Module\core\Auth\UserPassOrgBase::handleLogin
+     */
+    public static function handleLoginOrgBase(
+        string $authStateId,
+        string $username,
+        string $password,
+        string $organization
+    ): void {
+        /* Retrieve the authentication state. */
+        $state = Auth\State::loadState($authStateId, UserPassOrgBase::STAGEID);
+
+        /* Find authentication source. */
+        Assert::keyExists($state, UserPassOrgBase::AUTHID);
+
+        /** @var \SimpleSAML\Module\core\Auth\UserPassOrgBase|null $source */
+        $source = Auth\Source::getById($state[UserPassOrgBase::AUTHID]);
+        if ($source === null) {
+            throw new Exception('Could not find authentication source with id ' . $state[UserPassOrgBase::AUTHID]);
+        }
+
+        $orgMethod = $source->getUsernameOrgMethod();
+        if ($orgMethod !== 'none') {
+            $tmp = explode('@', $username, 2);
+            if (count($tmp) === 2) {
+                $username = $tmp[0];
+                $organization = $tmp[1];
+            } else {
+                if ($orgMethod === 'force') {
+                    /* The organization should be a part of the username, but isn't. */
+                    throw new Error\Error('WRONGUSERPASS');
+                }
+            }
+        }
+
+        /* Attempt to log in. */
+        try {
+            $attributes = $source->login($username, $password, $organization);
+        } catch (Exception $e) {
+            Logger::stats('Unsuccessful login attempt from ' . $_SERVER['REMOTE_ADDR'] . '.');
+            throw $e;
+        }
+
+        Logger::stats(
+            'User \'' . $username . '\' at \'' . $organization
+            . '\' successfully authenticated from ' . $_SERVER['REMOTE_ADDR']
+        );
+
+        // Add the selected Org to the state
+        $state[UserPassOrgBase::ORGID] = $organization;
+        $state['PersistentAuthData'][] = UserPassOrgBase::ORGID;
+
+        $state['Attributes'] = $attributes;
+
+        // @UAb: enable attribute processing chain
+        self::processingChain($source, $state);
+
+        Auth\Source::completeAuth($state);
+    }
+
+    public static function processingChain(Auth\Source $source, array &$state):void{
+        $returnCallAdded = false;
+        if(empty($state['ReturnCall']) && empty($state['ReturnURL'])):
+            $state['ReturnCall'] = function(){};
+            $returnCallAdded = true;
+        endif;
+        $pc = new ProcessingChain(array_merge(['entityid'=>$source->getAuthId()], self::loadConfig($source->getAuthId())), ['entityid'=>''], 'ldap');
+        $pc->processState($state);
+        if($returnCallAdded):
+            unset($state['ReturnCall']);
+        endif;
     }
 }
