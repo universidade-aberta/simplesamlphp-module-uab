@@ -458,6 +458,13 @@ ul.institutional-links{
 .sign-in-btn-wrapper{
     margin-top: 1rem;
 }
+#submit_button.sign-in-btn:disabled{
+    filter: grayscale(1);
+    cursor: not-allowed;
+}
+.focus-element-wrapper #submit_button.sign-in-btn.has-focus-element:is(:hover, :active):disabled+.focus-form-element{
+    display: none;
+}
 .auth-source-btn .authsource-label{
     overflow: hidden;
     white-space: nowrap;

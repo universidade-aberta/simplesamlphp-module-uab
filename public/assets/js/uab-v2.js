@@ -38,14 +38,6 @@ window.addEventListener('load',()=>{
             }
         };
 
-        const updateFormValidity = (form)=>{
-            const validity = form.checkValidity();
-            form.setAttribute('aria-invalid', !validity);
-            if(form.hasAttribute('aria-errormessage')){
-                form.removeAttribute('aria-errormessage');
-            }
-        };
-
         const checkElementValidityAsync = debounce((el) => {
             checkElementValidity(el);
             updateFormValidity(el.closest('form'));
@@ -55,6 +47,21 @@ window.addEventListener('load',()=>{
         const passwordField = loginForm.querySelector('#password');
         const fields = [usernameField, passwordField];
         const submitButton = document.getElementById("submit_button");
+
+        const updateFormValidity = (form)=>{
+            const validity = form.checkValidity();
+            form.setAttribute('aria-invalid', !validity);
+            if(form.hasAttribute('aria-errormessage')){
+                form.removeAttribute('aria-errormessage');
+            }
+            if(!!submitButton){
+                if(validity){
+                    submitButton.removeAttribute('disabled');
+                }else{
+                    submitButton.setAttribute('disabled', '');
+                }
+            }
+        };
 
         fields.forEach(el => {
             ['input'].forEach((ev) => el.addEventListener(ev, () => {
