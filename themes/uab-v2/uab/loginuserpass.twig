@@ -19,19 +19,19 @@
     
     {% if sources is not empty %}
         <form>
-            <ul class="auth-sources-list" aria-labelledby="page-title">
+            <div class="auth-sources-list" role="group" aria-labelledby="page-title">
                 {% for key, source in sources %}
                     {% set button = ('button-' ~ key) %}
                     {% set label = (source.text is defined ? source.text|translateFromArray : key) %}
-                    <li class="{{ source.css_class|default('') }} focus-element-wrapper authsource authsource-{{ key|e('html_attr') }}{% if currentSource is not empty and currentSource.key==key %} authsource-current{% endif %}" aria-selected="{{ (currentSource is not empty and currentSource.key==key)?'true':'false' }}">
-                        <button class="auth-source-btn has-focus-element" type="submit" formmethod="post" formaction="{{ moduleURL('uab/discovery', {'AuthState': MultiAuthState, 'source':key}) }}" name="sourceChoice[{{ key }}]" id="{{ button }}" value="{{ label|e('html_attr') }}" aria-label="{{ label|e('html_attr') }}" title="{{ label|e('html_attr') }}"><span {% if currentSource is not empty and currentSource.key==key %} id="authsource-{{ key|e('html_attr') }}"{% endif %} class="authsource-label">{{ label }}</span></button>
+                    <div role="presentation" class="focus-element-wrapper">
+                        <button class="auth-source-btn has-focus-element {{ source.css_class|default('') }} authsource authsource-{{ key|e('html_attr') }}{% if currentSource is not empty and currentSource.key==key %} authsource-current{% endif %}" aria-selected="{{ (currentSource is not empty and currentSource.key==key)?'true':'false' }}" type="submit" formmethod="post" formaction="{{ moduleURL('uab/discovery', {'AuthState': MultiAuthState, 'source':key}) }}" name="sourceChoice[{{ key }}]" id="{{ button }}" value="{{ label|e('html_attr') }}" aria-label="{{ label|e('html_attr') }}" title="{{ label|e('html_attr') }}"><span {% if currentSource is not empty and currentSource.key==key %} id="authsource-{{ key|e('html_attr') }}"{% endif %} class="authsource-label">{{ label }}</span></button>
                         <span class="focus-form-element"></span>
                         {#% if source.help is defined %}
                             <p>{{ source.help|translateFromArray }}</p>
                         {% endif %#}
-                    </li>
+                    </div>
                 {% endfor %}
-            </ul>
+            </div>
         </form>
     {% endif %}
 
