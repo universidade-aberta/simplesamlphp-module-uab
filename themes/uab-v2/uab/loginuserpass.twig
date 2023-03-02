@@ -36,7 +36,7 @@
     {% endif %}
 
     {% if errorcode -%}
-        <div class="message-box error" role="alert">
+        <div id="error-message" class="message-box error" role="alert">
 
             {% set errtitles = errorcodes['title'] %}
             {% set errtitle = errtitles[errorcode] %}
@@ -52,7 +52,7 @@
     {%- endif %}
 
     <div class="login-form-wrapper">
-        <form id="f" class="login-form" action="{{ moduleURL('uab/loginuserpass', {'AuthState': AuthState}) }}" method="post" name="f" spellcheck="false">
+        <form id="f" class="login-form uab-login-form" action="{{ moduleURL('uab/loginuserpass', {'AuthState': AuthState}) }}" method="post" name="f" spellcheck="false" {% if errorcode -%} aria-invalid="true" aria-errormessage="error-message" {%- endif %}>
             <div class="login-form-group username-wrapper order-1">
                 <label for="username">{{ 'Username'|trans }}</label>
                 <div class="focus-element-wrapper">

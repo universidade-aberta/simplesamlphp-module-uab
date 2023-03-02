@@ -87,7 +87,7 @@ msgid "Language"
 msgstr "Idioma"
 
 msgid "Sign in page of %s"
-msgstr "Início de sessão de %s"
+msgstr "Página de início sessão @%s"
 
 msgid "Sign in @%s"
 msgstr "Início de sessão @%s"

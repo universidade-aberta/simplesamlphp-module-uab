@@ -18,3 +18,66 @@ document.addEventListener("DOMContentLoaded", ()=>{
         el.style.setProperty("--scale-multiplier", `${scaleFactor}`);
     });
 });
+
+window.addEventListener('load',()=>{
+    const loginForm = document.querySelector(`#f.uab-login-form`);
+    if(!!loginForm){
+        const debounce = (func, timeout = 300)=>{
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    func.apply(this, args);
+                }, timeout);
+            };
+        };
+        const checkElementValidity = (el)=>{
+            if ('checkValidity' in el) {
+                el.reportValidity();
+                el.setAttribute('aria-invalid', !el.validity.valid);
+            }
+        };
+
+        const updateFormValidity = (form)=>{
+            const validity = form.checkValidity();
+            form.setAttribute('aria-invalid', !validity);
+            if(form.hasAttribute('aria-errormessage')){
+                form.removeAttribute('aria-errormessage');
+            }
+        };
+
+        const checkElementValidityAsync = debounce((el) => {
+            checkElementValidity(el);
+            updateFormValidity(el.closest('form'));
+        }, 300);
+
+        const usernameField = loginForm.querySelector('#username');
+        const passwordField = loginForm.querySelector('#password');
+        const fields = [usernameField, passwordField];
+        const submitButton = document.getElementById("submit_button");
+
+        fields.forEach(el => {
+            ['input'].forEach((ev) => el.addEventListener(ev, () => {
+                checkElementValidityAsync(el);
+            }));
+        });
+
+        loginForm.addEventListener('submit', (ev) => {
+            updateFormValidity(ev.currentTarget);
+            if (!(!fields.some((field) => !field || !field.reportValidity()))) {
+                ev.preventDefault();
+                return false;
+            }
+
+            if(!!submitButton){
+                submitButton.onclick = ()=>{};
+                submitButton.innerHTML = submitButton.getAttribute("data-processing");
+                submitButton.disabled = true;
+            }
+        });
+
+        if(!!submitButton){
+            submitButton.onclick = ()=>{};
+        }
+    }
+});
