@@ -26,7 +26,7 @@ msgid "Technical information"
 msgstr "Informação técnica"
 
 msgid "Go the initial login page of %s"
-msgstr "Ir para a página inicial de autenticação de %s"
+msgstr "Ir para a página de autenticação de %s"
 
 msgid "Select an authentication source"
 msgstr "Escolha uma fonte de autenticação"
@@ -54,7 +54,7 @@ msgid "%main Account Not Found"
 msgstr "Conta %main não encontrada"
 
 msgid "The %main account for \"%secondaryAccount\" was not found, so you must authenticate with your %main account to continue."
-msgstr "A conta %main para \"%secondaryAccount\" não foi encontrada, pelo que deve iniciar sessão com a sua conta %main para continuar."
+msgstr "A conta %main para \"%secondaryAccount\" não foi encontrada, pelo que deve autenticar-se com a sua conta %main para continuar."
 
 msgid "Cancel"
 msgstr "Cancelar"
@@ -90,10 +90,10 @@ msgid "Language"
 msgstr "Idioma"
 
 msgid "Sign in page of %s"
-msgstr "Página de início de sessão @%s"
+msgstr "Página de autenticação de %s"
 
 msgid "Sign in @%s"
-msgstr "Início de sessão @%s"
+msgstr "Autenticação @%s"
 
 msgid "Sign In With"
 msgstr "Iniciar sessão com"
@@ -111,7 +111,7 @@ msgid "Empty username or password"
 msgstr "Nome de utilizador ou senha inválido"
 
 msgid "You must provide an username and password to login"
-msgstr "Deve fornecer um nome de utilizador e senha para iniciar sessão"
+msgstr "Deve fornecer um nome de utilizador e senha para se autenticar"
 
 msgid "Authentication data"
 msgstr "Dados de autenticação"

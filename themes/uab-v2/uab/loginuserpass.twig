@@ -24,11 +24,17 @@
                         {% set button = ('button-' ~ key) %}
                         {% set label = (source.text is defined ? source.text|translateFromArray : key) %}
                         <div role="presentation" class="focus-element-wrapper">
-                            <button class="auth-source-btn has-focus-element {{ source.css_class|default('') }} authsource authsource-{{ key|e('html_attr') }}{% if currentSource is not empty and currentSource.key==key %} authsource-current{% endif %}" aria-pressed="{{ (currentSource is not empty and currentSource.key==key)?'true':'false' }}" type="submit" formmethod="post" formaction="{{ moduleURL('uab/discovery', {'AuthState': MultiAuthState, 'source':key}) }}" name="sourceChoice[{{ key }}]" id="{{ button }}" value="{{ label|e('html_attr') }}" aria-label="{{ label|e('html_attr') }}" title="{{ label|e('html_attr') }}"><span {% if currentSource is not empty and currentSource.key==key %} id="authsource-{{ key|e('html_attr') }}"{% endif %} class="authsource-label">{{ label }}</span></button>
+                            <button class="auth-source-btn has-focus-element {{ source.css_class|default('') }} authsource authsource-{{ key|e('html_attr') }}{% if currentSource is not empty and currentSource.key==key %} authsource-current{% endif %}" aria-pressed="{{ (currentSource is not empty and currentSource.key==key)?'true':'false' }}" type="submit" formmethod="post" formaction="{{ moduleURL('uab/discovery', {'AuthState': MultiAuthState, 'source':key}) }}" name="sourceChoice[{{ key }}]" id="{{ button }}" value="{{ label|e('html_attr') }}" aria-label="{{ label|e('html_attr') }}" title="{{ label|e('html_attr') }}" {% if source.help is defined %}aria-details="authsource-{{ key|e('html_attr') }}-help"{% endif %}>
+                                <span 
+                                    {% if currentSource is not empty and currentSource.key==key %} id="authsource-{{ key|e('html_attr') }}"{% endif %} 
+                                    class="authsource-label">
+                                        {{ label }}
+                                </span>
+                            </button>
                             <span class="focus-form-element"></span>
-                            {#% if source.help is defined %}
-                                <p>{{ source.help|translateFromArray }}</p>
-                            {% endif %#}
+                            {% if source.help is defined %}
+                                <div id="authsource-{{ key|e('html_attr') }}-help" class="visually-hidden">{{ source.help|translateFromArray }}</div>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>

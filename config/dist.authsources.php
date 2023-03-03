@@ -26,12 +26,20 @@ $config = [
                     'en' => 'UAb Credentials',
                     'pt' => 'Credenciais UAb',
                 ],
+                'help' => [
+                    'en' => 'Standard authentication for Universidade Aberta user accounts',
+                    'pt' => 'Método de autenticação predefinido para início de sessão com contas de utilizador da Universidade Aberta',
+                ],
                 'css-class' => 'uab-auth',
             ],
             // 'autenticacao-gov-pt' => [
             //     'text' => [
             //         'en' => 'Autenticação.Gov',
             //         'pt' => 'Autenticação.Gov',
+            //     ],
+            //     'help' => [
+            //         'en' => 'Uses the external site Autenticação.gov identity provider to authenticate in Universidade Aberta',
+            //         'pt' => 'Utiliza o site externo do serviço Autenticação.gov para autenticar o utilizador na Universidade Aberta com recurso ao cartão de cidadão, chave móvel e outros métodos de autenticação aplicáveis',
             //     ],
             //     'css-class' => 'gov-auth',
             // ],

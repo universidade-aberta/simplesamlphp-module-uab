@@ -262,19 +262,22 @@ body{
     padding:0;
 }
 
-@media(min-width: 576px) {
+/* @media(min-width: 576px) {
     .login-wrapper {
         padding: 62px 60px .75rem;
     }
-}
+} */
 
-@media(min-width: 768px) {
+/* @media(min-width: 768px) { */
+@media(min-width: 658px) {
     .login-wrapper {
-        padding: 62px 110px .75rem;
+        /* padding: 62px 110px .75rem; */
+        padding: 62px 60px .75rem;
     }
     .login-wrapper,
     .meta-footer-wrapper {
-        width: 730px;
+        /* width: 730px; */
+        width: 620px;
     }
 }
 
