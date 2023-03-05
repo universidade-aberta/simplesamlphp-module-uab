@@ -38,8 +38,8 @@ $config = [
             //         'pt' => 'Autenticação.Gov',
             //     ],
             //     'help' => [
-            //         'en' => 'Uses the external site Autenticação.gov identity provider to authenticate in Universidade Aberta',
-            //         'pt' => 'Utiliza o site externo do serviço Autenticação.gov para autenticar o utilizador na Universidade Aberta com recurso ao cartão de cidadão, chave móvel e outros métodos de autenticação aplicáveis',
+            //         'en' => 'Uses the Autenticação.gov identity provider, external site, to authenticate in Universidade Aberta with the corresponding user account',
+            //         'pt' => 'Utiliza o serviço Autenticação.gov, site externo, para autenticar o utilizador na Universidade Aberta com recurso ao cartão de cidadão, chave móvel e outros métodos de autenticação aplicáveis',
             //     ],
             //     'css-class' => 'gov-auth',
             // ],
