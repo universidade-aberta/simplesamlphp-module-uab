@@ -132,9 +132,14 @@ msgid ""
 "Either no user with the given username could be found, or the password "
 "you gave was wrong. Please check the username and try again."
 msgstr ""
-"O nome de utilizador não foi encontrado ou a senha "
+"O nome de utilizador não foi encontrado, a conta não está disponível ou a senha "
 "que forneceu estava incorreta. Por favor, verifique os dados fornecidos e tente novamente."
 
 msgid "Error: The field \"%s\" is empty"
 msgstr "Erro: O campo \"%s\" está vazio"
 
+msgid "Expired password"
+msgstr "Senha expirada"
+
+msgid "Your password has expired. Please, consult the documentation of contact technical support for information on how to reset your password."
+msgstr "A sua senha expirou. Por favor, consulte a documentação de apoio ou contacte o serviço de apoio técnico para mais informações sobre como repor a sua senha."

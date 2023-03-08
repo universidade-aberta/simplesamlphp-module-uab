@@ -23,14 +23,11 @@ use \SimpleSAML\Configuration;
 use \SimpleSAML\Error;
 use \SimpleSAML\HTTP\RunnableResponse;
 use \SimpleSAML\Logger;
-use \SimpleSAML\Metadata;
 use \SimpleSAML\Module;
 use \SimpleSAML\Module\saml\Auth\Source\SP;
 use \SimpleSAML\Session;
 use \SimpleSAML\Store\StoreFactory;
 use \SimpleSAML\Utils;
-use \SimpleSAML\XHTML\Template;
-use \Symfony\Component\HttpFoundation\{Request, Response};
 
 use function array_merge;
 use function count;
@@ -38,7 +35,6 @@ use function end;
 use function get_class;
 use function in_array;
 use function is_null;
-use function substr;
 use function time;
 use function var_export;
 

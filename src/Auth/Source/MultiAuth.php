@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\uab\Auth\Source;
 
-use SAML2\Constants;
 use SAML2\Exception\Protocol\NoAuthnContextException;
 use Exception;
 use SimpleSAML\Assert\Assert;
@@ -13,7 +12,6 @@ use SimpleSAML\Auth\ProcessingChain;
 use SimpleSAML\Auth\Source;
 use SimpleSAML\Auth\State;
 use SimpleSAML\Logger;
-use SimpleSAML\Configuration;
 use SimpleSAML\Error;
 use SimpleSAML\HTTP\RunnableResponse;
 use SimpleSAML\Module;

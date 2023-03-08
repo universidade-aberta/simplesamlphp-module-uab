@@ -10,7 +10,6 @@ use \SimpleSAML\Utils\HTTP;
 use \SimpleSAML\Logger;
 use \SimpleSAML\Module;
 
-use \SimpleSAML\Module\ldap\ConnectorFactory;
 use \SimpleSAML\Module\uab\Controller\UserMatchController;
 
 /**
@@ -163,12 +162,12 @@ class UserMatch extends Auth\ProcessingFilter {
             $authsourcePrimary = new $this->authSimple($this->config[self::CONFIG_auth_source_primary]);
             $primaryAttributes = $authsourcePrimary->getAuthSource()->getAttributes($primaryValue);
 
-            $attributes = \array_map(function($attribute){
+            $attributes = \array_change_key_case(\array_map(function($attribute){
                 return \is_array($attribute)?\reset($attribute):$attribute;
-            }, $primaryAttributes);
+            }, $primaryAttributes), CASE_LOWER);
 
-            $accountDisabled = isset($attributes['userAccountControl']) && UserMatchController::isLdapAccountDisabled((int)$attributes['userAccountControl']);
-            $accountExpired = isset($attributes['accountExpires']) && UserMatchController::isLdapAccountExpired((int)$attributes['accountExpires']);
+            $accountDisabled = isset($attributes['useraccountcontrol']) && UserMatchController::isLdapAccountDisabled((int)$attributes['useraccountcontrol']);
+            $accountExpired = isset($attributes['accountexpires']) && UserMatchController::isLdapAccountExpired((int)$attributes['accountexpires']);
 
             if($accountDisabled || $accountExpired):
                 Logger::debug(sprintf('Account disabled or expired for "%s".', $primaryValue));

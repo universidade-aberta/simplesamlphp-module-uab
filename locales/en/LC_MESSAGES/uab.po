@@ -129,5 +129,21 @@ msgstr "Change language"
 msgid "Accessibility"
 msgstr "Accessibility"
 
+msgid "Incorrect username or password"
+msgstr "Incorrect username or password"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+
 msgid "Error: The field \"%s\" is empty"
 msgstr "Error: The field \"%s\" is empty"
+
+msgid "Expired password"
+msgstr "Expired password"
+
+msgid "Your password has expired. Please, consult the documentation of contact technical support for information on how to reset your password."
+msgstr "Your password has expired. Please, consult the documentation of contact technical support for information on how to reset your password."

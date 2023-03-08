@@ -355,7 +355,7 @@ $config = [
          * authenticating against Microsoft Active Directory. This will
          * provide you with more specific error messages.
          */
-        'connector' => '\SimpleSAML\Module\ldap\Connector\Ldap',
+        'connector' => '\SimpleSAML\Module\ldap\Connector\ActiveDirectory',
 
         /**
          * Which attributes should be retrieved from the LDAP server.

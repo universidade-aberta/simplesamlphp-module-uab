@@ -7,17 +7,12 @@ namespace SimpleSAML\Module\uab\Controller;
 use Exception;
 use SimpleSAML\Assert\Assert;
 use SimpleSAML\Auth;
-use SimpleSAML\Configuration;
 use SimpleSAML\Error;
-use SimpleSAML\HTTP\RunnableResponse;
-use SimpleSAML\Module;
 use SimpleSAML\Module\core\Auth\UserPassBase;
 use SimpleSAML\Module\core\Auth\UserPassOrgBase;
 use SimpleSAML\Utils;
-use SimpleSAML\Locale\Translate;
 use SimpleSAML\Logger;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Ldap\Exception\LdapException;
 
@@ -269,9 +264,11 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
         $t->data['errorcodes'] = array_merge_recursive($t->data['errorcodes'], [
             'title'=>[
                 'EMPTY_USERNAME_OR_PASSWORD'=>'Empty username or password',
+                'EXPIRED_PASSWORD'=>'Expired password',
             ],
             'descr'=>[
                 'EMPTY_USERNAME_OR_PASSWORD'=>'You must provide an username and password to login',
+                'EXPIRED_PASSWORD'=>'Your password has expired. Please, consult the documentation of contact technical support for information on how to reset your password.',
             ],
         ]);
         $currentAuthID = $source->getAuthId();

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\uab\Auth\Process;
 use SimpleSAML\Assert\Assert;
-use SimpleSAML\Error;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Utils;
