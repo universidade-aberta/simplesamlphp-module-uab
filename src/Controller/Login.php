@@ -31,6 +31,19 @@ use function time;
  * @package SimpleSAML\Module\core
  */
 class Login extends \SimpleSAML\Module\core\Controller\Login {
+
+    public static $failuredMessages = [
+        'title'=>[
+            'EMPTY_USERNAME_OR_PASSWORD'=>'Empty username or password',
+            'EXPIRED_PASSWORD'=>'Expired password',
+            'LDAP_CONNECTION_FAILURE'=>'Server Connection Failure',
+        ],
+        'descr'=>[
+            'EMPTY_USERNAME_OR_PASSWORD'=>'You must provide an username and password to login',
+            'EXPIRED_PASSWORD'=>'Your password has expired. Please, consult the documentation of contact technical support for information on how to reset your password.',
+            'LDAP_CONNECTION_FAILURE'=>'The connection to the authentication server failed so we are unable to confirm your credentials. Please, try again later or contact technical support if the issue persists.',
+        ]
+    ];
     
     /**
      * This page shows a username/password login form, and passes information from it
@@ -261,16 +274,7 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
 
         // @UAb: Load the other auth sources
         $t->data['links'] = \array_merge_recursive($t->data['links'], $source->getLoginLinks());
-        $t->data['errorcodes'] = array_merge_recursive($t->data['errorcodes'], [
-            'title'=>[
-                'EMPTY_USERNAME_OR_PASSWORD'=>'Empty username or password',
-                'EXPIRED_PASSWORD'=>'Expired password',
-            ],
-            'descr'=>[
-                'EMPTY_USERNAME_OR_PASSWORD'=>'You must provide an username and password to login',
-                'EXPIRED_PASSWORD'=>'Your password has expired. Please, consult the documentation of contact technical support for information on how to reset your password.',
-            ],
-        ]);
+        $t->data['errorcodes'] = array_merge_recursive($t->data['errorcodes'], self::$failuredMessages);
         $currentAuthID = $source->getAuthId();
         $currentSource = [];
         $multiAuthState = Auth\State::cloneState($state);

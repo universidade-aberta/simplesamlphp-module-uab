@@ -52,6 +52,16 @@ $config = [
             ],
         ],
         'preselect' => 'uab-ldap',
+
+        'uab.profile.attributes' => [
+            'sAMAccountName', 
+            'mail', 
+            'givenName', 
+            'sn', 
+            'displayName', 
+            'AccountRecoveryEmail', 
+            'jpegPhoto',
+        ],
     ],
 
     // This is a authentication source which handles admin authentication.

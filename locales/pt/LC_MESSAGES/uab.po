@@ -143,3 +143,42 @@ msgstr "Senha expirada"
 
 msgid "Your password has expired. Please, consult the documentation of contact technical support for information on how to reset your password."
 msgstr "A sua senha expirou. Por favor, consulte a documentação de apoio ou contacte o serviço de apoio técnico para mais informações sobre como repor a sua senha."
+
+msgid "Server Connection Failure"
+msgstr "Falha na ligação ao servidor"
+
+msgid "The connection to the authentication server failed so we are unable to confirm your credentials. Please, try again later or contact technical support if the issue persists."
+msgstr "A ligação ao servidor de autenticação falhou pelo que não conseguimos validar as credenciais introduzidas neste momento. Por favor, tente novamente mais tarde ou contacte o apoio técnico se o problema persistir."
+
+msgid "User Profile - %s"
+msgstr "Perfil do utilizador - %s"
+
+msgid "User Profile"
+msgstr "Perfil do utilizador"
+
+msgid "%u's Profile - %s"
+msgstr "Perfil de %u - %s"
+
+msgid "User Avatar"
+msgstr "Avatar do utilizador"
+
+msgid "Session Timeout"
+msgstr "Tempo limite da sessão"
+
+msgid "%remaining% second(s) remaining"
+msgstr "Faltam %remaining% segundo(s)"
+
+msgid "${remaining} second remaining"
+msgstr "Falta ${remaining} segundo"
+
+msgid "${remaining} seconds remaining"
+msgstr "Faltam ${remaining} segundos"
+
+msgid "[Not Set]"
+msgstr "[Não definido]"
+
+msgid "Logout"
+msgstr "Sair"
+
+msgid "Edit Account"
+msgstr "Editar Conta"

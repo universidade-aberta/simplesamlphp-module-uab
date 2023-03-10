@@ -7,7 +7,7 @@ use SimpleSAML\Error\Exception;
 
 
 trait tConfig{
-    protected static function loadConfig(string $authId):array{
+    public static function loadConfig(string $authId):array{
         $config = Configuration::getConfig('authsources.php');
 
         $authConfig = $config->getOptionalArray($authId, null);

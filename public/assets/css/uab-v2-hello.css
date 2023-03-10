@@ -1,0 +1,182 @@
+a#brand-container{
+    color: white;
+    animation: none;
+    align-items: flex-start;
+    padding: 0;
+    padding-right: 110px;
+    align-self: start;
+}
+
+.login-wrapper{
+    --padding-top: 20px;
+    --glass-height-l: min(35vw, 180px);
+    --glass-height-r: min(20vw, 80px);
+    --height: max(var(--glass-height-l, 0), var(--glass-height-r, 0));
+    padding-top: var(--padding-top, 20px);
+}
+@media(min-width: 658px) {
+    a#brand-container{
+        padding-right: 0;
+        /* margin-left: -30px; */
+    }
+    .login-wrapper{
+        --padding-top: 30px;
+    }
+}
+
+#perspective-bg{
+    display: flex;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 620/420;
+    position: absolute;
+    top: 0;
+    left: 0;
+    align-items: flex-end;
+    justify-content: flex-end;
+
+    /* overflow: hidden; */
+}
+#perspective-bg svg{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 300%;
+    height: auto;
+    object-fit: cover;
+    translate: 0% 10%;
+    display: block;
+    transform-origin: bottom left;
+    transform: perspective(1000px) rotatex(30deg) rotatez(-25deg) rotatey(0deg);
+    filter: drop-shadow( -25px 25px 7px rgba(0, 0, 0, .1));
+    /* animation: shadowAnimation 5s ease-in-out infinite; */
+
+    /* --x: 10px; */
+    /* --y: 20px; */
+    /* clip-path: polygon( 0 var(--x),var(--y) 0, 100% 0,100% 100%, var(--y) 100%,0 calc(100% - var(--x))); */
+    /* margin: 30px; */
+    /* mask: linear-gradient(to right,#fff var(--y),rgba(0,0,0,0.8) 0); */
+}
+@keyframes shadowAnimation {
+    50% {
+        filter: drop-shadow( -20px 20px 4px rgba(0, 0, 0, .2));
+        translate: calc(0% - 2px) calc(10% - 2px );
+    }
+}
+
+#perspective-bg svg .s-color{
+    display: none;
+}
+
+header.header{
+    z-index: 2;
+    height: calc(var(--height, 0) - var(--padding-top, 20px));
+}
+main{
+    z-index: 1;
+}
+#hello-content,
+#foot{
+    position: relative;
+    z-index: 2;
+}
+.login-wrapper{
+    /* border: 5px solid white;
+    box-shadow: 0px 0px 15px inset rgba(0, 0, 0, .1); */
+    background-color: transparent;
+    box-shadow: 0 0 10px rgba(50, 50, 0, 0.3);
+}
+.login-language-menu{
+    color: white;
+}
+.login-language-menu option{
+    color: #1c1c1c;
+    background-color: white;
+}
+
+#perspective-bg{
+    display: none;
+}
+#another-bg{
+    z-index: 1;
+}
+#another-bg,
+#another-bg .bg-wrapper{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#another-bg .bg-wrapper>div{
+    width: 100%;
+    height: 100%;
+}
+/* #another-bg #header-bg-wrapper{
+    filter: drop-shadow(-1px 6px 3px rgba(50, 50, 0, 0.5));
+    z-index: 2;
+} */
+#another-bg #content-bg-wrapper{
+    z-index: 1;
+}
+#another-bg #header-bg{
+    backdrop-filter: blur(3px);
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.1) 90%,rgba(255, 255, 255, 0.3) 100%);
+    /* max-height: var(--height, 0); */
+}
+
+/* slide layout*/
+/* #another-bg #header-bg{
+    clip-path: polygon(0 0, 0 var(--glass-height-l, 0), 100% var(--glass-height-r, 0), 100% 0 );
+}
+#another-bg #content-bg{
+    background-color: white;
+    clip-path: polygon(0 0, 0 100%, 100% 100%, 100% var(--glass-height-r, 0), 0 var(--glass-height-l, 0) );
+} */
+
+
+/* wave layout */
+@keyframes waveAnimation {
+    0% {        
+        left: 0;
+    }
+    100% {        
+        left: -100%;
+    }
+}
+.login-wrapper {
+    --glass-height-l: min(35vw, 180px);
+}
+#another-bg #content-bg-wrapper {
+    padding-top: var(--height, 0);
+}
+#another-bg #content-bg{
+    background-color: white;
+    clip-path: url(#wave);
+    width: 200%;
+    position: absolute;
+    left: 0;
+    top: calc(var(--height, 0) / 2);
+    height: calc(var(--height, 0) / 2);
+    animation: waveAnimation 60s cubic-bezier(0.35, 0.68, 0.61, 0.27) var(--animation-delay, 0) infinite;
+    animation-duration: 120s;
+    transition: left 0.3s;
+    /* animation-play-state: paused; */
+}
+#another-bg #content-bg-bottom{
+    background-color: white;
+    width: 100%;
+    height: 100%;
+}
+header.header{
+    height: calc(var(--height, 0) - var(--padding-top, 20px) - 40px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #another-bg #content-bg{
+        animation: none;
+    }
+}

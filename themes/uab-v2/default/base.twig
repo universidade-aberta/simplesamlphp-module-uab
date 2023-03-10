@@ -7,19 +7,18 @@
     <title>
       {{ pagetitle }}
     </title>
-    {% if logout is defined %}
-      <link rel="preload"
-        href="{{ asset('fonts/fa-solid-900.woff2') }}"
-        as="font"
-        crossorigin>
-    {% endif %}
+    <link rel="icon"
+      type="image/svg+xml"
+      href="{{ asset('icons/favicon.svg', 'uab') }}">
     <link rel="stylesheet" href="{{ asset('css/stylesheet.css') }}">
     <link rel="stylesheet" href="{{ asset('fonts/montserrat/montserrat.css', 'uab') }}">
     <link rel="stylesheet" href="{{ asset('fonts/poppins/poppins.css', 'uab') }}">
     <link rel="stylesheet" href="{{ asset('css/uab-v2.css', 'uab') }}">
-    <link rel="icon"
-      type="image/svg+xml"
-      href="{{ asset('icons/favicon.svg', 'uab') }}">
+    {% if logouturl is defined %}
+      <link href="{{ asset('fonts/fontawesome/css/fontawesome.css', 'uab') }}" rel="stylesheet">
+      <link href="{{ asset('fonts/fontawesome/css/brands.css', 'uab') }}" rel="stylesheet">
+      <link href="{{ asset('fonts/fontawesome/css/solid.css', 'uab') }}" rel="stylesheet">
+    {% endif %}
     <meta name="robots" content="noindex, nofollow">
     {{ include('_head.twig', ignore_missing = true) }}
     {% block preload %}

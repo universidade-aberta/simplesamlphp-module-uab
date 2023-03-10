@@ -16,6 +16,7 @@ use SimpleSAML\Logger;
 use SAML2\Constants;
 use Symfony\Component\Ldap\Adapter\ExtLdap\Query;
 use Symfony\Component\Ldap\Entry;
+use Symfony\Component\Ldap\Exception\ConnectionException;
 
 /**
  * LDAP authentication source.
@@ -25,6 +26,8 @@ use Symfony\Component\Ldap\Entry;
  */
 
 class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
+
+    const ERROR_CODE_CUSTOM = -31171;
 
     /** @var \SimpleSAML\Utils\HTTP */
     /**
@@ -121,10 +124,15 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
             Assert::nullOrnotWhitespaceOnly($searchPassword);
 
             try {
-
                 $this->connector->bind($searchUsername, $searchPassword);
-            } catch (Error\Error $e) {
-                throw new Error\Exception("Unable to bind using the configured search.username and search.password.");
+            } catch (ConnectionException $e) {
+                throw new Error\Error('LDAP_CONNECTION_FAILURE');
+            } catch (Error\Exception $e) {
+                if($e->getCode() !== self::ERROR_CODE_CUSTOM):
+                    Logger::debug(sprintf('An error occurred on LDAP authentication: "%s".', $e->getMessage()));
+                    throw new Error\Error('WRONGUSERPASS');
+                endif;
+                throw new Error\Error($e->getMessage());
             }
 
             $filter = $this->buildSearchFilter($username);
@@ -139,12 +147,12 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
                         // @TODO: short circuit to update the user password using system account
                     else:
                         Logger::debug(sprintf('The password for "%s" has expired and system is unable to update the user password. Stopping authentication...', $username));
-                        throw new Error\Exception('EXPIRED_PASSWORD', -31171);
+                        throw new Error\Exception('EXPIRED_PASSWORD', self::ERROR_CODE_CUSTOM);
                     endif;
                 endif;
                 $entry = null;
             } catch (Error\Exception $e) {
-                if($e->getCode() !== -31171):
+                if($e->getCode() !== self::ERROR_CODE_CUSTOM):
                     Logger::debug(sprintf('An error occurred on LDAP authentication: "%s".', $e->getMessage()));
                     throw new Error\Error('WRONGUSERPASS');
                 endif;

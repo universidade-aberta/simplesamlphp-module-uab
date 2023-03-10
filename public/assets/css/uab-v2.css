@@ -245,6 +245,7 @@ body{
 .meta-footer-wrapper {
     background: #fff;
     border-radius: 10px;
+    overflow: hidden;
     position: relative;
     padding: 62px 1.5rem .75rem;
 
@@ -445,7 +446,8 @@ ul.institutional-links{
     }
 }
 .auth-source-btn,
-.sign-in-btn{
+.sign-in-btn,
+.pure-button{
     font-family: Montserrat;
     font-weight: 500;
     font-size: 1rem;
@@ -468,7 +470,8 @@ ul.institutional-links{
     min-width: 0;
     gap: 0.5rem;
 }
-.sign-in-btn{
+.sign-in-btn,
+.pure-button.pure-button-red{
     background-color: #333;
     color: #fff;
     text-shadow: none;
@@ -530,9 +533,11 @@ ul.institutional-links{
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill-rule='evenodd'%3E%3Cpath d='M26.653 43.629V42.59h-5.647v1.039h2.109V54.22c0 3.372-2.162 5.648-5.367 5.648-3.119 0-5.113-2.219-5.113-5.619v-10.62h2.108V42.59H8.055v1.039h2.109V55.12c0 3.68 3.005 6.378 7.079 6.378a8.45 8.45 0 0 0 3.905-.955c2.332-1.265 3.4-3.202 3.4-6.209V43.629zm10.648 10.058H31.12l3.175-7.895zm6.602 7.444v-1.068h-1.601L35.28 42h-1.012l-7.304 18.064h-1.46v1.068h5.365v-1.068h-2.331l2.05-5.056 7.192.028 1.968 5.056h-2.247v1.04zm12.703-6.771c0-3.679-2.163-6.293-5.225-6.293-.76 0-1.433.113-2.866.591v.927h2.051c2.249 0 3.625 1.91 3.625 4.973 0 3.371-1.938 5.758-4.69 5.758-.703 0-1.096-.111-2.024-.477V40.427h-.506l-4.045 1.096v.759h2.445v18.626c1.656.422 2.697.591 3.932.591 4.412 0 7.305-2.837 7.305-7.136M8.251.192h47.521V27.09H8.251z' fill='%23fff'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='.373'%3E%3Cpath d='M55.744.186h8.07v26.898h-8.07zM.187.191h8.07v26.898H.187z'/%3E%3Cpath d='M8.243 27.068h47.521v8.082H8.243z'/%3E%3C/g%3E%3C/svg%3E");
 }
 .auth-source-btn:is(:hover,:focus,:active),
-.sign-in-btn:is(:hover,:focus,:active) {
+.sign-in-btn:is(:hover,:focus,:active),
+.pure-button:is(:scope, :hover, :focus, :active){
     background-color: var(--transition-color-middle, #207299);
     color: white;
+    padding: 1rem 1.5rem;
 }
 .auth-source-btn:is(:hover,:focus,:active):before,
 .authsource-current.auth-source-btn:before {

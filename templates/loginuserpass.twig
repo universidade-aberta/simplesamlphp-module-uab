@@ -127,7 +127,7 @@
     {% if links is defined -%}
     <ul>
         {% for link in links -%}
-        <li><a href="{{ link.href }}">{{ link['text']|trans }}</a></li>
+        <li><a href="{{ link.href }}">{{ link['label']|trans }}</a></li>
         {% endfor %}
     </ul>
     {%- endif %}

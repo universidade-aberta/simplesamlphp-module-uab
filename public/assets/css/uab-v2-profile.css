@@ -1,0 +1,104 @@
+.page-title{
+    text-align: left;
+}
+
+.user-attributes{
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+    margin-bottom: 2rem;
+}
+.user-attributes dt{
+    font-weight: 600;
+    color: var(--transition-color-middle, #207299);
+    font-size: 0.9rem;
+}
+
+.user-attributes dd{
+    min-height: 1.5rem;
+}
+
+.user-attributes .attribute-is-empty{
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+.user-attributes-wrapper{
+    padding-right: 4rem;
+}
+.admin-links{
+    list-style: none;
+    padding: 0;
+    /* display: grid;
+    grid-gap: 2rem 1rem;
+    grid-auto-flow: dense;
+    width: 100%;*/
+    /* grid-template-columns: repeat(auto-fill,minmax(80px, 1fr)); */
+    /* grid-template-columns: repeat(auto-fit,minmax(80px, 1fr)); */ 
+    display: flex;
+    gap: 0; 
+    flex-direction: column;
+}
+.admin-links li{
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+.admin-links a{
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    align-items: center;
+    justify-content: flex-start;
+    flex-flow: row-reverse;
+}
+.admin-links a,
+.admin-links a:is(:focus, :hover, :active){
+    text-decoration: none;
+}
+.admin-links a:is(:focus, :hover, :active) .link-icon{
+    background-color: var(--transition-color-middle, #207299);
+    color: white;
+    border-radius: 25%;
+    box-shadow: 0 0 10px rgba(77,77,77,0.5);
+}
+.admin-links a .link-icon{
+    font-size: 1.5rem;
+    padding: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 0;
+    flex-shrink: 0;
+    color: #555;
+}
+.admin-links a .link-label {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+
+    transition: opacity 0.3s ease-in-out;
+    width: 0;
+    opacity: 0;
+}
+.admin-links a:is(:focus, :hover, :active) .link-label{
+    width: auto;
+    opacity: 1;
+}
+.admin-columns{
+    position: relative;
+}
+.profile-links{
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    translate: 0 -50%;
+}
+@media(min-width: 658px) {
+    .profile-links {
+        right: -50px;
+    }
+}

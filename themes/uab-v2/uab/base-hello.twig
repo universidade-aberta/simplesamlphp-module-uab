@@ -1,0 +1,40 @@
+{% extends "base.twig" %}
+
+{% block preload %}
+  <link rel="stylesheet" href="{{ asset('css/uab-v2-hello.css', 'uab') }}">
+{% endblock %}
+
+{% block content %}
+    <div id="another-bg">
+      <svg viewBox="0 0 1 1" aria-role="presentation">
+        <clipPath id="wave" clipPathUnits="objectBoundingBox">
+          <path d="m0 0.5v0.5h1v-0.5c-0.125 0-0.15 0.30078-0.25 0.30078s-0.125-0.30078-0.25-0.30078-0.15 0.30078-0.25 0.30078-0.125-0.30078-0.25-0.30078z" fill="#fff" />
+        </clipPath>
+      </svg>
+      <div id="content-bg-wrapper" class="bg-wrapper"><div id="content-bg" class="with-animation-delay"></div><div id="content-bg-bottom"></div></div>
+      <div id="header-bg-wrapper" class="bg-wrapper"><div id="header-bg"></div></div>
+    </div>
+    {#<div id="perspective-bg">
+      <svg version="1.1" viewBox="0 0 58.205 31.948" xmlns="http://www.w3.org/2000/svg" class="color-change">
+          <style>
+            .f-color{
+              fill:currentColor;
+            }
+            .s-color {
+              stroke:currentColor;
+            }
+          </style>
+        <g>
+          <path class="f-color" d="m50.578 24.34h-43.03v-24.34h43.03z" fill="currentColor" shape-rendering="optimizeQuality"/>
+          <path class="s-color" d="m50.668 0.28h7.26v24.01h-7.26zm-50.39 0h7.26v24.06h-7.26zm7.26 24.04h43.12v7.35h-43.12z" fill="none" stroke="currentColor" stroke-miterlimit="3.8637" stroke-width=".555" shape-rendering="optimizeQuality"/>
+        </g>
+      </svg>
+    </div>#}
+
+    <div id="hello-content">
+      {% block hellocontent %}
+      {% endblock %}
+    </div>
+{% endblock %}
+{% block funding %}
+{% endblock %}

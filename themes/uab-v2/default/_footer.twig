@@ -1,25 +1,26 @@
 <footer class="footer w-100">
-
-  {%- if links is defined -%}
-    <ul class="institutional-links">
-        {%- for link in links -%}
-          {%- set href = link.href is iterable ? link.href|translateFromArray : link.href -%}
-          {%- if href starts with 'uab:' -%}
-            {%- set href = moduleURL(href|replace({'uab:': ''})) -%}
-          {%- endif -%}
-          {%- set attribs = {
-            'target':'target', 
-            'rel':'rel', 
-            'accesskey':'accesskey',
-          } -%}
-          <li {{- (link['classes'] is defined ? ' class="'~(link['classes']|e('html_attr'))~'"' : '')|raw -}}><a href="{{ href|e('html_attr') }}" 
-            {%- for key,name in attribs -%}
-              {{- (link[key] is defined ? ' '~name~'="'~(link[key]|e('html_attr'))~'"' : '')|raw -}}
-            {%- endfor -%}
-          >{{ link['text'] is iterable ? link['text']|translateFromArray : link['text']|trans }}</a></li>
-        {%- endfor -%}
-    </ul>
-  {%- endif -%}
+  {% block footerlinks %}
+    {%- if links is defined -%}
+      <ul class="institutional-links">
+          {%- for link in links -%}
+            {%- set href = link.href is iterable ? link.href|translateFromArray : link.href -%}
+            {%- if href starts with 'uab:' -%}
+              {%- set href = moduleURL(href|replace({'uab:': ''})) -%}
+            {%- endif -%}
+            {%- set attribs = {
+              'target':'target', 
+              'rel':'rel', 
+              'accesskey':'accesskey',
+            } -%}
+            <li {{- (link['classes'] is defined ? ' class="'~(link['classes']|e('html_attr'))~'"' : '')|raw -}}><a href="{{ href|e('html_attr') }}" 
+              {%- for key,name in attribs -%}
+                {{- (link[key] is defined ? ' '~name~'="'~(link[key]|e('html_attr'))~'"' : '')|raw -}}
+              {%- endfor -%}
+            >{{ link['text'] is iterable ? link['text']|translateFromArray : link['text']|trans }}</a></li>
+          {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  {% endblock %}
 
   <div class="copyrights w-100 color-change">
     {% block copyright %}

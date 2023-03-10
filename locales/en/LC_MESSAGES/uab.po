@@ -147,3 +147,42 @@ msgstr "Expired password"
 
 msgid "Your password has expired. Please, consult the documentation of contact technical support for information on how to reset your password."
 msgstr "Your password has expired. Please, consult the documentation of contact technical support for information on how to reset your password."
+
+msgid "Server Connection Failure"
+msgstr "Server Connection Failure"
+
+msgid "The connection to the authentication server failed so we are unable to confirm your credentials. Please, try again later or contact technical support if the issue persists."
+msgstr "The connection to the authentication server failed so we are unable to confirm your credentials. Please, try again later or contact technical support if the issue persists."
+
+msgid "User Profile - %s"
+msgstr "User Profile - %s"
+
+msgid "%u's Profile - %s"
+msgstr "%u's Profile - %s"
+
+msgid "User Profile"
+msgstr "User Profile"
+
+msgid "User Avatar"
+msgstr "User Avatar"
+
+msgid "Session Timeout"
+msgstr "Session Timeout"
+
+msgid "%remaining% second(s) remaining"
+msgstr "%remaining% second(s) remaining"
+
+msgid "${remaining} second remaining"
+msgstr "${remaining} second remaining"
+
+msgid "${remaining} seconds remaining"
+msgstr "${remaining} seconds remaining"
+
+msgid "[Not Set]"
+msgstr "[Not Set]"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "Edit Account"
+msgstr "Edit Account"

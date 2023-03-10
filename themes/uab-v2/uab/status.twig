@@ -1,0 +1,139 @@
+{% set pagetitle = '%u\'s Profile - %s'|trans({"%s": header, "%u": name|default('')}) %}
+
+{% extends "@uab/base-hello.twig" %}
+
+{% block preload %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('css/uab-v2-profile.css', 'uab') }}">
+
+  <script>
+    if("Intl" in window){
+      document.addEventListener('DOMContentLoaded', ()=>{
+        const pr = new Intl.PluralRules("{{ currentLanguage }}", { type: "cardinal" });
+        const translateRemainingTime = (remaining) => {
+          switch(pr.select(remaining)){
+            case "one":
+              return `{{ '${remaining} second remaining'|trans|raw }}`;
+            default: 
+              return `{{ '${remaining} seconds remaining'|trans|raw }}`;
+          }
+        };
+
+        const timeoutEl = document.querySelector('.attribute-session-timeout dd');
+        if(!!timeoutEl){
+          let remainingTime = parseInt(timeoutEl.dataset.startTime);
+          if(!isNaN(remainingTime)){
+            const timer = ()=>{
+              remainingTime--;
+              if(remainingTime<0){
+                timeoutEl.innerText = translateRemainingTime(0);
+              }else{
+                timeoutEl.innerText = translateRemainingTime(remainingTime);
+                setTimeout(timer, 1000);
+              }
+            };
+            timer();
+          }
+        }
+      });
+    }
+  </script>
+{% endblock %}
+
+{% block hellocontent %}
+    <h1 class="page-title">{{ name|default('') }}</h1>
+
+    <div class="admin-columns">
+      {% if attributesToShow is not empty %}
+        <div class="user-attributes-wrapper">
+          {% set photo = attributes['jpegPhoto'] is defined?attributes['jpegPhoto'][0]:'' %}
+          {% set attributesToShowFiltered = (attributesToShow|filter((v, k) => (k|lower) != ('jpegPhoto'|lower) and (v.view.allow ?? true) != false)) %}
+          {%- if photo is not empty -%}
+              <img src="data:image/jpeg;base64,{{ photo }}" alt="{{ 'User Avatar'|e('html_attr')|raw }}">
+          {%- endif -%}
+
+          <dl class="user-attributes attributes">
+            {% for attributeName,attributeInfo  in attributesToShowFiltered %}
+              <div class="attribute-group attribute-{{ attributeName|e('html_attr')|raw }} {{ attributes[attributeName] is defined?'':'attribute-is-empty' }}">
+                {%- set label = attributeInfo.label is iterable ? attributeInfo.label|translateFromArray : attributeInfo.label -%}
+                <dt class="attribute-label">{{ label }}</dt>
+                <dd class="attribute-value">{% apply spaceless %}
+                  {% if attributes[attributeName] is defined %}
+                    {% for value in attributes[attributeName] %}
+                        {% if loop.length>1 and loop.first %}<ul>{% endif %}
+                        {% if loop.length>1 %}<li>{% endif -%}
+                        {{ value|default('') }}
+                        {% if loop.length>1 %}</li>{% endif %}
+                        {% if loop.length>1 and loop.last %}</ul>{% endif %}
+                    {% endfor %}
+                    {% else %}
+                      {{ '[Not Set]'|trans }}
+                  {% endif %}
+                {% endapply -%}</dd>
+              </div>
+            {% endfor %}
+
+            {% if remaining %}
+              <div class="attribute-group attribute-session-timeout">
+                <dt>{{ 'Session Timeout'|trans }}</dt>
+                <dd data-start-time="{{remaining|e('html_attr')}}">{% apply spaceless %}
+                  {% trans with {
+                      '%remaining%': '<span class="remaining-time">'~remaining~'</span>'
+                  } %}%remaining% second(s) remaining{% endtrans %}
+                {% endapply -%}</dd>
+              </div>
+            {% endif %}
+          </dl>
+        </div>
+      {% endif %}
+
+      <div class="profile-links">
+        <div>
+          <ul class="admin-links">
+            {%- if logouturl is defined and logouturl is not empty -%}
+              <li><a class="admin-link" href="{{ logouturl }}" accesskey="l"><span class="fa fa-right-from-bracket link-icon" aria-hidden="true"></span><span class="link-label">{{ 'Logout'|trans }}</span></a></li>
+            {%- endif -%}
+            {%- if profileEditingEnabled is defined and profileEditingEnabled == true -%}
+              <li><a class="admin-link" href="{{ moduleURL('uab/edit-profile') }}" accesskey="p"><span class="fa fa-user-pen link-icon" aria-hidden="true"></span><span class="link-label">{{ 'Edit Account'|trans }}</span></a></li>
+            {%- endif -%}
+          </ul>
+        </div>
+        <div>
+          {%- if adminLinks is defined and adminLinks is not empty -%}
+            <ul class="admin-links">
+                {%- for link in adminLinks -%}
+                  {%- set href = link.href is iterable ? link.href|translateFromArray : link.href -%}
+                  {%- if href starts with 'uab:' -%}
+                    {%- set href = (href=='uab:#logout')?(logouturl??''):moduleURL(href|replace({'uab:': ''})) -%}
+                  {%- endif -%}
+                  {%- set attribs = {
+                    'target':'target', 
+                    'rel':'rel', 
+                    'accesskey':'accesskey',
+                  } -%}
+                  <li {{- (link['classes'] is defined ? ' class="'~(link['classes']|e('html_attr'))~'"' : '')|raw -}}><a class="admin-link" href="{{ href|e('html_attr') }}" 
+                    {%- for key,name in attribs -%}
+                      {{- (link[key] is defined ? ' '~name~'="'~(link[key]|e('html_attr'))~'"' : '')|raw -}}
+                    {%- endfor -%}
+                  >
+                    {% if link['icon'] is not empty %}<span class="fa {{ link['icon']|e('html_attr') }} link-icon" aria-hidden="true"></span>{%- endif -%}
+                    <span class="link-label">{{ link['label'] is iterable ? link['label']|translateFromArray : link['label']|trans }}</span></a></li>
+                {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    
+
+{% endblock %}
+
+
+{#% block footer %}
+  {% embed '_footer.twig' %}
+    {% block footerlinks %}
+      
+    {% endblock %}
+  {% endembed %}
+{% endblock %#}

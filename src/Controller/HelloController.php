@@ -9,9 +9,11 @@ use SimpleSAML\Auth;
 use SimpleSAML\Configuration;
 use SimpleSAML\HTTP\RunnableResponse;
 use SimpleSAML\Module;
+use SimpleSAML\Module\uab\Auth\Source\MultiAuth;
 use SimpleSAML\Session;
 use SimpleSAML\Utils;
-use SimpleSAML\XHTML\Template;
+use SimpleSAML\XHTML\Template;;
+use SimpleSAML\Assert\Assert;
 use Symfony\Component\HttpFoundation\Request;
 
 class HelloController{
@@ -86,7 +88,7 @@ class HelloController{
     public function discovery(Request $request){
         $as =  $this->config->getValue(self::DEFAULT_AUTHENTICATOR);
         if ($as === null):
-            throw new \Exception('Could not find authentication source with id ' . $as);
+            throw new Exception('Could not find authentication source with id ' . $as);
         endif;
 
         $url = Module::getModuleURL('uab/hello/', []);
@@ -117,6 +119,30 @@ class HelloController{
         $authData = $authsource->getAuthDataArray();
         $nameId = $authsource->getAuthData('uab:sp:NameID') ?? false;
 
+        $links = $this->config->getOptionalArray('uab:loginpage_links', []);
+        $attributesToShow = array_keys($attributes);
+        $authsourceConfig = MultiAuth::loadConfig($authsource->getAuthSource()->getAuthId());
+        $username = '';
+        $name = '';
+        $adminLinks = [];
+        $profileEditingEnabled = [];
+        if(is_array($authsourceConfig)):
+            $authsourceConfig = Configuration::loadFromArray($authsourceConfig);
+            $attributesToShow = $authsourceConfig->getOptionalArray('uab.profile.attributes', $attributesToShow);
+            $authsourceConfig->getOptionalArray('uab.profile.attributes', $attributesToShow);
+
+            $uid = $authsourceConfig->getOptionalString('uid.attribute', 'sAMAccountName');
+            if(!empty($attributes[$uid])):
+                $username = is_array($attributes[$uid])?reset($attributes[$uid]):(is_scalar($attributes[$uid])?$attributes[$uid]:'');
+            endif;
+
+            $uid = $authsourceConfig->getOptionalValue('uid.name', 'displayName');
+            $name = is_scalar($uid) && empty($attributes[$uid])?$attributes[$uid]:(is_callable($uid)?call_user_func($uid, $attributes):'');
+
+            $adminLinks = $authsourceConfig->getOptionalArray('uab.admin.links', []);
+            $profileEditingEnabled = $authsourceConfig->getOptionalBoolean('uab.profile.edit.enabled', false);
+        endif;
+
         $httpUtils = new Utils\HTTP();
         $t = new Template($this->config, 'uab:status.twig');
         $l = $t->getLocalization();
@@ -127,6 +153,12 @@ class HelloController{
             'remaining' => isset($authData['Expire']) ? $authData['Expire'] - time() : null,
             'nameid' => $nameId,
             'logouturl' => $httpUtils->getSelfURLNoQuery() . '?as=' . urlencode($as) . '&logout',
+            'links'=>$links??null,
+            'adminLinks'=>$adminLinks,
+            'attributesToShow'=>$attributesToShow,
+            'username'=>$username,
+            'name'=>$name,
+            'profileEditingEnabled'=>$profileEditingEnabled,
         ];
 
         return $t;

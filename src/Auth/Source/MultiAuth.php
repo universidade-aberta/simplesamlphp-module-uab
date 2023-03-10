@@ -324,7 +324,7 @@ class MultiAuth extends UserPassBase {
             throw $e;
         }
 
-        Logger::stats('XXXX User \'' . $username . '\' successfully authenticated from ' . $_SERVER['REMOTE_ADDR']);
+        Logger::stats('User \'' . $username . '\' successfully authenticated from ' . $_SERVER['REMOTE_ADDR']);
 
         // Save the attributes we received from the login-function in the $state-array
         $state['Attributes'] = $attributes;
