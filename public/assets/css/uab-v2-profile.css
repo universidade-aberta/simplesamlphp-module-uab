@@ -29,76 +29,123 @@
 .admin-links{
     list-style: none;
     padding: 0;
-    /* display: grid;
-    grid-gap: 2rem 1rem;
-    grid-auto-flow: dense;
-    width: 100%;*/
-    /* grid-template-columns: repeat(auto-fill,minmax(80px, 1fr)); */
-    /* grid-template-columns: repeat(auto-fit,minmax(80px, 1fr)); */ 
     display: flex;
     gap: 0; 
     flex-direction: column;
 }
 .admin-links li{
     position: relative;
-    width: 100%;
-    min-width: 0;
 }
-.admin-links a{
+.profile-links .admin-links a.admin-link{
     display: flex;
     flex-direction: row;
-    gap: 0.75rem;
     font-size: 0.9rem;
     align-items: center;
-    justify-content: flex-start;
-    flex-flow: row-reverse;
+    position: relative;
+    margin: 0 10px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 .admin-links a,
 .admin-links a:is(:focus, :hover, :active){
     text-decoration: none;
+    transition: none;
 }
+.admin-links a:is(:focus, :hover, :active),
 .admin-links a:is(:focus, :hover, :active) .link-icon{
     background-color: var(--transition-color-middle, #207299);
     color: white;
-    border-radius: 25%;
-    box-shadow: 0 0 10px rgba(77,77,77,0.5);
 }
 .admin-links a .link-icon{
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     padding: 0;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: var(--btn-width, 3.5rem);
+    height: 2.5rem;
+    max-width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-grow: 0;
     flex-shrink: 0;
-    color: #555;
+    color: var(--transition-color-middle, #207299);
+    box-sizing: border-box;
+}
+#tool-group-external-links.admin-links li:last-child a{
+    margin-bottom: -2px;
+    height: calc(100% + 2px);
+    overflow: hidden;
 }
 .admin-links a .link-label {
-    text-overflow: ellipsis;
+    font-size: 0.7rem;
     overflow: hidden;
     white-space: nowrap;
-
-    transition: opacity 0.3s ease-in-out;
-    width: 0;
-    opacity: 0;
+    padding-right: 1rem;
+    text-align: left;
 }
-.admin-links a:is(:focus, :hover, :active) .link-label{
-    width: auto;
-    opacity: 1;
+.tool-group-label {
+    position: relative;
+    text-transform: uppercase;
+    font-size: 0.5rem;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    padding: 0.5rem 0.4rem 0;
+
+    transition: all 0s ease-in-out 0s;
+}
+#tool-group-external-links-label.tool-group-label::before{
+    position: absolute;
+    content: '';
+    display: block;
+    width: 50%;
+    top: 0;
+    left: 50%;
+    translate: -50% 0;
+    border-top: 1px solid rgba(79,123,170,.4);
+    border-bottom: 1px solid rgba(255,255,255,.3);
+}
+#tool-group-external-links-label.tool-group-label{
+    margin-top: 10px;
 }
 .admin-columns{
     position: relative;
 }
 .profile-links{
+    --btn-width: 3.5rem;
     position: absolute;
     top: 50%;
-    right: -10px;
+    right: -25px;
     translate: 0 -50%;
+    border: 2px groove;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    min-width: 0;
+    max-width: var(--btn-width, 3.5rem);
+    transition: max-width 0.5s ease-in-out;
+
+    background: linear-gradient(to left, #F9F6FC 0%,#F7F9FB 100%);
+    border: 1px solid rgba(79,123,170,.4);
+    color: #40648a;
+    padding: 10px 0;
+    max-height: 100%;
+    overflow: hidden;
+    z-index: 10;
 }
+.profile-links:is(:hover, :focus-within){
+    max-width: 100%;
+}
+
+.profile-links:is(:hover, :focus-within) .tool-group-label {
+    transition: all 0.1s ease-in-out 0.5s;
+    font-size: 0.75rem;
+    text-overflow: initial;
+    font-weight: 600;
+}
+
 @media(min-width: 658px) {
     .profile-links {
-        right: -50px;
+        right: -62px;
     }
 }

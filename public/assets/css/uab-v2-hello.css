@@ -143,9 +143,14 @@ main{
 @keyframes waveAnimation {
     0% {        
         left: 0;
+        translate: 0 0;
+    }
+    50% {
+        translate: 0 var(--wave-heigth-variation, 20px);
     }
     100% {        
         left: -100%;
+        translate: 0 0;
     }
 }
 .login-wrapper {
@@ -156,6 +161,10 @@ main{
     overflow: hidden;
 }
 #another-bg #content-bg{
+    --wave-heigth-variation:15px;
+}
+#another-bg #content-bg,
+#another-bg #content-bg-wrapper::before{
     background-color: white;
     clip-path: url(#wave);
     width: 200%;
@@ -163,10 +172,21 @@ main{
     left: 0;
     top: calc(var(--height, 0) / 2);
     height: calc(var(--height, 0) / 2);
-    animation: waveAnimation 60s cubic-bezier(0.35, 0.68, 0.61, 0.27) var(--animation-delay, 0) infinite;
-    animation-duration: 120s;
+    animation: waveAnimation 90s cubic-bezier(0.35, 0.68, 0.61, 0.27) var(--animation-delay, 0) infinite;
+    animation-duration: 40s;
     transition: left 0.3s;
     /* animation-play-state: paused; */
+}
+#another-bg #content-bg-wrapper::before{
+    --wave-heigth-variation:0;
+    display: block;
+    content: '';
+    animation-duration: 60s;
+    animation-iteration-count: infinite;
+    animation-delay: 0;
+    animation-name: waveAnimation;
+    position: absolute;
+    opacity: 0.3;
 }
 #another-bg #content-bg-bottom{
     background-color: white;

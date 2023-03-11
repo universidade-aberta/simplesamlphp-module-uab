@@ -440,6 +440,11 @@ ul.institutional-links{
     width: 100%;
     min-width: 0;
 }
+.pure-control-group {
+    display: flex;
+    gap: 1rem;
+    flex-direction: row;
+}
 @media screen and (max-width: 550px) {
     .auth-sources-list .authsource.authsource-current {
         order: 1000;
@@ -476,6 +481,7 @@ ul.institutional-links{
     color: #fff;
     text-shadow: none;
 }
+
 .sign-in-btn-wrapper{
     margin-top: 1rem;
 }

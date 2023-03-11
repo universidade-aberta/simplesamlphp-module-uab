@@ -19,6 +19,71 @@
           }
         };
 
+        const translateTime = (time, pluralForms, pad=false, defaultKey='other') => {
+          if (time===0) {
+            return 0;
+          } else {
+            if(pluralForms.has(pr.select(time))){
+              return pad ?
+                      pluralForms.get(pr.select(time)).toString().padStart(2, '0') :
+                      pluralForms.get(pr.select(time));
+            }else{
+              return pluralForms.has(defaultKey) ?
+                      pluralForms.get(defaultKey) :
+                      0;
+            }
+          }
+        };
+
+        const formatTime = (seconds)=>{
+          const timeParts = new Map([
+            [
+              'hours', {
+                'value': Math.floor(seconds / 3600),
+                'translations': new Map([
+                  ['one', `{{ '%d hour'|trans|raw }}`],
+                  ['other', `{{ '%d hours'|trans|raw }}`],
+                ])
+              } 
+            ],
+            [
+              'minutes', {
+                'value': Math.floor((seconds % 3600) / 60),
+                'translations': new Map([
+                  ['one', `{{ '%d minute'|trans|raw }}`],
+                  ['other', `{{ '%d minutes'|trans|raw }}`],
+                ])
+              } 
+            ],
+            [
+              'seconds', {
+                'value': seconds % 60,
+                'translations': new Map([
+                  ['one', `{{ '%d second'|trans|raw }}`],
+                  ['other', `{{ '%d seconds'|trans|raw }}`],
+                ])
+              } 
+            ],
+          ]);
+          timeParts.forEach((part, key)=>{
+            const value = (translateTime(part.value, part.translations)).toString().replace('%d', part.value);
+            if(value!=0){
+              timeParts.set(key, value);
+            }else{
+              timeParts.delete(key);
+            }
+          });
+
+          let timePartsArray = Array.from(timeParts.values());
+          let result = '';
+          if (timePartsArray.length > 2) {
+            result += timePartsArray.slice(0, -2).join(", ") + `{{ ', '|trans|raw }}`;
+            timePartsArray = timePartsArray.slice(-2);
+          }
+          result += timePartsArray.join(`{{ ' and '|trans|raw }}`);
+          return (result!=''?result:`{{ '0 seconds'|trans|raw }}`);
+        };
+
         const timeoutEl = document.querySelector('.attribute-session-timeout dd');
         if(!!timeoutEl){
           let remainingTime = parseInt(timeoutEl.dataset.startTime);
@@ -26,9 +91,9 @@
             const timer = ()=>{
               remainingTime--;
               if(remainingTime<0){
-                timeoutEl.innerText = translateRemainingTime(0);
+                timeoutEl.innerText = formatTime(0);
               }else{
-                timeoutEl.innerText = translateRemainingTime(remainingTime);
+                timeoutEl.innerText = formatTime(remainingTime);
                 setTimeout(timer, 1000);
               }
             };
@@ -89,7 +154,8 @@
 
       <div class="profile-links">
         <div>
-          <ul class="admin-links">
+          <div id="tool-group-admin-links-label" class="tool-group-label">{{ 'Options'|trans }}</div>
+          <ul class="admin-links" aria-labelledby="tool-group-admin-links-label">
             {%- if logouturl is defined and logouturl is not empty -%}
               <li><a class="admin-link" href="{{ logouturl }}" accesskey="l"><span class="fa fa-right-from-bracket link-icon" aria-hidden="true"></span><span class="link-label">{{ 'Logout'|trans }}</span></a></li>
             {%- endif -%}
@@ -100,7 +166,8 @@
         </div>
         <div>
           {%- if adminLinks is defined and adminLinks is not empty -%}
-            <ul class="admin-links">
+            <div id="tool-group-external-links-label" class="tool-group-label">{{ 'Links'|trans }}</div>
+            <ul class="admin-links" id="tool-group-external-links" aria-labelledby="tool-group-external-links-label">
                 {%- for link in adminLinks -%}
                   {%- set href = link.href is iterable ? link.href|translateFromArray : link.href -%}
                   {%- if href starts with 'uab:' -%}

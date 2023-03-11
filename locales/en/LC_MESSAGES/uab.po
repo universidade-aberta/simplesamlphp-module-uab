@@ -178,6 +178,33 @@ msgstr "${remaining} second remaining"
 msgid "${remaining} seconds remaining"
 msgstr "${remaining} seconds remaining"
 
+msgid "%d hour"
+msgstr "%d hour"
+
+msgid "%d hours"
+msgstr "%d hours"
+
+msgid "%d minute"
+msgstr "%d minute"
+
+msgid "%d minutes"
+msgstr "%d minutes"
+
+msgid "%d second"
+msgstr "%d second"
+
+msgid "%d seconds"
+msgstr "%d seconds"
+
+msgid "0 seconds"
+msgstr "0 seconds"
+
+msgid ", "
+msgstr ", "
+
+msgid " and "
+msgstr " and "
+
 msgid "[Not Set]"
 msgstr "[Not Set]"
 
@@ -186,3 +213,9 @@ msgstr "Logout"
 
 msgid "Edit Account"
 msgstr "Edit Account"
+
+msgid "Links"
+msgstr "Links"
+
+msgid "Options"
+msgstr "Options"
