@@ -1,0 +1,42 @@
+{% set pagetitle = 'Edit %u\'s Profile - %s'|trans({"%s": header, "%u": name|default('')}) %}
+
+{% extends "@uab/base-hello.twig" %}
+
+{% block preload %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('css/uab-v2-profile.css', 'uab') }}">
+{% endblock %}
+
+{% block hellocontent %}
+    <h1 class="page-title">{{ 'Edit Profile'|default('')|trans }}</h1>
+
+    <div class="admin-columns">
+      {% if attributesToEdit is not empty %}
+        <div class="user-attributes-wrapper">
+          {% set photo = attributes['jpegPhoto'] is defined?attributes['jpegPhoto'][0]:'' %}
+          {% set attributesToEditFiltered = (attributesToEdit|filter((v, k) => (k|lower) != ('jpegPhoto'|lower) and (v.edit.allow|default(false)) != false)) %}
+          {%- if photo is not empty -%}
+              <img src="data:image/jpeg;base64,{{ photo }}" alt="{{ 'User Avatar'|e('html_attr')|raw }}">
+          {%- endif -%}
+
+          <div class="user-attributes attributes">
+            {% for attributeName,attributeInfo  in attributesToEditFiltered %}
+              <div class="attribute-group attribute-{{ attributeName|e('html_attr')|raw }} {{ attributes[attributeName] is defined?'':'attribute-is-empty' }} {{ attributeInfo.edit.classes|default('')|e('html_attr') }}">
+                {%- set label = attributeInfo.label is iterable ? attributeInfo.label|translateFromArray : attributeInfo.label|trans -%}
+                
+                {% apply spaceless %}
+                  {% if attributes[attributeName] is defined %}
+                    {% for value in attributes[attributeName] %}
+                      {%- set idAttrib = attributeName|e('html_attr') -%}
+                      <label class="attribute-label attribute-label-input" for="attribute-{{ idAttrib|raw }}-{{ loop.index }}">{{ label }}</label>
+                      <input class="attribute-value attribute-value-input" type="{{ attributeInfo.edit.htmlType|default('text') }}" id="attribute-{{ idAttrib|raw }}-{{ loop.index }}" name="{{ idAttrib|raw }}[]" value="{{ value|default('')|e('html_attr')|raw }}" {% for attributeName, attributeValue in attributeInfo.edit.htmlAttributes|default([]) %}{{ attributeName|e('html_attr') }}="{{ attributeValue|e('html_attr')|raw }}"{% endfor %}>
+                    {% endfor %}
+                  {% endif %}
+                {% endapply -%}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+{% endblock %}

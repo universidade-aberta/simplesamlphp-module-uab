@@ -104,7 +104,6 @@ class HelloController{
         if (!is_null($request->query->get('logout'))):
             return new RunnableResponse([$authsource, 'logout'], [$params /*$this->config->getBasePath() . 'logout.php'*/]);
         elseif (!is_null($request->query->get($this->authState::EXCEPTION_PARAM))):
-            // This is just a simple example of an error
             /** @var array $state */
             $state = $this->authState::loadExceptionState();
             Assert::keyExists($state, $this->authState::EXCEPTION_DATA);
@@ -125,11 +124,13 @@ class HelloController{
         $username = '';
         $name = '';
         $adminLinks = [];
-        $profileEditingEnabled = [];
+        $profileEditUrl = null;
         if(is_array($authsourceConfig)):
             $authsourceConfig = Configuration::loadFromArray($authsourceConfig);
-            $attributesToShow = $authsourceConfig->getOptionalArray('uab.profile.attributes', $attributesToShow);
-            $authsourceConfig->getOptionalArray('uab.profile.attributes', $attributesToShow);
+
+            $attributesToShow = array_filter($authsourceConfig->getOptionalArray('uab.profile.attributes', $attributesToShow), function($attribute){
+                return ($attribute['view']['allow']??true)==true;
+            });
 
             $uid = $authsourceConfig->getOptionalString('uid.attribute', 'sAMAccountName');
             if(!empty($attributes[$uid])):
@@ -140,11 +141,23 @@ class HelloController{
             $name = is_scalar($uid) && empty($attributes[$uid])?$attributes[$uid]:(is_callable($uid)?call_user_func($uid, $attributes):'');
 
             $adminLinks = $authsourceConfig->getOptionalArray('uab.admin.links', []);
-            $profileEditingEnabled = $authsourceConfig->getOptionalBoolean('uab.profile.edit.enabled', false);
+            if($authsourceConfig->getOptionalBoolean('uab.profile.edit.enabled', false)):
+                $editProfileState = [
+                    'AuthID'=>$authsource->getAuthSource()->getAuthId(),
+                    'returnUrl'=>$url,
+                    'username'=>$username,
+                    'name'=>$name,
+                ];
+                $stateId = $this->authState::saveState($editProfileState, ProfileEdit::STATEID);
+
+                $profileEditUrl = Module::getModuleURL('uab/edit-profile', [
+                    'StateId' => $stateId,
+                ]);
+            endif;
         endif;
 
         $httpUtils = new Utils\HTTP();
-        $t = new Template($this->config, 'uab:status.twig');
+        $t = new Template($this->config, 'uab:profile-view.twig');
         $l = $t->getLocalization();
         $l->addAttributeDomains();
         $t->data = [
@@ -158,7 +171,7 @@ class HelloController{
             'attributesToShow'=>$attributesToShow,
             'username'=>$username,
             'name'=>$name,
-            'profileEditingEnabled'=>$profileEditingEnabled,
+            'profileEditUrl'=>$profileEditUrl,
         ];
 
         return $t;

@@ -112,7 +112,7 @@
       {% if attributesToShow is not empty %}
         <div class="user-attributes-wrapper">
           {% set photo = attributes['jpegPhoto'] is defined?attributes['jpegPhoto'][0]:'' %}
-          {% set attributesToShowFiltered = (attributesToShow|filter((v, k) => (k|lower) != ('jpegPhoto'|lower) and (v.view.allow ?? true) != false)) %}
+          {% set attributesToShowFiltered = (attributesToShow|filter((v, k) => (k|lower) != ('jpegPhoto'|lower) and (v.view.allow|default(true)) != false)) %}
           {%- if photo is not empty -%}
               <img src="data:image/jpeg;base64,{{ photo }}" alt="{{ 'User Avatar'|e('html_attr')|raw }}">
           {%- endif -%}
@@ -159,8 +159,8 @@
             {%- if logouturl is defined and logouturl is not empty -%}
               <li><a class="admin-link" href="{{ logouturl }}" accesskey="l"><span class="fa fa-right-from-bracket link-icon" aria-hidden="true"></span><span class="link-label">{{ 'Logout'|trans }}</span></a></li>
             {%- endif -%}
-            {%- if profileEditingEnabled is defined and profileEditingEnabled == true -%}
-              <li><a class="admin-link" href="{{ moduleURL('uab/edit-profile') }}" accesskey="p"><span class="fa fa-user-pen link-icon" aria-hidden="true"></span><span class="link-label">{{ 'Edit Account'|trans }}</span></a></li>
+            {%- if profileEditUrl is defined and profileEditUrl is not empty -%}
+              <li><a class="admin-link" href="{{ profileEditUrl|raw }}" accesskey="p"><span class="fa fa-user-pen link-icon" aria-hidden="true"></span><span class="link-label">{{ 'Edit Account'|trans }}</span></a></li>
             {%- endif -%}
           </ul>
         </div>

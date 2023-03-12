@@ -215,3 +215,15 @@ msgstr "Ligações"
 
 msgid "Options"
 msgstr "Opções"
+
+msgid "Edit %u's Profile - %s"
+msgstr "Editar perfil de %u - %s"
+
+msgid "Edit Profile"
+msgstr "Editar perfil"
+
+msgid "Current Password"
+msgstr "Palavra-passe atual"
+
+msgid "Password (confirmation)"
+msgstr "Palavra-passe (confirmação)"

@@ -38,3 +38,7 @@ uab-accessibility:
         en: /accessibility
         pt: /acessibilidade
     defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\Accessibility::page' }
+       
+uab-editprofile:
+    path:       /edit-profile
+    defaults:   { _controller: 'SimpleSAML\Module\uab\Controller\ProfileEdit::edit' }

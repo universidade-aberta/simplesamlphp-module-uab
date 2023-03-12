@@ -1,0 +1,16 @@
+{% set pagetitle = 'Edit Profile'|trans %}
+{% set frontpage_section = 'test' %}
+{% extends "base.twig" %}
+
+{% block content %}
+    {#%- include "@admin/includes/menu.twig" %#}
+
+    <p>{% trans %}@TODO{% endtrans %}</p>
+
+    {%- if logouturl %}
+
+    <div class="center">
+      <a class="pure-button pure-button-red" href="{{ logouturl }}">{{ 'Logout'|trans }}</a>
+    </div>
+    {%- endif %}
+{% endblock %}

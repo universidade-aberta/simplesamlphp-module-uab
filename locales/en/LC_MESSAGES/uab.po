@@ -219,3 +219,15 @@ msgstr "Links"
 
 msgid "Options"
 msgstr "Options"
+
+msgid "Edit %u's Profile - %s"
+msgstr "Edit %u's Profile - %s"
+
+msgid "Edit Profile"
+msgstr "Edit Profile"
+
+msgid "Current Password"
+msgstr "Current Password"
+
+msgid "Password (confirmation)"
+msgstr "Password (confirmation)"
