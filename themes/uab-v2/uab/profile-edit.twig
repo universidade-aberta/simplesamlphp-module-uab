@@ -5,38 +5,75 @@
 {% block preload %}
   {{ parent() }}
   <link rel="stylesheet" href="{{ asset('css/uab-v2-profile.css', 'uab') }}">
+  <link rel="stylesheet" href="{{ asset('css/uab-v2-forms.css', 'uab') }}">
+  <script src="{{ asset('js/uab-v2-forms.js', 'uab') }}" defer></script>
 {% endblock %}
 
 {% block hellocontent %}
     <h1 class="page-title">{{ 'Edit Profile'|default('')|trans }}</h1>
 
     <div class="admin-columns">
-      {% if attributesToEdit is not empty %}
-        <div class="user-attributes-wrapper">
-          {% set photo = attributes['jpegPhoto'] is defined?attributes['jpegPhoto'][0]:'' %}
-          {% set attributesToEditFiltered = (attributesToEdit|filter((v, k) => (k|lower) != ('jpegPhoto'|lower) and (v.edit.allow|default(false)) != false)) %}
-          {%- if photo is not empty -%}
-              <img src="data:image/jpeg;base64,{{ photo }}" alt="{{ 'User Avatar'|e('html_attr')|raw }}">
-          {%- endif -%}
+      {% if errors is not empty -%}
+          <div id="error-message" class="message-box error">
+              <h2 class="font-semi-bold">{{ (errors|length==1?'An error has occurred':'Errors have occurred')|trans }}</h2>
 
-          <div class="user-attributes attributes">
-            {% for attributeName,attributeInfo  in attributesToEditFiltered %}
-              <div class="attribute-group attribute-{{ attributeName|e('html_attr')|raw }} {{ attributes[attributeName] is defined?'':'attribute-is-empty' }} {{ attributeInfo.edit.classes|default('')|e('html_attr') }}">
-                {%- set label = attributeInfo.label is iterable ? attributeInfo.label|translateFromArray : attributeInfo.label|trans -%}
-                
-                {% apply spaceless %}
-                  {% if attributes[attributeName] is defined %}
-                    {% for value in attributes[attributeName] %}
-                      {%- set idAttrib = attributeName|e('html_attr') -%}
-                      <label class="attribute-label attribute-label-input" for="attribute-{{ idAttrib|raw }}-{{ loop.index }}">{{ label }}</label>
-                      <input class="attribute-value attribute-value-input" type="{{ attributeInfo.edit.htmlType|default('text') }}" id="attribute-{{ idAttrib|raw }}-{{ loop.index }}" name="{{ idAttrib|raw }}[]" value="{{ value|default('')|e('html_attr')|raw }}" {% for attributeName, attributeValue in attributeInfo.edit.htmlAttributes|default([]) %}{{ attributeName|e('html_attr') }}="{{ attributeValue|e('html_attr')|raw }}"{% endfor %}>
-                    {% endfor %}
-                  {% endif %}
-                {% endapply -%}
-              </div>
-            {% endfor %}
+              {% for error in errors %}
+                  {% if loop.length>1 and loop.first %}<ul>{% endif %}
+                  {% if loop.length>1 %}<li>{% endif -%}
+                  {{ error|default('')|trans }}
+                  {% if loop.length>1 %}</li>{% endif %}
+                  {% if loop.length>1 and loop.last %}</ul>{% endif %}
+              {% endfor %}
+
           </div>
+      {%- endif %}
+      
+      <form id="f" class="_pure-form _pure-form-aligned" action="{{ moduleURL('uab/edit-profile', {'StateId': StateId}) }}" method="post" name="f">
+        {% if attributesToEdit is not empty %}
+            <div class="user-attributes-wrapper">
+              {% set photo = attributes['jpegPhoto'] is defined?attributes['jpegPhoto'][0]:'' %}
+              {% set attributesToEditFiltered = (attributesToEdit|filter((v, k) => (k|lower) != ('jpegPhoto'|lower) and (v.edit.allow|default(false)) != false)) %}
+              {%- if photo is not empty -%}
+                  <img src="data:image/jpeg;base64,{{ photo }}" alt="{{ 'User Avatar'|e('html_attr')|raw }}">
+              {%- endif -%}
+
+              <div class="user-attributes attributes">
+                {% for attributeName,attributeInfo  in attributesToEditFiltered %}
+                  <div class="attribute-group attribute-{{ attributeName|e('html_attr')|raw }} {{ attributes[attributeName] is defined?'':'attribute-is-empty' }} {{ attributeInfo.edit.classes|default('')|e('html_attr') }}">
+                    {%- set label = attributeInfo.label is iterable ? attributeInfo.label|translateFromArray : attributeInfo.label|trans -%}
+                    
+                    {% apply spaceless %}
+                      {% if attributes[attributeName] is defined %}
+                        {% for value in attributes[attributeName] %}
+                          {%- set idAttrib = attributeName|e('html_attr') -%}
+                          <div class="form-floating mt-4">
+                            <input class="form-control attribute-value attribute-value-input" type="{{ attributeInfo.edit.htmlType|default('text') }}" id="attribute-{{ idAttrib|raw }}-{{ loop.index }}" name="{{ idAttrib|raw }}[]" title="{{ label|default('')|e('html_attr')|raw }}" value="{{ value|default('')|e('html_attr')|raw }}" {% for attributeName, attributeValue in attributeInfo.edit.htmlAttributes|default([]) %}{{ attributeName|e('html_attr') }}="{{ attributeValue|e('html_attr')|raw }}"{% endfor %} {% if attributeInfo.description is defined %}aria-details="attribute-{{ idAttrib|raw }}-{{ loop.index }}"{% endif %}>
+                          </div>
+                          {% if attributeInfo.description is defined %}
+                            <small class="field-description attribute-{{ idAttrib|raw }}-description" id="attribute-{{ idAttrib|raw }}-{{ loop.index }}">{{ attributeInfo.description|trans|raw }}</small>
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endapply -%}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+        {% endif %}
+        <div class="pure-control-group center login-form-submit">
+            <a class="pure-button" id="cancel_button" href="{{ returnUrl }}">
+              {% if attributesToEdit is not empty %}
+                {% trans %}Cancel{% endtrans %}
+              {% else %}
+                {% trans %}Back{% endtrans %}
+              {% endif %}
+            </a>
+            {% if attributesToEdit is not empty %}
+              <button class="pure-button pure-button-red" id="submit_button" type="submit" name="continue" value="1">
+                  {% trans %}Save{% endtrans %}
+              </button>
+            {% endif %}
         </div>
-      {% endif %}
+      </form>
     </div>
 {% endblock %}

@@ -66,6 +66,12 @@ msgstr "Cancel"
 msgid "Continue"
 msgstr "Continue"
 
+msgid "Back"
+msgstr "Back"
+
+msgid "Save"
+msgstr "Save"
+
 msgid "Are you sure you want to cancel?"
 msgstr "Are you sure you want to cancel?"
 
@@ -231,3 +237,48 @@ msgstr "Current Password"
 
 msgid "Password (confirmation)"
 msgstr "Password (confirmation)"
+
+msgid "title_not_authenticated"
+msgstr "Not authenticated"
+
+msgid "An error has occurred"
+msgstr "An error has occurred"
+
+msgid "Errors have occurred"
+msgstr "Errors have occurred"
+
+msgid "Missing state ID. Cannot proceed."
+msgstr "Missing state ID. Cannot proceed."
+
+msgid "Missing state data. Cannot proceed."
+msgstr "Missing state data. Cannot proceed."
+
+msgid "Missing authentication ID. Cannot proceed."
+msgstr "Missing authentication ID. Cannot proceed."
+
+msgid "Not authenticated. Cannot proceed."
+msgstr "Not authenticated. Cannot proceed."
+
+msgid "No attributes available for editing. Cannot proceed."
+msgstr "No attributes available for editing. Cannot proceed."
+
+msgid "Profile editing is disabled. Cannot proceed."
+msgstr "Profile editing is disabled. Cannot proceed."
+
+msgid "Unable to load Multi-Authentication configuration. Cannot proceed."
+msgstr "Unable to load Multi-Authentication configuration. Cannot proceed."
+
+msgid "New Password"
+msgstr "New Password"
+
+msgid "Specify a new password if you want to change it. Leave it blank to keep the current password."
+msgstr "Specify a new password if you want to change it. Leave it blank to keep the current password."
+
+msgid "New Password (confirmation)"
+msgstr "New Password (confirmation)"
+
+msgid "Reenter the new password again to confirm."
+msgstr "Reenter the new password again to confirm."
+
+msgid "Specify your current password to authenticate the request."
+msgstr "Specify your current password to authenticate the request."

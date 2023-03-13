@@ -62,6 +62,12 @@ msgstr "Cancelar"
 msgid "Continue"
 msgstr "Continuar"
 
+msgid "Back"
+msgstr "Voltar"
+
+msgid "Save"
+msgstr "Guardar"
+
 msgid "Are you sure you want to cancel?"
 msgstr "Tem a certeza que pretende cancelar?"
 
@@ -227,3 +233,45 @@ msgstr "Palavra-passe atual"
 
 msgid "Password (confirmation)"
 msgstr "Palavra-passe (confirmação)"
+
+msgid "An error has occurred"
+msgstr "Ocorreu um erro"
+
+msgid "Errors have occurred"
+msgstr "Ocorreram erros"
+
+msgid "Missing state ID. Cannot proceed."
+msgstr "Falta o ID de estado. Não é possível prosseguir"
+
+msgid "Missing state data. Cannot proceed."
+msgstr "Falta a informação de estado. Não é possível prosseguir."
+
+msgid "Missing authentication ID. Cannot proceed."
+msgstr "Falta o ID de autenticação. Não é possível prosseguir."
+
+msgid "Not authenticated. Cannot proceed."
+msgstr "Não está autenticado. Não é possível prosseguir."
+
+msgid "No attributes available for editing. Cannot proceed."
+msgstr "Sem atributos disponível para edição. Não é possível prosseguir."
+
+msgid "Profile editing is disabled. Cannot proceed."
+msgstr "A edição de perfis de utilizador está desativada. Não é possível prosseguir."
+
+msgid "Unable to load Multi-Authentication configuration. Cannot proceed."
+msgstr "Não foi possível carregar a configuração de Multi-autenticação. Não é possível prosseguir."
+
+msgid "New Password"
+msgstr "Nova palavra-passe"
+
+msgid "Specify a new password if you want to change it. Leave it blank to keep the current password."
+msgstr "Especifique uma nova palavra-passe se pretender alterar a mesma. Deixe em branco para manter a palavra-passe atual inalterada."
+
+msgid "New Password (confirmation)"
+msgstr "Nova palavra-passe (confirmação)"
+
+msgid "Reenter the new password again to confirm."
+msgstr "Reintroduza a nova palavra-passe para confirmar."
+
+msgid "Specify your current password to authenticate the request."
+msgstr "Especifique a sua palavra-passe atual para autenticar o pedido."
