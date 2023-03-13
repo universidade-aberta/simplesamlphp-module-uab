@@ -49,9 +49,11 @@ Please refer to [module documentation](https://github.com/simplesamlphp/simplesa
 
 CAS Server is a soft dependency, which means you probably can configure your instance to work without it. However in our implementation we use it, so you can install it with the following command: 
 ```bash
-composer config repositories.repo-name vcs https://github.com/universidade-aberta/simplesamlphp-module-casserver.git
+composer config repositories.simplesamlphp-module-casserver vcs https://github.com/universidade-aberta/simplesamlphp-module-casserver.git
 composer require simplesamlphp/simplesamlphp-module-casserver dev-master
 ```
+> **Note:** The `config` command above uses a temporary repository to allow the instalation of the CAS Server module in SimpleSAMLphp v2.0+. Please adjust the command to the upstream repository when a compatible version for your SimpleSAMLphp version is available.
+
 Please refer to [module documentation](https://github.com/universidade-aberta/simplesamlphp-module-casserver) for more information about the module requirements and settings.
 
 
@@ -63,7 +65,7 @@ Just execute the following command in the root of your SimpleSAMLphp
 installation:
 
 ```bash
-composer config repositories.repo-name vcs https://github.com/universidade-aberta/simplesamlphp-module-uab.git
+composer config repositories.simplesamlphp-module-uab vcs https://github.com/universidade-aberta/simplesamlphp-module-uab.git
 composer require uab/simplesamlphp-module-uab:dev-master
 ```
 
