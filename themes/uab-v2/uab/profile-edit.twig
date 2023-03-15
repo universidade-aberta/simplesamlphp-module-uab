@@ -47,7 +47,7 @@
                         {% for value in attributes[attributeName] %}
                           {%- set idAttrib = attributeName|e('html_attr') -%}
                           <div class="form-floating mt-4">
-                            <input class="form-control attribute-value attribute-value-input" type="{{ attributeInfo.edit.htmlType|default('text') }}" id="attribute-{{ idAttrib|raw }}-{{ loop.index }}" name="{{ idAttrib|raw }}[]" title="{{ label|default('')|e('html_attr')|raw }}" value="{{ value|default('')|e('html_attr')|raw }}" {% for attributeName, attributeValue in attributeInfo.edit.htmlAttributes|default([]) %}{{ attributeName|e('html_attr') }}="{{ attributeValue|e('html_attr')|raw }}"{% endfor %} {% if attributeInfo.description is defined %}aria-details="attribute-{{ idAttrib|raw }}-{{ loop.index }}"{% endif %}>
+                            <input class="form-control attribute-value attribute-value-input attribute-{{ idAttrib|raw }}" type="{{ attributeInfo.edit.htmlType|default('text') }}" id="attribute-{{ idAttrib|raw }}-{{ loop.index }}" name="{{ idAttrib|raw }}[]" title="{{ label|default('')|e('html_attr')|raw }}" value="{{ value|default('')|e('html_attr')|raw }}" {% for attributeName, attributeValue in attributeInfo.edit.htmlAttributes|default([]) %}{{ attributeName|e('html_attr') }}="{{ attributeValue|e('html_attr')|raw }}"{% endfor %} {% if attributeInfo.description is defined %}aria-details="attribute-{{ idAttrib|raw }}-{{ loop.index }}"{% endif %}>
                           </div>
                           {% if attributeInfo.description is defined %}
                             <small class="field-description attribute-{{ idAttrib|raw }}-description" id="attribute-{{ idAttrib|raw }}-{{ loop.index }}">{{ attributeInfo.description|trans|raw }}</small>
@@ -69,7 +69,7 @@
               {% endif %}
             </a>
             {% if attributesToEdit is not empty %}
-              <button class="pure-button pure-button-red" id="submit_button" type="submit" name="continue" value="1">
+              <button class="pure-button pure-button-red" id="submit_button" type="submit" name="save" value="1">
                   {% trans %}Save{% endtrans %}
               </button>
             {% endif %}

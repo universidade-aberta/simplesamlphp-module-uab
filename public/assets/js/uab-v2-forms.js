@@ -80,7 +80,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
  */
 document.addEventListener('DOMContentLoaded', ()=>{
 
-
     const debounceFn = (func, timeout = 300)=>{
         let timer;
         return (...args) => {
@@ -108,83 +107,109 @@ document.addEventListener('DOMContentLoaded', ()=>{
         };
     };
 
-    const applyFormRestritionsInElementFn = (form, el)=>{
-        const restritions = el.dataset?.['restrictions'];
-        const regex = new RegExp('{(?<operator>.+?)(:true\\((?<true>.+?)\\))?(:false\\((?<false>.+?)\\))?}(?<selector>.+?){\\/\\1}', 'gm');
-        let m;
-        while ((m = regex.exec(restritions)) !== null) {
-            if (m.index === regex.lastIndex) {
-                regex.lastIndex++;
+    const uid = (element, prefix='')=>{
+        if(!element.id){
+            const genUid = () =>prefix+String(Date.now().toString(32)+Math.random().toString(16)).replace(/\./g, '');
+            let id = genUid();
+            while(!!document.getElementById(id)){
+                id = genUid();
             }
-            const match = (form.querySelectorAll(m.groups.selector).length > 0);
+            element.id = id;
+        }
+		return element.id;
+	};
 
-            const groups = {
-                'true': '-match',
-                'false': '-do-not-match'
-            };
+    const applyFormRestritionsInElementFactory = ()=>{
+        // const restrictionsCache = new Map();
+        const restrictionsCache = new Map();
 
-            Object.keys(groups).forEach((group) => {
-                const sufix = groups[group];
-                if (!!m.groups?.[group]) {
-                    const positive = group==='true';
-                    const add = (match && positive) || (!match && !positive);
-                    try {
-                        const attributes = JSON.parse(m.groups[group]);
-                        const parseAttributes = (el, attributes)=>{
-                            Object.keys(attributes).forEach((attribute) => {
-                                switch (attribute.toLowerCase()) {
-                                    case '- data-restrictions -':
-                                        const selector = attributes[attribute]?.selector;
-                                        const innerAttributes = attributes[attribute]?.attributes;
-                                        if(!!selector && !!innerAttributes){
-                                            document.querySelectorAll(selector).forEach((subEl)=>{
-                                                el.setAttribute('data-restrictions', el.getAttribute('data-restrictions').replace(m[0], '').toString());
-                                                if(el.getAttribute('data-restrictions')?.length<=0){
-                                                    el.removeAttribute('data-restrictions');
-                                                }
-                                                subEl.setAttribute('data-restrictions', (subEl.hasAttribute('data-restrictions')?subEl.getAttribute('data-restrictions'):'')+`{cloned-rule:${(positive?'true':'false')}(${(JSON.stringify(innerAttributes))})}${m.groups.selector}{/cloned-rule}`);
-                                                applyFormRestritionsInElementFn(form, subEl);
-                                            });
-                                        }
-                                        break;
-                                    case 'class':
-                                        const classList = attributes[attribute].split();
-                                        el.classList[add ? 'add' : 'remove'](...classList);
-                                        break;
-                                    case 'style':
-                                        try {
-                                            const styles = JSON.parse(attributes[attribute]);
-                                            Object.keys(styles).forEach((styleProperty) => {
-                                                if (!!styles[styleProperty] && add) {
-                                                    el.style.setProperty(styleProperty, styles[styleProperty]);
-                                                } else {
-                                                    el.style.removeProperty(styleProperty);
-                                                }
-                                            }
-                                            );
-                                        } catch (ex) {
-                                            console.error(m.groups[group], attributes[attribute], ex);
-                                        }
-                                        ; break;
-                                    default:
-                                        if (match && add) {
-                                            el.setAttribute(attribute, attributes[attribute]);
-                                        } else {
-                                            el.removeAttribute(attribute);
-                                        }
-                                }
-                            });
-                        };
-                        parseAttributes(el, attributes);
-                    } catch (ex) {
-                        console.error(m.groups[group], ex);
-                    }
-                } else {
-                    el.classList.toggle(m.groups.operator + sufix, match);
+        const parseRule = (rule, name, el, form, set=false, rootMatch=null)=>{
+            
+            const matchSelector = (!!rootMatch?rootMatch:(rule?.match));
+            const match = !!matchSelector ? (form.querySelectorAll(matchSelector).length > 0) : set;
+
+            Object.keys(rule).filter(key=>key.toLowerCase()!=='match').forEach(key=>{
+                switch(key.toLowerCase()){
+                    case 'if':
+                        const T = (new Boolean(match)).toString();
+                        const F = (new Boolean(!match)).toString()
+                        const matchRules = rule[key][T]; 
+                        const mismatchRules = rule[key][F]; 
+                        if(!!mismatchRules){
+                            rule[key][F] = parseRule(mismatchRules, `${name}-${key}`, el, form, match?!match:match);
+                        }
+                        if(!!matchRules){
+                            rule[key][T] = parseRule(matchRules, `${name}-${key}`, el, form, match?match:!match);
+                        }
+                        break;
+                    
+                    case 'nested':
+                        const nestedRules = !Array.isArray(rule[key])?[rule[key]]:rule[key];
+                        nestedRules.forEach((subRule, index)=>{
+                            if(!!subRule?.select){
+                                document.querySelectorAll(subRule?.select).forEach((subEl)=>{
+                                    el.setAttribute('data-restrictions', el.getAttribute('data-restrictions').replace(JSON.stringify({[key]:subRule}), '').toString());
+                                    if(el.getAttribute('data-restrictions')?.length<=0){
+                                        el.removeAttribute('data-restrictions');
+                                    }
+                                    
+                                    let subRestritions;
+                                    try{
+                                        subRestritions = subEl.hasAttribute('data-restrictions')?JSON.parse(subEl.getAttribute('data-restrictions')):{};
+                                    }catch(ex){
+                                        subRestritions = {};
+                                    }
+                                    delete subRule?.select;
+                                    subRestritions[`${name}-${key}-${index}`] = {"match": (rule?.match), ...subRule};
+                                    subEl.setAttribute('data-restrictions', JSON.stringify(subRestritions));
+                                    init(form, subEl);
+                                });
+                            }
+                        });
+
+                        delete rule[key];
+                        break;
+                    
+                    case 'class':
+                        const classList = rule[key].split(' ');
+                        el.classList[match ? 'add' : 'remove'](...classList);
+                        break;
+
+                    default: 
+                        if (match) {
+                            el.setAttribute(key, rule[key]);
+                        } else {
+                            el.removeAttribute(key);
+                        }
                 }
             });
-        }
+            return rule;
+        };
+
+        const parseRules = (rules, el, form)=>{
+            Object.keys(rules).forEach((rule) => {
+                rules[rule] = parseRule(rules[rule], rule, el, form);
+            });
+            return rules;
+        };
+
+        const init = (form, el)=>{
+            const restritions = el.dataset?.['restrictions'];
+
+            try{
+                const elID = uid(el); 
+                if(!restrictionsCache.has(elID)){
+                    restrictionsCache.set(elID, JSON.parse(restritions));
+                }
+                parseRules(restrictionsCache.get(elID), el, form);
+            }catch(ex){
+                console.error("Data Restritions Exception", ex, restritions);
+            }
+        };
+
+        return init;
     };
+    const applyFormRestritionsInElementFn = applyFormRestritionsInElementFactory();
 
     const applyFormRestritionsFn = (form)=>{
         form.querySelectorAll(`[data-restrictions]`).forEach(el => {
@@ -245,5 +270,20 @@ document.addEventListener('DOMContentLoaded', ()=>{
             }));
         }
         checkValidityAsync(form);
+    });
+
+    /**
+     * Animate the toggling of hidden elements
+     */
+    const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+            entry.target.style.setProperty('--height', (entry.target.scrollHeight+20)+'px');
+        }
+    });
+    document.addEventListener('DOMContentLoaded', ()=>{
+        document.querySelectorAll(`.expandable-element`).forEach((el)=>{
+            resizeObserver.observe(el);
+            el.style.setProperty('--height', (el.scrollHeight+20)+'px');
+        });
     });
 });

@@ -1,5 +1,26 @@
-.d-none{
-    display: none;
+/* .hide-field,
+.show-field{
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+} */
+/* .hide-field{
+    max-height: 0;
+} */
+/* .show-field{
+    max-height: 100%;
+} */
+.expandable-element {
+    max-height: var(--height, 9999px);
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+.expandable-element.hide-field {
+    max-height: 0;
+}
+
+.no-js .expandable-element {
+    --height: auto;
+    overflow: auto;
 }
 .form-control {
     display: block;
@@ -68,17 +89,38 @@
     overflow: hidden;
     max-width: 100%;
     text-overflow: ellipsis;
-    color: rgb(117, 117, 117);
+    color: var(--main-color, #41228e);
     background-color: white;
-    padding: 0;
+    padding: 0.3rem 1.3rem;
     height: auto;
-    line-height: 1.5rem;
+    line-height: 1.3rem;
     margin: 0;
+}
+
+.form-floating label:before{
+    content: "\2192";
+    display: block;
+    position: absolute;
+    left: 0;
+    top: auto;
+    width: 1rem;
+    text-align: center;
+    line-height: 1.3rem;
+    pointer-events: none;
+    transition: rotate var(--fast-transition) ease-in-out;
+    font-weight: bold;
+}
+.form-floating.as-label label:before{
+    rotate: 90deg;
+}
+
+.field-description{
+    color: rgb(117, 117, 117);
 }
 
 .form-floating.as-label label {
     bottom: 2.2rem;
-    color: var(--main-color);
+    color: var(--main-color, #41228e);
     font-weight: bold;
 }
 

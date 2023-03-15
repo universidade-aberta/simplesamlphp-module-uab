@@ -172,10 +172,37 @@ class ProfileEdit{
                                                 'key'=>'password',
                                                 'type' => 'password',
                                                 'htmlType' => 'password',
-                                                'classes' => 'd-none',
+                                                'classes' => 'hide-field expandable-element',
                                                 'htmlAttributes' => [
-                                                    'data-restrictions'=>'{hide-if:true({"- data-restrictions -":{"selector":".attribute-group.attribute-'.sprintf($confirmationPasswordFormat, $key).'","attributes": {"class":"d-none"}}})}#attribute-'.$key.'-1[value=""]{/hide-if}',
-                                                    //{disable-if:true({"disabled":""})}input:not([data-is-valid="true"]){/disable-if}{title-if:true({"title":"Corrija os campos com valores inválidos para continuar"})}input:not([data-is-valid="true"]){/title-if}'
+                                                    'data-restrictions'=>json_encode([
+                                                        "hide"=>[
+                                                            "match"=>'.attribute-'.$key.'[value=""]',
+                                                            // "if"=>[
+                                                            //     "true"=>[
+                                                            //         "class"=>"cpois-sim",
+                                                            //         "data-class"=>"dpois-sim",
+                                                            //     ],
+                                                            //     "false"=>[
+                                                            //         "class"=>"cpois-nao",
+                                                            //     ],
+                                                            // ],
+                                                            "nested"=>[
+                                                                [
+                                                                    "select"=>'.attribute-group.attribute-'.sprintf($confirmationPasswordFormat, $key),
+                                                                    "if"=>[
+                                                                        "true"=>[
+                                                                            "class"=>"hide-field",
+                                                                            "aria-hidden"=>"true",
+                                                                        ],
+                                                                        "false"=>[
+                                                                            "class"=>"show-field",
+                                                                            "aria-hidden"=>"false",
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                            ],
+                                                        ],
+                                                    ]),
                                                 ],
                                             ],
                                             'view'=>[
@@ -190,9 +217,29 @@ class ProfileEdit{
                                                 'key'=>'password',
                                                 'type' => 'password',
                                                 'htmlType' => 'password',
-                                                'classes' => 'd-none',
+                                                'classes' => 'hide-field expandable-element',
+                                                
                                                 'htmlAttributes' => [
-                                                    'data-restrictions'=>'{hide-if:true({"- data-restrictions -":{"selector":".attribute-group.attribute-'.sprintf($currentPasswordFormat, $key).'","attributes": {"class":"d-none"}}})}#attribute-'.$key.'-1[value=""]{/hide-if}',
+                                                    'data-restrictions'=>json_encode([
+                                                        "hide"=>[
+                                                            "match"=>'.attribute-'.$key.'[value=""]',
+                                                            "nested"=>[
+                                                                [
+                                                                    "select"=>'.attribute-group.attribute-'.sprintf($currentPasswordFormat, $key),
+                                                                    "if"=>[
+                                                                        "true"=>[
+                                                                            "class"=>"hide-field",
+                                                                            "aria-hidden"=>"true",
+                                                                        ],
+                                                                        "false"=>[
+                                                                            "class"=>"show-field",
+                                                                            "aria-hidden"=>"false",
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                            ],
+                                                        ],
+                                                    ]),
                                                 ],
                                             ],
                                             'view'=>[
@@ -227,7 +274,12 @@ class ProfileEdit{
 
             $save = $request->getMethod() === 'POST' && !empty($request->request->get('save'));
             if($save):
+
+                //serverInputValidation
+                $request->request->all();
+                echo("<pre>".print_r($request->request->all(), true)."</pre>");
                 die("TODO: Save<pre>".print_r($attributesToEdit, true)."</pre>");
+                
 
                 $this->authState::deleteState($state);
                 $savedProfileState = [
