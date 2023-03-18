@@ -53,15 +53,201 @@ $config = [
         ],
         'preselect' => 'uab-ldap',
 
+        'uab.profile.edit.source' => 'uab-ldap',
+        'uab.profile.edit.enabled' => false,
         'uab.profile.attributes' => [
-            'sAMAccountName', 
-            'mail', 
-            'givenName', 
-            'sn', 
-            'displayName', 
-            'AccountRecoveryEmail', 
-            'jpegPhoto',
+            'sAMAccountName'=>[
+                'label'=>[
+                    'en' => 'Username',
+                    'pt' => 'Nome de utilizador',
+                ],
+            ],
+            'password'=>[
+                'label'=>[
+                    'en' => 'Password',
+                    'pt' => 'Palavra-passe',
+                ],
+                'edit'=>[
+                    'allow'=>true,
+                    'required'=>false,
+                    'key'=>'password',
+                    'type' => 'password',
+                    'htmlType' => 'password',
+                    'classes' => '',
+                    'htmlAttributes' => [],
+                    'requireAuthForUpdate' => true,
+                    'serverInputValidation'=>[
+                        'filter' => FILTER_CALLBACK,
+                        'flags' => FILTER_REQUIRE_ARRAY, 
+                        'options'   => (function(int $minLength=8){
+                            return function($value) use ($minLength){ 
+                                $results = [];
+                                // The password must have alphanumeric characters, symbols and with a minimum length of 8 chars
+                                if(\preg_match("/(?=(?'alphanum'.*[A-Za-z0-9]))(?=(?'symbols'.*[^A-Za-z0-9]))(?=(?'length'.{".\preg_quote($minLength).",}))/u", $value, $results)):
+                                    return $value;
+                                endif;
+
+                                $matchGroupsErrors = [
+                                    'alphanum'=>[
+                                        'en'=>'No alphanumeric characters where provided',
+                                        'pt'=>'Não foram fornecidos carateres alfa-numéricos',
+                                    ],
+                                    'symbols'=>[
+                                        'en'=>'No symbol characters where provided',
+                                        'pt'=>'Não foram fornecidos carateres especiais',
+                                    ],
+                                    'length'=>[
+                                        'en'=>'The minimum password length was not achieved',
+                                        'pt'=>'O tamanho mínimo da palavra-passe não foi atingido',
+                                    ]
+                                ];
+                                $errors = array_diff_key($matchGroupsErrors, $results);
+
+                                if(!empty($errors)):
+                                    throw new class($errors) extends \Exception{
+                                        protected $errors = [];
+                                        public function __construct(array $errors, $message='', $code = 0, \Exception $previous = null) {
+                                            $this->errors = $errors;
+                                            parent::__construct($message, $code, $previous);
+                                        }
+
+                                        public function getErrors():array{
+                                            return $this->errors;
+                                        }
+                                    };
+                                endif;
+
+                                // Should not happen, but probably it will ;-)
+                                return $value;
+                            };
+                        })(8),
+                    ],
+                    'minLength' => 8,
+                ],
+                'view'=>[
+                    'allow'=>false,
+                ],
+            ],
+            'mail'=>[
+                'label'=>[
+                    'en' => 'Email',
+                    'pt' => 'E-mail',
+                ],
+            ], 
+            'givenName'=>[
+                'label'=>[
+                    'en' => 'First Name',
+                    'pt' => 'Primeiro nome',
+                ],
+            ], 
+            'sn'=>[
+                'label'=>[
+                    'en' => 'Last Name',
+                    'pt' => 'Último nome',
+                ],
+            ], 
+            'displayName'=>[
+                'label'=>[
+                    'en' => 'Display Name',
+                    'pt' => 'Nome de apresentação',
+                ],
+            ], 
+            'AccountRecoveryEmail'=>[
+                'label'=>[
+                    'en' => 'Recovery Email',
+                    'pt' => 'E-mail de recuperação',
+                ],
+                'edit'=>[
+                    'allow'=>true,
+                    'required'=>false,
+                    'key'=>'extensionAttribute5',
+                    'type' => 'text',
+                    'htmlType' => 'email',
+                    'classes' => '',
+                    'htmlAttributes' => [],
+                    'requireAuthForUpdate' => true,
+                    'serverInputValidation'=>[
+                        'filter' => FILTER_VALIDATE_EMAIL,
+                        'flags' => FILTER_REQUIRE_ARRAY, 
+                        'options'   => [
+                            'default' => '',
+                        ],
+                    ],
+                ],
+            ], 
+            'jpegPhoto'=>[
+                'label'=>[
+                    'en' => 'Photo',
+                    'pt' => 'Foto',
+                ],
+                'edit'=>[
+                    'allow'=>false,
+                    'key'=>'jpegPhoto',
+                ],
+                'view'=>[
+                    'allow'=>false,
+                ],
+            ],
         ],
+        'uab.admin.links' => [
+            'portal'=>[
+                'label'=>[
+                    'en' => 'Portal',
+                    'pt' => 'Portal',
+                ],
+                'icon'=>'fa-university',
+                'href'=>[
+                    'en' => 'https://portal.uab.pt/?lang=en',
+                    'pt' => 'https://portal.uab.pt/?lang=pt',
+                ],
+                'target'=>'_blank',
+                'rel'=>'noopener',
+                'accesskey'=>'p',
+            ],
+            'intranet'=>[
+                'label'=>[
+                    'en' => 'Intranet',
+                    'pt' => 'Intranet',
+                ],
+                'icon'=>'fa-network-wired',
+                'href'=>[
+                    'en' => 'https://intranet.uab.pt',
+                    'pt' => 'https://intranet.uab.pt',
+                ],
+                'target'=>'_blank',
+                'rel'=>'noopener',
+                'accesskey'=>'i',
+            ],
+            'help'=>[
+                'label'=>[
+                    'en' => 'Help',
+                    'pt' => 'Ajuda',
+                ],
+                'icon'=>'fa-life-ring',
+                'href'=>[
+                    'en' => 'https://portal.uab.pt/si/',
+                    'pt' => 'https://portal.uab.pt/si/',
+                ],
+                'target'=>'_blank',
+                'rel'=>'noopener',
+                'accesskey'=>'i',
+            ],
+        ],
+
+        'uid.attribute' => 'sAMAccountName',
+        'uid.name' => function($attributes){ // Compose a name for the user using 'givenName', 'sn' and 'displayName' (as a fallback)
+            $attributes = array_map(function($attribute){
+                return is_array($attribute)?implode(',', $attribute):(is_scalar($attribute)?$attribute:null);
+            }, $attributes);
+
+            $names = [];
+            foreach(['givenName', 'sn', 'displayName'] as $nameKey):
+                if((!empty($attributes[$nameKey]) and $nameKey!=='displayName') or empty($names)):
+                    $names[]=$attributes[$nameKey];
+                endif;
+            endforeach;
+            return implode(' ', $names);
+        },
     ],
 
     // This is a authentication source which handles admin authentication.

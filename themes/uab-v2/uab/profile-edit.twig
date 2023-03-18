@@ -20,7 +20,7 @@
               {% for error in errors %}
                   {% if loop.length>1 and loop.first %}<ul>{% endif %}
                   {% if loop.length>1 %}<li>{% endif -%}
-                  {{ error|default('')|trans }}
+                  {{ error|default('')|trans|nl2br }}
                   {% if loop.length>1 %}</li>{% endif %}
                   {% if loop.length>1 and loop.last %}</ul>{% endif %}
               {% endfor %}

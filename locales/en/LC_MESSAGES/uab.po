@@ -268,6 +268,15 @@ msgstr "Profile editing is disabled. Cannot proceed."
 msgid "Unable to load Multi-Authentication configuration. Cannot proceed."
 msgstr "Unable to load Multi-Authentication configuration. Cannot proceed."
 
+msgid "No profile editing source defined. Cannot proceed."
+msgstr "No profile editing source defined. Cannot proceed."
+
+msgid "Unable to create a connector from the authentication source. Cannot proceed."
+msgstr "Unable to create a connector from the authentication source. Cannot proceed."
+
+msgid "Unable load the configuration for \"%s\""
+msgstr "Unable load the configuration for \"%s\""
+
 msgid "New Password"
 msgstr "New Password"
 
@@ -282,3 +291,18 @@ msgstr "Reenter the new password again to confirm."
 
 msgid "Specify your current password to authenticate the request."
 msgstr "Specify your current password to authenticate the request."
+
+msgid "The field \"%s\" is not editable"
+msgstr "The field \"%s\" is not editable"
+
+msgid "The field \"%s\" is required"
+msgstr "The field \"%s\" is required"
+
+msgid "The field \"%s\" value is invalid. Please, check the field value requirements and try again."
+msgstr "The field \"%s\" value is invalid. Please, check the field value requirements and try again."
+
+msgid "The field \"%s\" is required but resulting value after validation is empty. Please, check the field value requirements and try again."
+msgstr "The field \"%s\" is required but resulting value after validation is empty. Please, check the field value requirements and try again."
+
+msgid "Validation error for field \"%s\": %s."
+msgstr "Validation error for field \"%s\": %s."

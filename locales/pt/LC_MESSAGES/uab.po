@@ -261,6 +261,15 @@ msgstr "A edição de perfis de utilizador está desativada. Não é possível p
 msgid "Unable to load Multi-Authentication configuration. Cannot proceed."
 msgstr "Não foi possível carregar a configuração de Multi-autenticação. Não é possível prosseguir."
 
+msgid "No profile editing source defined. Cannot proceed."
+msgstr "Não está definida uma fonte para edição de perfis. Não é possível prosseguir."
+
+msgid "Unable to create a connector from the authentication source. Cannot proceed."
+msgstr "Não foi possível criar um conector a partir da fonte de autenticação. Não é possível prosseguir."
+
+msgid "Unable load the configuration for \"%s\""
+msgstr "Não foi possível carregar a configuração para \"%s\""
+
 msgid "New Password"
 msgstr "Nova palavra-passe"
 
@@ -275,3 +284,20 @@ msgstr "Reintroduza a nova palavra-passe para confirmar."
 
 msgid "Specify your current password to authenticate the request."
 msgstr "Especifique a sua palavra-passe atual para autenticar o pedido."
+
+msgid "The field \"%s\" is not editable"
+msgstr "O field \"%s\" não é editável"
+
+msgid "The field \"%s\" is required"
+msgstr "O campo \"%s\" é obrigatório"
+
+msgid "The field \"%s\" value is invalid. Please, check the field value requirements and try again."
+msgstr "O valor do campo \"%s\" não é válido. Por favor, confirme os requisitos para o campo e tente novamente."
+
+msgid "The field \"%s\" is required but resulting value after validation is empty. Please, check the field value requirements and try again."
+msgstr "O valor do campo \"%s\" é obrigatório mas o resultado obtido após a validação está vazio. Por favor, confirme os requisitos para o campo e tente novamente."
+
+msgid "Validation error for field \"%s\": %s."
+msgstr "Erro de validação para o campo \"%s\": %s."
+
+

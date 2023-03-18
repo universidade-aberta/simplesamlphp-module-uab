@@ -547,6 +547,7 @@ $config = [
         'admin' => true,
         'multiauth' => true,
         'saml' => true,
+        'casserver' => false,
         'ldap' => true,
         'uab' => true
     ],
@@ -850,13 +851,13 @@ $config = [
     /*
      * Which theme directory should be used?
      */
-    'theme.use' => 'uab:uab-v1',
+    'theme.use' => 'uab:uab-v2',
 
     /*
      * Set this option to the text you would like to appear at the header of each page. Set to false if you don't want
      * any text to appear in the header.
      */
-    'theme.header' => 'UAb',
+    'theme.header' => 'Universidade Aberta',
 
     /**
      * A template controller, if any.
@@ -979,18 +980,25 @@ $config = [
         */
 
         // Adopts language from attribute to use in UI
-        30 => 'core:LanguageAdaptor',
+        // 30 => 'core:LanguageAdaptor',
 
-        45 => [
-            'class'         => 'core:StatisticsWithAttribute',
-            'attributename' => 'realm',
-            'type'          => 'saml20-idp-SSO',
-        ],
+        // 45 => [
+        //     'class'         => 'core:StatisticsWithAttribute',
+        //     'attributename' => 'realm',
+        //     'type'          => 'saml20-idp-SSO',
+        // ],
 
         /* When called without parameters, it will fallback to filter attributes 'the old way'
          * by checking the 'attributes' parameter in metadata on IdP hosted and SP remote.
          */
-        50 => 'core:AttributeLimit',
+        // 50 => 'core:AttributeLimit',
+
+        // 55 => [
+        //     'class' => 'ldap:AttributeAddUsersGroups',
+        //     'authsource' => 'uab-ldap',
+        //     'ldap.product' => 'ActiveDirectory',
+        //     'attribute.username' => 'sAMAccountName',
+        // ],
 
         /*
          * Search attribute "distinguishedName" for pattern and replaces if found
@@ -1017,7 +1025,8 @@ $config = [
         ],
         */
         // If language is set in Consent module it will be added as an attribute.
-        99 => 'core:LanguageAdaptor',
+        // 99 => 'core:LanguageAdaptor',
+
     ],
 
     /*
@@ -1047,6 +1056,7 @@ $config = [
 
         // Adopts language from attribute to use in UI
         90 => 'core:LanguageAdaptor',
+
     ],
 
 
@@ -1265,7 +1275,9 @@ $config = [
      */
     'proxymode.passAuthnContextClassRef' => false,
 
-    'UAb.defaultAuthenticator' => 'UAb-multi','uab:loginpage_links'=>[
+    'UAb.defaultAuthenticator' => 'UAb-multi',
+    
+    'uab:loginpage_links'=>[
         [
             'href'=>[
                 'en' => 'uab:uab/accessibility',

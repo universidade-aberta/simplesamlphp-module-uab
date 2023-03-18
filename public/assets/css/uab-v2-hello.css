@@ -183,7 +183,7 @@ main{
     content: '';
     animation-duration: 60s;
     animation-iteration-count: infinite;
-    animation-delay: 0;
+    animation-delay: 0s;
     animation-name: waveAnimation;
     position: absolute;
     opacity: 0.3;
@@ -198,7 +198,8 @@ header.header{
 }
 
 @media (prefers-reduced-motion: reduce) {
-    #another-bg #content-bg{
+    #another-bg #content-bg,
+    #another-bg #content-bg-wrapper::before{
         animation: none;
     }
 }
