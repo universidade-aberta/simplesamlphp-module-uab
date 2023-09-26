@@ -507,7 +507,7 @@ $config = [
          * The connection string for the LDAP-server.
          * You can add multiple by separating them with a space.
          */
-        'connection_string' => '[ldap://127.0.0.1]',
+        'connection_string' => 'ldap://127.0.0.1',
 
         /**
          * Whether SSL/TLS should be used when contacting the LDAP server.
