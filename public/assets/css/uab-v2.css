@@ -116,7 +116,7 @@ body{
     --transition-color-end:#6A75C6;
     --transition-color-dark:#3C6392;
 }
-@keyframes color-change {
+/* @keyframes color-change {
     0% { color: var(--transition-color-end, #864fe1); }
     25% { color: var(--transition-color-middle, #1797d2); }
     50% { color: var(--transition-color-start, #0cc898); }
@@ -126,20 +126,7 @@ body{
 .color-change {
     animation: color-change 60s ease infinite;
     animation-delay: var(--color-animation-delay, 0);
-}
-
-.background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 1;
-
-    background: linear-gradient(250deg, var(--transition-color-start, #0cc898), var(--transition-color-middle, #1797d2), var(--transition-color-end, #864fe1));
-    background-size: 300% 300%;
-    animation: backgroundColorAnimation 60s ease infinite;
-    animation-delay: var(--color-animation-delay, 0);
-}
+} */
 
 @keyframes backgroundColorAnimation {
     0% {
@@ -154,66 +141,31 @@ body{
         background-position: 0% 50%
     }
 }
+.bg-animation {
+    --blur:5px;
+    --transition-color-middle:#4687D0;
+    --transition-color-end:#6A75C6;
+    --transition-color-dark:#3C6392;
 
-.elements {
-    height: 100vh;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-around;
-    align-items: center;
-    filter: blur(5px);
-}
+    position: fixed;
+    z-index: -1;
+    top: calc(var(--blur, 5px) * -2);
+    right: calc(var(--blur, 5px) * -2);
+    bottom: calc(var(--blur, 5px) * -2);
+    left: calc(var(--blur, 5px) * -2);
+    width: calc(100% + calc(var(--blur, 5px) * 4) );
+    height: calc(100% + calc(var(--blur, 5px) * 4));
+    filter: blur(var(--blur, 5px));
 
-.square {
-    border: 10px solid rgb(237 237 237 / 0.10);
-    transition: all 1s ease-in-out;
-    animation-timing-function: linear;
-    animation-name: movingSquares;
-    animation-iteration-count: infinite;
-    animation-delay: var(--animation-delay, 0);
-
-    --scale-multiplier: 1;
-}
-
-@keyframes movingSquares {
-    0% {
-        transform: rotate(var(--initial-rotation, 0deg));
-        opacity: 0.5;
-    }
-
-    50% {
-        width: 1000px;
-        height: 1000px;
-    }
-
-    100% {
-        transform: rotate(calc(var(--initial-rotation, 0deg) + 360deg ));
-        opacity: 1;
-    }
-}
-
-.sq1 {
-    width: calc(var(--scale-multiplier, 1) * 50vw);
-    height: calc(var(--scale-multiplier, 1) * 70vh);
-    animation-duration: var(--animation-duration, 43s);
-}
-
-.sq2 {
-    width: calc(var(--scale-multiplier, 1) * 60vw);
-    height: calc(var(--scale-multiplier, 1) * 160vh);
-    animation-duration: var(--animation-duration, 90s);
-}
-
-.sq3 {
-    width: calc(var(--scale-multiplier, 1) * 65vw);
-    height: calc(var(--scale-multiplier, 1) * 80vh);
-    animation-duration: var(--animation-duration, 60s);
-}
+    background: var(--transition-color-start,#3C6392) linear-gradient(250deg, var(--transition-color-start, #0cc898), var(--transition-color-middle, #1797d2), var(--transition-color-end, #864fe1));
+    background-size: 300% 300%;
+    animation: backgroundColorAnimation 60s ease infinite;
+    animation-delay: var(--color-animation-delay, 0);
+  }
 
 @media (prefers-reduced-motion: reduce) {
-    .background,
-    .square,
     .color-change,
+    .bg-animation,
     a:is(:focus, :hover,:active){
         animation: none;
     }
@@ -301,10 +253,10 @@ a#brand-container,
 a.color-change{
     transition-duration: 0s;
 }
-a#brand-container:is(:hover, :active, :focus),
+/* a#brand-container:is(:hover, :active, :focus),
 a.color-change:is(:hover, :active, :focus){
     filter: hue-rotate(45deg);
-}
+} */
 
 /* language menu */
 .login-language-bar{

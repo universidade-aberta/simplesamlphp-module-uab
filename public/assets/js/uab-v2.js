@@ -2,21 +2,93 @@ document.documentElement.classList.toggle('no-js', false);
 document.documentElement.classList.toggle('js', true);
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    const randomDelay = Math.round(Math.random()*100)/100;
-    document.querySelectorAll('body, .background').forEach(el=>{
-        const currentAnimationDuration = /*getComputedStyle(el).animationDuration??*/'60s';
-        el.style.setProperty("--color-animation-delay", `calc(${currentAnimationDuration} * -${randomDelay})`);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.classList.add('bg-animation');
+    
+    const resizeCanvas = ()=>{
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    };
+    
+    class Square{
+        ctx;
+        x;
+        y;
+        speed;
+        size;
+        angle;
+        
+        constructor(ctx, x, y, speed, size, angle=0) {
+            this.ctx = ctx;
+            this.x = x;
+            this.y = y;
+            this.speed = speed;
+            this.size = size;
+            this.angle = angle;
+        }
+        
+        draw() {
+            this.ctx.save();
+            this.ctx.translate(this.x, this.y);
+            this.ctx.rotate(this.angle);
+            this.ctx.strokeStyle = "rgba(255,255,255,0.2)";
+            this.ctx.fillStyle = "rgba(255,255,255,0)";
+            this.ctx.lineWidth = 3;
+            this.ctx.beginPath();
+            this.ctx.rect(-this.size / 2, -this.size / 2, this.size, this.size);
+            this.ctx.stroke();
+            this.ctx.fill();
+            this.ctx.restore();
+        }
+    }
+    
+    // Initialize squares with random positions and sizes
+    const squares = Array.from({ length: 3 }, () => {
+        const x = Math.random() * (window.innerWidth + 200) - 100;
+        const y = Math.random() * (window.innerHeight + 200) - 100;
+        const speed = Math.random() * 0.003;
+        const size = Math.random() * window.innerWidth/2 + window.innerWidth/2;
+        const angle = (Math.random() * 360) * Math.PI / 180;
+        return new Square(ctx, x, y, speed, size, angle);
     });
 
-    document.querySelectorAll('.square, .with-animation-delay').forEach(el=>{
-        const currentAnimationDuration = getComputedStyle(el).animationDuration??'60s';
-        const randomDelay = Math.round(Math.random()*100)/100;
-        el.style.setProperty("--animation-delay", `calc(${currentAnimationDuration} * -${randomDelay})`);
-        const randomRotation = Math.round(Math.random()*360);
-        el.style.setProperty("--initial-rotation", `${randomRotation}deg`);
-        const scaleFactor = Math.round(Math.random()*3)+1;
-        el.style.setProperty("--scale-multiplier", `${scaleFactor}`);
-    });
+    
+
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let animationEnabled = !prefersReducedMotion?.matches;
+
+    const draw = ()=>{
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+        for (const square of squares) {
+            square.draw();
+            square.angle += square.speed;
+        }
+
+        if(animationEnabled) requestAnimationFrame(draw);
+    };
+
+    const randomDelay = Math.round(Math.random()*100)/100;
+    const currentAnimationDuration = /*getComputedStyle(el).animationDuration??*/'60s';
+    canvas.style.setProperty("--color-animation-delay", `calc(${currentAnimationDuration} * -${randomDelay})`);
+    
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // Function to handle the change in motion preference
+    const handleReduceMotionChanged = () => {
+        animationEnabled = !prefersReducedMotion?.matches;
+        draw();
+    };
+    // Listen for changes to the motion preference
+    prefersReducedMotion.addEventListener("change", handleReduceMotionChanged);
+
+    // Initially check for the user's preference and start drawing
+    handleReduceMotionChanged();
+
+    document.body.appendChild(canvas);
 });
 
 window.addEventListener('load',()=>{
