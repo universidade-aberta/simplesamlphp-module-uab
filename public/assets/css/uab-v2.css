@@ -437,7 +437,7 @@ ul.institutional-links{
 .sign-in-btn-wrapper{
     margin-top: 1rem;
 }
-/*#sign-in-submit_button.sign-in-btn:disabled,*/
+#sign-in-submit_button.sign-in-btn:disabled,
 #sign-in-submit_button.sign-in-btn[aria-disabled="true"]{
     cursor: not-allowed;
     box-shadow: none;
@@ -445,7 +445,7 @@ ul.institutional-links{
     color: #fff;
     background-color: #90979d;
 }
-/* .focus-element-wrapper #sign-in-submit_button.sign-in-btn.has-focus-element:is(:hover, :active):disabled+.focus-form-element, */
+.focus-element-wrapper #sign-in-submit_button.sign-in-btn.has-focus-element:is(:hover, :active):disabled+.focus-form-element,
 .focus-element-wrapper #sign-in-submit_button.sign-in-btn.has-focus-element:is(:hover, :active)[aria-disabled="true"]+.focus-form-element{
     display: none;
 }

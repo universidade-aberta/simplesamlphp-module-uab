@@ -105,6 +105,18 @@ window.addEventListener('load',()=>{
                 }, timeout);
             };
         };
+        const throttle = (func, limit)=>{
+            let inThrottle;
+            return function() {
+              const args = arguments;
+              const context = this;
+              if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+              }
+            }
+          };
 
         const domUniqueID = (prefix='')=>{
             let id;
@@ -158,7 +170,7 @@ window.addEventListener('load',()=>{
             return true;
         };
 
-        const checkElementValidityAsync = debounce((el) => {
+        const checkElementValidityAsync = throttle((el) => {
             checkElementValidity(el);
         }, 300);
 
@@ -220,8 +232,10 @@ window.addEventListener('load',()=>{
             if (Array.isArray(invalidFields) && invalidFields.length>0) {
                 invalidFields[0].focus();
                 //invalidFields[0].reportValidity();
-                submitButton.innerHTML = submitButton.getAttribute("data-default");
-                submitButton.removeAttribute('disabled');
+                if(submitButton){
+                    submitButton.innerHTML = submitButton.getAttribute("data-default");
+                    submitButton.removeAttribute('disabled');
+                }
                 ev.preventDefault();
                 return false;
             }
