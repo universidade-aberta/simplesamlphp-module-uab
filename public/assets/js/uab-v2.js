@@ -1,6 +1,7 @@
 document.documentElement.classList.toggle('no-js', false);
 document.documentElement.classList.toggle('js', true);
 
+// Background animation
 document.addEventListener("DOMContentLoaded", ()=>{
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -91,6 +92,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     document.body.appendChild(canvas);
 });
 
+// Login form validation
 window.addEventListener('load',()=>{
     const loginForm = document.querySelector(`#f.uab-login-form`);
     if(!!loginForm){
@@ -162,11 +164,13 @@ window.addEventListener('load',()=>{
 
         const updateSubmitButtonState = (submitButton, validity=false)=>{
             if(!!submitButton){
-                if(validity){
-                    submitButton.removeAttribute('disabled');
-                }else{
-                    submitButton.setAttribute('disabled', '');
-                }
+                // if(validity){
+                //     submitButton.removeAttribute('disabled');
+                // }else{
+                //     submitButton.setAttribute('disabled', '');
+                // }
+                submitButton.removeAttribute('disabled');
+                submitButton.setAttribute('aria-disabled', !validity?'true':'false');
             }
             return validity;
         };
@@ -174,14 +178,23 @@ window.addEventListener('load',()=>{
         const updateFormValidity = (form, submitButton)=>{
             const validity = form.checkValidity();
             form.setAttribute('aria-invalid', !validity);
-            //updateSubmitButtonState(submitButton, validity);
+            updateSubmitButtonState(submitButton, validity);
             return validity;
         };
 
         const usernameField = loginForm.querySelector('#username');
         const passwordField = loginForm.querySelector('#password');
         const fields = [usernameField, passwordField];
-        const submitButton = document.getElementById("submit_button");
+        const submitButton = document.getElementById("sign-in-submit_button");
+
+        // const oldSubmitButton = document.createElement('button');
+        // oldSubmitButton.id = "submit_button";
+        // oldSubmitButton.disabled = true;
+        // oldSubmitButton.hidden = '';
+        // oldSubmitButton.inert = '';
+        // document.body.appendChild(oldSubmitButton);
+        // window.onpageshow = ()=>{};
+        // loginForm.onsubmit = ()=>{};
 
         if(!!submitButton){
             submitButton.onclick = ()=>{};
@@ -203,17 +216,19 @@ window.addEventListener('load',()=>{
         loginForm.addEventListener('submit', (ev) => {
             updateFormValidity(ev.currentTarget, submitButton);
             ev.currentTarget.focus();
-            let invalidFields = [];
-            if ((invalidFields = fields.filter((field) => field && !checkElementValidity(field))) && invalidFields.length>0) {
+            const invalidFields = fields.filter((field) => field && !checkElementValidity(field));
+            if (Array.isArray(invalidFields) && invalidFields.length>0) {
                 invalidFields[0].focus();
                 //invalidFields[0].reportValidity();
+                submitButton.innerHTML = submitButton.getAttribute("data-default");
+                submitButton.removeAttribute('disabled');
                 ev.preventDefault();
                 return false;
             }
 
-            if(!!submitButton){
+            if(submitButton){
                 submitButton.innerHTML = submitButton.getAttribute("data-processing");
-                submitButton.disabled = true;
+                submitButton.setAttribute('disabled', '');
             }
         });
         loginForm.setAttribute('tabindex', '-1');
@@ -226,7 +241,7 @@ window.addEventListener('load',()=>{
         }else{
             loginForm.focus();
         }
-        //updateSubmitButtonState(submitButton, loginForm.checkValidity());
+        updateSubmitButtonState(submitButton, loginForm.checkValidity());
 
     }
 });
