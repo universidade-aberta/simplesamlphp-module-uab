@@ -14,18 +14,20 @@ use SimpleSAML\Assert\Assert;
 use SimpleSAML\Logger;
 use Symfony\Component\Ldap\Adapter\ExtLdap\Query;
 
+use function array_values;
+
 class AttributeAddFromLDAP extends BaseFilter{
     /**
      * LDAP attributes to add to the request attributes
      *
-     * @var array
+     * @var string[]
      */
     protected array $searchAttributes;
 
     /**
      * LDAP attributes to base64 encode
      *
-     * @var array
+     * @var string[]
      */
     protected array $binaryAttributes;
 
@@ -43,16 +45,16 @@ class AttributeAddFromLDAP extends BaseFilter{
      */
     protected string $attrPolicy;
 
-    /** @var string */
-    protected string $searchUsername;
+    /** @var string|null */
+    protected ?string $searchUsername;
 
-    /** @var string */
-    protected string $searchPassword;
+    /** @var string|null */
+    protected ?string $searchPassword;
 
     /**
      * Initialize this filter.
      *
-     * @param array $config Configuration information about this filter.
+     * @param array<mixed> $config Configuration information about this filter.
      * @param mixed $reserved For future use.
      */
     public function __construct(array $config, $reserved)
@@ -72,7 +74,7 @@ class AttributeAddFromLDAP extends BaseFilter{
         $this->attrPolicy = $this->config->getOptionalString('attribute.policy', 'merge');
         Assert::oneOf($this->attrPolicy, ['merge', 'replace', 'add']);
 
-        $this->searchUsername = $this->config->getString('search.username');
+        $this->searchUsername = $this->config->getOptionalString('search.username', null);
         $this->searchPassword = $this->config->getOptionalString('search.password', null);
     }
 
@@ -80,7 +82,7 @@ class AttributeAddFromLDAP extends BaseFilter{
     /**
      * Add attributes from an LDAP server.
      *
-     * @param array &$state The current request
+     * @param array<mixed> &$state The current request
      */
     public function process(array &$state): void
     {
@@ -93,7 +95,7 @@ class AttributeAddFromLDAP extends BaseFilter{
         foreach ($attributes as $attr => $val) {
             $arrSearch[] = '%' . $attr . '%';
 
-            if (is_array($val) && count($val) > 0 && strlen($val[0]) > 0) {
+            if (is_array($val) && count($val) > 0 && is_string($val[0]) && strlen($val[0]) > 0) {
                 $arrReplace[] = $this->connector->escapeFilterValue($val[0], true);
             } else {
                 $arrReplace[] = '';
@@ -107,30 +109,37 @@ class AttributeAddFromLDAP extends BaseFilter{
             Logger::info(sprintf(
                 '%s: There are non-existing attributes in the search filter. (%s)',
                 $this->title,
-                $filter
+                $filter,
             ));
             return;
         }
 
         $this->connector->bind($this->searchUsername, $this->searchPassword);
 
+        $wantedAttrs = $this->config->getOptionalValue(
+            'attributes',
+            // If specifically set to NULL return all attributes, if not set at all return nothing (safe default)
+            in_array('attributes', $this->config->getOptions(), true) ? ['*'] : [],
+        );
+
         $options = [
             'scope' => $this->config->getOptionalString('search.scope', Query::SCOPE_SUB),
             'timeout' => $this->config->getOptionalInteger('timeout', 3),
+            'filter' => array_values($wantedAttrs),
         ];
 
         $entries = $this->connector->searchForMultiple(
             $this->searchBase,
             $filter,
             $options,
-            true
+            true,
         );
 
         $results = [];
         foreach ($entries as $entry) {
             $tmp = array_intersect_key(
                 $entry->getAttributes(),
-                array_fill_keys(array_values($this->searchAttributes), null)
+                array_fill_keys(array_values($this->searchAttributes), null),
             );
 
             $binaries = array_intersect(
@@ -138,7 +147,6 @@ class AttributeAddFromLDAP extends BaseFilter{
                 $this->binaryAttributes,
             );
             foreach ($binaries as $binary) {
-                /** @psalm-var array $attr */
                 $attr = $entry->getAttribute($binary);
                 $tmp[$binary] = array_map('base64_encode', $attr);
             }

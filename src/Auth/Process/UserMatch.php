@@ -166,8 +166,8 @@ class UserMatch extends Auth\ProcessingFilter {
                 return \is_array($attribute)?\reset($attribute):$attribute;
             }, $primaryAttributes), CASE_LOWER);
 
-            $accountDisabled = isset($attributes['useraccountcontrol']) && UserMatchController::isLdapAccountDisabled((int)$attributes['useraccountcontrol']);
-            $accountExpired = isset($attributes['accountexpires']) && UserMatchController::isLdapAccountExpired((int)$attributes['accountexpires']);
+            $accountDisabled = false && isset($attributes['useraccountcontrol']) && UserMatchController::isLdapAccountDisabled((int)$attributes['useraccountcontrol']);
+            $accountExpired = false && isset($attributes['accountexpires']) && UserMatchController::isLdapAccountExpired((int)$attributes['accountexpires']);
 
             if($accountDisabled || $accountExpired):
                 Logger::debug(sprintf('Account disabled or expired for "%s".', $primaryValue));

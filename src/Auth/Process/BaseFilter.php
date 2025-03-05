@@ -11,10 +11,7 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\uab\Auth\Process;
 
-use SimpleSAML\Auth\ProcessingFilter;
-use SimpleSAML\Configuration;
-use SimpleSAML\Logger;
-use SimpleSAML\Error\Exception;
+use SimpleSAML\{Auth, Configuration, Error, Logger};
 use SimpleSAML\Module\uab\ConnectorFactory;
 
 abstract class BaseFilter extends \SimpleSAML\Module\ldap\Auth\Process\BaseFilter{
@@ -26,12 +23,12 @@ abstract class BaseFilter extends \SimpleSAML\Module\ldap\Auth\Process\BaseFilte
      * instance/object and stores everything in class members.
      *
      * @throws \SimpleSAML\Error\Exception
-     * @param array &$config
+     * @param array<mixed> &$config
      * @param mixed $reserved
      */
     public function __construct(array &$config, $reserved) {
-        self::appendLdapSource();
-        ProcessingFilter::__construct($config, $reserved);
+        static::appendLdapSource();
+        parent::__construct($config, $reserved);
 
         // Change the class $title to match it's true name
         // This way if the class is extended the proper name is used
@@ -55,7 +52,7 @@ abstract class BaseFilter extends \SimpleSAML\Module\ldap\Auth\Process\BaseFilte
                 '%s : Retrieved authsource [%s] configuration values: %s',
                 $this->title,
                 $config['authsource'],
-                $this->varExport($authconfig)
+                $this->varExport($authconfig),
             ));
         }
 
@@ -74,7 +71,7 @@ abstract class BaseFilter extends \SimpleSAML\Module\ldap\Auth\Process\BaseFilte
         Logger::debug(sprintf(
             '%s : Configuration values retrieved; BaseDN: %s',
             $this->title,
-            $this->varExport($this->searchBase)
+            $this->varExport($this->searchBase),
         ));
 
         // Setup the attribute map which will be used to search LDAP
@@ -86,42 +83,44 @@ abstract class BaseFilter extends \SimpleSAML\Module\ldap\Auth\Process\BaseFilte
             'name'     => $this->config->getOptionalString('attribute.groupname', 'name'),
             'return'   => $this->config->getOptionalString('attribute.return', 'distinguishedName'),
             'type'     => $this->config->getOptionalString('attribute.type', 'objectClass'),
-            'username' => $this->config->getOptionalString('attribute.username', 'sAMAccountName')
+            'username' => $this->config->getOptionalString('attribute.username', 'sAMAccountName'),
         ];
 
         // Log the attribute map
         Logger::debug(sprintf(
             '%s : Attribute map created: %s',
             $this->title,
-            $this->varExport($this->attribute_map)
+            $this->varExport($this->attribute_map),
         ));
 
         // Setup the object type map which is used to determine a DNs' type
         $this->type_map = [
             'group' => $this->config->getOptionalString('type.group', 'group'),
-            'user'  => $this->config->getOptionalString('type.user', 'user')
+            'user'  => $this->config->getOptionalString('type.user', 'user'),
         ];
 
         // Log the type map
         Logger::debug(sprintf(
             '%s : Type map created: %s',
             $this->title,
-            $this->varExport($this->type_map)
+            $this->varExport($this->type_map),
         ));
     }
-    
+
+
     /**
      * Parse authsource config
      *
      * @param string $as The name of the authsource
+     * @return array<mixed>
      */
-    protected function parseAuthSourceConfig(string $as): array
+    private function parseAuthSourceConfig(string $as): array
     {
         // Log the authsource request
         Logger::debug(sprintf(
             '%s : Attempting to get configuration values from authsource [%s]',
             $this->title,
-            $as
+            $as,
         ));
 
         // Get the authsources file, which should contain the config
@@ -129,10 +128,10 @@ abstract class BaseFilter extends \SimpleSAML\Module\ldap\Auth\Process\BaseFilte
 
         // Verify that the authsource config exists
         if (!$authsources->hasValue($as)) {
-            throw new Exception(sprintf(
+            throw new Error\Exception(sprintf(
                 '%s : Authsource [%s] defined in filter parameters not found in authsources.php',
                 $this->title,
-                $as
+                $as,
             ));
         }
 
@@ -141,10 +140,10 @@ abstract class BaseFilter extends \SimpleSAML\Module\ldap\Auth\Process\BaseFilte
 
         // Make sure it is an ldap source
         if (isset($authsource[0]) && !in_array($authsource[0], self::$ldapsources)) {
-            throw new Exception(sprintf(
+            throw new Error\Exception(sprintf(
                 '%s : Authsource [%s] specified in filter parameters is not an ldap:LDAP type',
                 $this->title,
-                $as
+                $as,
             ));
         }
 
@@ -177,6 +176,7 @@ abstract class BaseFilter extends \SimpleSAML\Module\ldap\Auth\Process\BaseFilte
             if (isset($authsource['search.scope'])) {
                 $authconfig['search.scope'] = $authsource['search.scope'];
             }
+
             if (isset($authsource['search.username'])) {
                 $authconfig['search.username']   = $authsource['search.username'];
             }
@@ -205,6 +205,36 @@ abstract class BaseFilter extends \SimpleSAML\Module\ldap\Auth\Process\BaseFilte
         }
 
         return $authconfig;
+    }
+
+
+    /**
+     * Local utility function to get details about a variable,
+     * basically converting it to a string to be used in a log
+     * message. The var_export() function returns several lines
+     * so this will remove the new lines and trim each line.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    protected function varExport($value): string
+    {
+        if (is_array($value)) {
+            // remove sensitive data
+            foreach ($value as $key => &$val) {
+                if ($key === 'search.password' || $key === 'priv.password') {
+                    $val = empty($val) ? '' : '********';
+                }
+            }
+            unset($val);
+        }
+
+        $export = var_export($value, true);
+        $lines = explode("\n", $export);
+        foreach ($lines as &$line) {
+            $line = trim($line);
+        }
+        return implode(' ', $lines);
     }
 
     public static function appendLdapSource(){

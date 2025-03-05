@@ -39,7 +39,7 @@ ARG MYSQL_HOST=${MYSQL_HOST:-localhost}
 ARG MYSQL_DATABASE=${MYSQL_DATABASE:-app_db}
 ARG MYSQL_USER=${MYSQL_USER:-app_db_user}
 ARG MYSQL_PASSWORD=${MYSQL_PASSWORD:-app_db_pwd}
-ARG SIMPLESAMLPHP_VERSION=${SIMPLESAMLPHP_VERSION:-v2.0.0-rc3}
+ARG SIMPLESAMLPHP_VERSION=${SIMPLESAMLPHP_VERSION:-v2.3.6}
 ARG SIMPLESAMLPHP_BRANCH=${SIMPLESAMLPHP_BRANCH:-simplesamlphp-2.0}
 
 ARG PHP_VERSION=${PHP_VERSION:-8.1}
@@ -438,19 +438,20 @@ mysqladmin shutdown \n\
 # Configure the project folder
 RUN git config --global --add advice.detachedHead false \
     && git config --global --add safe.directory "${PROJECT_FOLDER_ABSOLUTE}" \
-    && git clone -b "${SIMPLESAMLPHP_BRANCH}" --single-branch -o upstream https://github.com/simplesamlphp/simplesamlphp.git "${PROJECT_FOLDER_ABSOLUTE}" \
-#    && git clone -b "${SIMPLESAMLPHP_VERSION}" https://github.com/simplesamlphp/simplesamlphp.git "${PROJECT_FOLDER_ABSOLUTE}" \
-#    && cd "${PROJECT_FOLDER_ABSOLUTE}" \
-#    && git remote add upstream https://github.com/simplesamlphp/simplesamlphp.git \
-#    && git fetch upstream \
-#    && git checkout "${SIMPLESAMLPHP_VERSION}"
+#    && git clone -b "${SIMPLESAMLPHP_BRANCH}" --single-branch -o upstream https://github.com/simplesamlphp/simplesamlphp.git "${PROJECT_FOLDER_ABSOLUTE}" \
+    && git clone -b "${SIMPLESAMLPHP_VERSION}" https://github.com/simplesamlphp/simplesamlphp.git "${PROJECT_FOLDER_ABSOLUTE}" \
+    && cd "${PROJECT_FOLDER_ABSOLUTE}" \
+    && git remote add upstream https://github.com/simplesamlphp/simplesamlphp.git \
+    && git fetch upstream \
+    && git checkout "${SIMPLESAMLPHP_VERSION}" \
     && echo "Ok"
 
 RUN cd "${PROJECT_FOLDER_ABSOLUTE}" \
     && composer config version "${SIMPLESAMLPHP_VERSION}" \
     && composer update --no-progress \
     && composer require simplesamlphp/simplesamlphp-module-ldap"${SIMPLESAMLPHP_VERSION_LDAP}" --no-progress \
-    && composer require simplesamlphp/simplesamlphp-module-webauthn"${SIMPLESAMLPHP_VERSION_WEBAUTHN}" --no-progress
+#    && composer require simplesamlphp/simplesamlphp-module-webauthn"${SIMPLESAMLPHP_VERSION_WEBAUTHN}" --no-progress
+    && echo "Ok"
 
 RUN mkdir -p "${PROJECT_FOLDER_ABSOLUTE}/modules/uab"
 

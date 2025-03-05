@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\uab;
 
-use \RobRichards\XMLSecLibs\XMLSecurityKey;
-use \SAML2\Assertion;
-use \SAML2\AuthnRequest;
-use \SAML2\Constants;
-use \SAML2\EncryptedAssertion;
-use \SAML2\LogoutRequest;
-use \SAML2\LogoutResponse;
-use \SAML2\Response;
-use \SAML2\SignedElement;
-use \SAML2\StatusResponse;
-use \SAML2\XML\ds\KeyInfo;
-use \SAML2\XML\ds\X509Certificate;
-use \SAML2\XML\ds\X509Data;
-use \SAML2\XML\saml\Issuer;
-use \SimpleSAML\Assert\Assert;
-use \SimpleSAML\Configuration;
-use \SimpleSAML\Error as SSP_Error;
-use \SimpleSAML\Logger;
-use \SimpleSAML\Utils;
+use RobRichards\XMLSecLibs\XMLSecurityKey;
+use SAML2\Assertion;
+use SAML2\AuthnRequest;
+use SAML2\Constants;
+use SAML2\EncryptedAssertion;
+use SAML2\LogoutRequest;
+use SAML2\LogoutResponse;
+use SAML2\Response;
+use SAML2\SignedElement;
+use SAML2\StatusResponse;
+use SAML2\XML\ds\KeyInfo;
+use SAML2\XML\ds\X509Certificate;
+use SAML2\XML\ds\X509Data;
+use SAML2\XML\saml\Issuer;
+use SimpleSAML\Assert\Assert;
+use SimpleSAML\Configuration;
+use SimpleSAML\Error as SSP_Error;
+use SimpleSAML\Logger;
+use SimpleSAML\Utils;
 
 /**
  * Common code for building SAML 2 messages based on the available metadata.
@@ -40,7 +40,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
     public static function addSign(
         Configuration $srcMetadata,
         Configuration $dstMetadata,
-        SignedElement $element
+        SignedElement $element,
     ): void {
         $dstPrivateKey = $dstMetadata->getOptionalString('signature.privatekey', null);
         $cryptoUtils = new Utils\Crypto();
@@ -92,7 +92,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
     private static function addRedirectSign(
         Configuration $srcMetadata,
         Configuration $dstMetadata,
-        \SAML2\Message $message
+        \SAML2\Message $message,
     ): void {
         $signingEnabled = null;
         if ($message instanceof LogoutRequest || $message instanceof LogoutResponse) {
@@ -151,7 +151,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
         } else {
             throw new SSP_Error\Exception(
                 'Missing certificate in metadata for ' .
-                var_export($srcMetadata->getString('entityid'), true)
+                var_export($srcMetadata->getString('entityid'), true),
             );
         }
 
@@ -198,7 +198,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
     public static function validateMessage(
         Configuration $srcMetadata,
         Configuration $dstMetadata,
-        \SAML2\Message $message
+        \SAML2\Message $message,
     ): bool {
         $enabled = null;
         if ($message instanceof LogoutRequest || $message instanceof LogoutResponse) {
@@ -231,7 +231,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
             return false;
         } elseif (!self::checkSign($srcMetadata, $message)) {
             throw new SSP_Error\Exception(
-                'Validation of received messages enabled, but no signature found on message.'
+                'Validation of received messages enabled, but no signature found on message.',
             );
         }
         return true;
@@ -251,7 +251,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
     public static function getDecryptionKeys(
         Configuration $srcMetadata,
         Configuration $dstMetadata,
-        $encryptionMethod = null
+        $encryptionMethod = null,
     ): array {
         $sharedKey = $srcMetadata->getOptionalString('sharedkey', null);
         if ($sharedKey !== null) {
@@ -319,7 +319,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
      */
     public static function getBlacklistedAlgorithms(
         Configuration $srcMetadata,
-        Configuration $dstMetadata
+        Configuration $dstMetadata,
     ): array {
         $blacklist = $srcMetadata->getOptionalArray('encryption.blacklisted-algorithms', null);
         if ($blacklist === null) {
@@ -345,10 +345,8 @@ class Message extends \SimpleSAML\Module\saml\Message {
     private static function decryptAssertion(
         Configuration $srcMetadata,
         Configuration $dstMetadata,
-        $assertion
+        Assertion|EncryptedAssertion $assertion,
     ): Assertion {
-        Assert::isInstanceOfAny($assertion, [Assertion::class, EncryptedAssertion::class]);
-
         if ($assertion instanceof Assertion) {
             $encryptAssertion = $srcMetadata->getOptionalBoolean('assertion.encryption', null);
             if ($encryptAssertion === null) {
@@ -409,7 +407,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
     private static function decryptAttributes(
         Configuration $srcMetadata,
         Configuration $dstMetadata,
-        Assertion &$assertion
+        Assertion &$assertion,
     ): void {
         if (!$assertion->hasEncryptedAttributes()) {
             return;
@@ -463,7 +461,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
      */
     public static function buildAuthnRequest(
         Configuration $spMetadata,
-        Configuration $idpMetadata
+        Configuration $idpMetadata,
     ): AuthnRequest {
         $ar = new AuthnRequest();
 
@@ -497,10 +495,10 @@ class Message extends \SimpleSAML\Module\saml\Message {
         $issuer->setValue($spMetadata->getString('entityID'));
         $ar->setIssuer($issuer);
         $ar->setAssertionConsumerServiceIndex(
-            $spMetadata->getOptionalInteger('AssertionConsumerServiceIndex', null)
+            $spMetadata->getOptionalInteger('AssertionConsumerServiceIndex', null),
         );
         $ar->setAttributeConsumingServiceIndex(
-            $spMetadata->getOptionalInteger('AttributeConsumingServiceIndex', null)
+            $spMetadata->getOptionalInteger('AttributeConsumingServiceIndex', null),
         );
 
         if ($spMetadata->hasValue('AuthnContextClassRef')) {
@@ -529,11 +527,11 @@ class Message extends \SimpleSAML\Module\saml\Message {
      */
     public static function buildLogoutRequest(
         Configuration $srcMetadata,
-        Configuration $dstMetadata
+        Configuration $dstMetadata,
     ): LogoutRequest {
         $lr = new LogoutRequest();
         $issuer = new Issuer();
-        $issuer->setValue($srcMetadata->getString('entityID'));
+        $issuer->setValue($srcMetadata->getString('entityid'));
         $issuer->setFormat(Constants::NAMEID_ENTITY);
         $lr->setIssuer($issuer);
 
@@ -552,7 +550,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
      */
     public static function buildLogoutResponse(
         Configuration $srcMetadata,
-        Configuration $dstMetadata
+        Configuration $dstMetadata,
     ): LogoutResponse {
         $lr = new LogoutResponse();
         $issuer = new Issuer();
@@ -583,7 +581,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
     public static function processResponse(
         Configuration $spMetadata,
         Configuration $idpMetadata,
-        Response $response
+        Response $response,
     ): array {
         if (!$response->isSuccess()) {
             throw self::getResponseError($response);
@@ -638,11 +636,9 @@ class Message extends \SimpleSAML\Module\saml\Message {
         Configuration $spMetadata,
         Configuration $idpMetadata,
         Response $response,
-        $assertion,
-        bool $responseSigned
+        Assertion|EncryptedAssertion $assertion,
+        bool $responseSigned,
     ): Assertion {
-        Assert::isInstanceOfAny($assertion, [\SAML2\Assertion::class, \SAML2\EncryptedAssertion::class]);
-
         $assertion = self::decryptAssertion($idpMetadata, $spMetadata, $assertion);
         self::decryptAttributes($idpMetadata, $spMetadata, $assertion);
 
@@ -670,19 +666,19 @@ class Message extends \SimpleSAML\Module\saml\Message {
         $notBefore = $assertion->getNotBefore();
         if ($notBefore !== null && $notBefore > time() + $allowed_clock_skew) {
             throw new SSP_Error\Exception(
-                'Received an assertion that is valid in the future. Check clock synchronization on IdP and SP.'
+                'Received an assertion that is valid in the future. Check clock synchronization on IdP and SP.',
             );
         }
         $notOnOrAfter = $assertion->getNotOnOrAfter();
         if ($notOnOrAfter !== null && $notOnOrAfter <= time() - $allowed_clock_skew) {
             throw new SSP_Error\Exception(
-                'Received an assertion that has expired. Check clock synchronization on IdP and SP.'
+                'Received an assertion that has expired. Check clock synchronization on IdP and SP.',
             );
         }
         $sessionNotOnOrAfter = $assertion->getSessionNotOnOrAfter();
         if ($sessionNotOnOrAfter !== null && $sessionNotOnOrAfter <= time() - $allowed_clock_skew) {
             throw new SSP_Error\Exception(
-                'Received an assertion with a session that has expired. Check clock synchronization on IdP and SP.'
+                'Received an assertion with a session that has expired. Check clock synchronization on IdP and SP.',
             );
         }
         $validAudiences = $assertion->getValidAudiences();
@@ -692,7 +688,7 @@ class Message extends \SimpleSAML\Module\saml\Message {
                 $candidates = '[' . implode('], [', $validAudiences) . ']';
                 throw new SSP_Error\Exception(
                     'This SP [' . $spEntityId .
-                    ']  is not a valid audience for the assertion. Candidates were: ' . $candidates
+                    ']  is not a valid audience for the assertion. Candidates were: ' . $candidates,
                 );
             }
         }

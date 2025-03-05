@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\uab\Controller;
 
+use SimpleSAML\{Auth, Configuration, Error, Module, Utils};
+use SimpleSAML\Module\core\Auth\{UserPassBase, UserPassOrgBase};
+use SimpleSAML\Module\uab\Template;
 use Exception;
-use SimpleSAML\Assert\Assert;
-use SimpleSAML\Auth;
-use SimpleSAML\Error;
-use SimpleSAML\Module\core\Auth\UserPassBase;
-use SimpleSAML\Module\core\Auth\UserPassOrgBase;
-use SimpleSAML\Utils;
 use SimpleSAML\Logger;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use SimpleSAML\Error\ErrorCodes;
+
 use Symfony\Component\Ldap\Exception\LdapException;
 
 use SimpleSAML\Module\uab\Auth\Source\MultiAuth;
-use SimpleSAML\Module\uab\Template;
 
 use function array_key_exists;
 use function substr;
 use function time;
+use function trim;
 
 /**
  * Controller class for the core module.
@@ -31,6 +31,23 @@ use function time;
  * @package SimpleSAML\Module\core
  */
 class Login extends \SimpleSAML\Module\core\Controller\Login {
+    /**
+     * @var \SimpleSAML\Auth\Source|string
+     * @psalm-var \SimpleSAML\Auth\Source|class-string
+     */
+    protected $authSource = Auth\Source::class;
+
+    /**
+     * @var \SimpleSAML\Auth\State|string
+     * @psalm-var \SimpleSAML\Auth\State|class-string
+     */
+    protected $authState = Auth\State::class;
+
+    /**
+     * These are all the subclass instances of ErrorCodes which have been created
+     */
+    protected static array $registeredErrorCodeClasses = [];
+
 
     public static $failuredMessages = [
         'title'=>[
@@ -44,30 +61,77 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
             'LDAP_CONNECTION_FAILURE'=>'The connection to the authentication server failed so we are unable to confirm your credentials. Please, try again later or contact technical support if the issue persists.',
         ]
     ];
-    
+
+
+    /**
+     * Controller constructor.
+     *
+     * It initializes the global configuration for the controllers implemented here.
+     *
+     * @param \SimpleSAML\Configuration              $config The configuration to use by the controllers.
+     *
+     * @throws \Exception
+     */
+    public function __construct(
+        protected Configuration $config,
+    ) {
+    }
+
+
+    /**
+     * Inject the \SimpleSAML\Auth\Source dependency.
+     *
+     * @param \SimpleSAML\Auth\Source $authSource
+     */
+    public function setAuthSource(Auth\Source $authSource): void
+    {
+        $this->authSource = $authSource;
+    }
+
+
+    /**
+     * Inject the \SimpleSAML\Auth\State dependency.
+     *
+     * @param \SimpleSAML\Auth\State $authState
+     */
+    public function setAuthState(Auth\State $authState): void
+    {
+        $this->authState = $authState;
+    }
+
+
+    /**
+     * @return \SimpleSAML\XHTML\Template
+     */
+    public function welcome(): Template
+    {
+        return new Template($this->config, 'core:welcome.twig');
+    }
+
+
     /**
      * This page shows a username/password login form, and passes information from it
      * to the \SimpleSAML\Module\core\Auth\UserPassBase class, which is a generic class for
      * username/password authentication.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @return \SimpleSAML\XHTML\Template
      */
-    public function loginuserpass(Request $request): Template
+    public function loginuserpass(Request $request): Response
     {
         // Retrieve the authentication state
         if (!$request->query->has('AuthState')) {
             throw new Error\BadRequest('Missing AuthState parameter.');
         }
         $authStateId = $request->query->get('AuthState');
+        $this->authState::validateStateId($authStateId);
 
         $state = $this->authState::loadState($authStateId, UserPassBase::STAGEID);
 
         /** @var \SimpleSAML\Module\core\Auth\UserPassBase|null $source */
         $source = $this->authSource::getById($state[UserPassBase::AUTHID]);
         if ($source === null) {
-            throw new Exception(
-                'Could not find authentication source with id ' . $state[UserPassBase::AUTHID]
+            throw new Error\Exception(
+                'Could not find authentication source with id ' . $state[UserPassBase::AUTHID],
             );
         }
 
@@ -76,17 +140,31 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
 
 
     /**
+     * Called by the constructor in ErrorCode to register subclasses with us
+     * so we can track which subclasses are valid names in order to limit
+     * which classes we might recreate
+     *
+     * @para object ecc an instance of an ErrorCode or subclass
+     */
+    public static function registerErrorCodeClass(ErrorCodes $ecc): void
+    {
+        if (is_subclass_of($ecc, ErrorCodes::class, false)) {
+            $className = get_class($ecc);
+            self::$registeredErrorCodeClasses[] = $className;
+        }
+    }
+
+    /**
      * This method handles the generic part for both loginuserpass and loginuserpassorg
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param \SimpleSAML\Module\core\Auth\UserPassBase|\SimpleSAML\Module\core\Auth\UserPassOrgBase $source
      * @param array $state
-     * @return \SimpleSAML\XHTML\Template
      */
-    protected function handleLogin(Request $request, $source, array $state): Template
+    private function handleLogin(Request $request, UserPassBase|UserPassOrgBase $source, array $state): Response
     {
-        Assert::isInstanceOfAny($source, [UserPassBase::class, UserPassOrgBase::class]);
         $authStateId = $request->query->get('AuthState');
+        $this->authState::validateStateId($authStateId);
 
         $organizations = $organization = null;
         if ($source instanceof UserPassOrgBase) {
@@ -99,15 +177,17 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
 
         $errorCode = null;
         $errorParams = null;
+        $codeClass = '';
 
         if (isset($state['error'])) {
             $errorCode = $state['error']['code'];
             $errorParams = $state['error']['params'];
+            $codeClass = $state['error']['codeclass'];
         }
 
         $cookies = [];
         if ($organizations === null || $organization !== '') {
-            if (!empty($username) && !empty($password)) {
+            if (!empty($username) || !empty($password)) {
                 $httpUtils = new Utils\HTTP();
                 $sameSiteNone = $httpUtils->canSetSamesiteNone() ? Cookie::SAMESITE_NONE : null;
 
@@ -180,9 +260,12 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
                     // Login failed. Extract error code and parameters, to display the error
                     $errorCode = $e->getErrorCode();
                     $errorParams = $e->getParameters();
+                    $codeClass = get_class($e->getErrorCodes());
+
                     $state['error'] = [
                         'code' => $errorCode,
-                        'params' => $errorParams
+                        'params' => $errorParams,
+                        'codeclass' => $codeClass,
                     ];
                     $authStateId = Auth\State::saveState($state, $source::STAGEID);
 
@@ -191,9 +274,12 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
                     // Login failed. Extract error code and parameters, to display the error
                     $errorCode = $e->getErrorCode();
                     $errorParams = $e->getParameters();
+                    $codeClass = get_class($e->getErrorCodes());
+
                     $state['error'] = [
                         'code' => $errorCode,
-                        'params' => $errorParams
+                        'params' => $errorParams,
+                        'codeclass' => $codeClass,
                     ];
                     $authStateId = Auth\State::saveState($state, $source::STAGEID);
                 }
@@ -201,9 +287,6 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
                 if (isset($state['error'])) {
                     unset($state['error']);
                 }
-            }elseif (!empty($username) || !empty($password)){
-                $errorCode = 'EMPTY_USERNAME_OR_PASSWORD';
-                $errorParams = [];
             }
         }
 
@@ -212,7 +295,7 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
         $t->data['AuthState'] = $authStateId;
 
         if ($source instanceof UserPassOrgBase) {
-            $t->data['username'] = $username;
+            $t->data['username'] = $state['core:username'] ?? '';
             $t->data['forceUsername'] = false;
             $t->data['rememberUsernameEnabled'] = $source->getRememberUsernameEnabled();
             $t->data['rememberUsernameChecked'] = $source->getRememberUsernameChecked();
@@ -226,7 +309,7 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
             $t->data['rememberMeEnabled'] = $source->isRememberMeEnabled();
             $t->data['rememberMeChecked'] = $source->isRememberMeChecked();
         } else {
-            $t->data['username'] = $username;
+            $t->data['username'] = $state['core:username'] ?? '';
             $t->data['forceUsername'] = false;
             $t->data['rememberUsernameEnabled'] = $source->getRememberUsernameEnabled();
             $t->data['rememberUsernameChecked'] = $source->getRememberUsernameChecked();
@@ -239,6 +322,7 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
         }
 
         if ($source instanceof UserPassOrgBase) {
+            $t->data['formURL'] = Module::getModuleURL('core/loginuserpassorg', ['AuthState' => $authStateId]);
             if ($request->request->has($source->getAuthId() . '-username')) {
                 $t->data['rememberUsernameChecked'] = true;
             }
@@ -255,12 +339,38 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
                 $t->data['organizations'] = $organizations;
             }
         } else {
-            //$t->data['links'] = $source->getLoginLinks();
+            $t->data['formURL'] = Module::getModuleURL('core/loginuserpass', ['AuthState' => $authStateId]);
+            //$t->data['loginpage_links'] = $source->getLoginLinks();
         }
 
         $t->data['errorcode'] = $errorCode;
-        $t->data['errorcodes'] = Error\ErrorCodes::getAllErrorCodeMessages();
+        $t->data['errorcodes'] = ErrorCodes::getAllErrorCodeMessages();
         $t->data['errorparams'] = $errorParams;
+
+        $className = $codeClass;
+        if ($className) {
+            if (in_array($className, self::$registeredErrorCodeClasses)) {
+                if (!class_exists($className)) {
+                    throw new Error\Exception("Could not resolve error class. no class named '$className'.");
+                }
+
+                if (!is_subclass_of($className, ErrorCodes::class)) {
+                    throw new Error\Exception(
+                        'Could not resolve error class: The class \'' . $className
+                        . '\' isn\'t a subclass of \'' . ErrorCodes::class . '\'.',
+                    );
+                }
+
+                $obj = Module::createObject($className, ErrorCodes::class);
+                $t->data['errorcodes'] = $obj->getAllErrorCodeMessages();
+            } else {
+                if ($className != ErrorCodes::class) {
+                    throw new Error\Exception(
+                        'The desired error code class is not found or of the wrong type ' . $className,
+                    );
+                }
+            }
+        }
 
         if (isset($state['SPMetadata'])) {
             $t->data['SPMetadata'] = $state['SPMetadata'];
@@ -299,23 +409,23 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
      * username/password/organization authentication.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @return \SimpleSAML\XHTML\Template
      */
-    public function loginuserpassorg(Request $request): Template
+    public function loginuserpassorg(Request $request): Response
     {
         // Retrieve the authentication state
         if (!$request->query->has('AuthState')) {
             throw new Error\BadRequest('Missing AuthState parameter.');
         }
         $authStateId = $request->query->get('AuthState');
+        $this->authState::validateStateId($authStateId);
 
         $state = $this->authState::loadState($authStateId, UserPassOrgBase::STAGEID);
 
         /** @var \SimpleSAML\Module\core\Auth\UserPassOrgBase $source */
         $source = $this->authSource::getById($state[UserPassOrgBase::AUTHID]);
         if ($source === null) {
-            throw new Exception(
-                'Could not find authentication source with id ' . $state[UserPassOrgBase::AUTHID]
+            throw new Error\Exception(
+                'Could not find authentication source with id ' . $state[UserPassOrgBase::AUTHID],
             );
         }
 
@@ -344,7 +454,7 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
         ?bool $secure = null,
         bool $httponly = true,
         bool $raw = false,
-        ?string $sameSite = 'none'
+        ?string $sameSite = 'none',
     ): Cookie {
         return new Cookie($name, $value, $expire, $path, $domain, $secure, $httponly, $raw, $sameSite);
     }
@@ -363,7 +473,7 @@ class Login extends \SimpleSAML\Module\core\Controller\Login {
         $username = '';
 
         if ($request->request->has('username')) {
-            $username = $request->request->get('username');
+            $username = trim($request->request->get('username'));
         } elseif (
             $source->getRememberUsernameEnabled()
             && $request->cookies->has($source->getAuthId() . '-username')

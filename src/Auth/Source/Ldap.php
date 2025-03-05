@@ -18,6 +18,13 @@ use Symfony\Component\Ldap\Adapter\ExtLdap\Query;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\Exception\ConnectionException;
 
+use function array_keys;
+use function array_map;
+use function in_array;
+use function preg_match;
+use function str_replace;
+use function var_export;
+
 /**
  * LDAP authentication source.
  *
@@ -69,8 +76,8 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
     /**
      * Constructor for this authentication source.
      *
-     * @param array $info  Information about this authentication source.
-     * @param array $config  Configuration.
+     * @param array<mixed> $info  Information about this authentication source.
+     * @param array<mixed> $config  Configuration.
      */
     public function __construct(array $info, array $config){
         // Call the parent constructor first, as required by the interface
@@ -82,7 +89,7 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
 
         $this->ldapConfig = Configuration::loadFromArray(
             $config,
-            'authsources[' . var_export($this->authId, true) . ']'
+            'authsources[' . var_export($this->authId, true) . ']',
         );
 
         $this->pwdlastset_fieldname = strtolower($this->ldapConfig->getOptionalString('name.pwdLastSet', $this->pwdlastset_fieldname));
@@ -93,23 +100,42 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
 
 
     /**
-     * Attempt to log in using the given username and password.
+     * Attempt to log in using SASL and the given username and password.
      *
      * @param string $username  The username the user wrote.
      * @param string $password  The password the user wrote.
-     * @return array  Associative array with the users attributes.
+     * @param array<mixed> $sasl_args  SASL options
+     * @return array<mixed> Associative array with the users attributes.
      */
-    protected function login(string $username, string $password): array {
+    protected function loginSasl(
+        string $username,
+        #[\SensitiveParameter]
+        string $password,
+        array $sasl_args = [],
+    ): array {
+                if (preg_match('/^\s*$/', $password)) {
+            // The empty string is considered an anonymous bind to Symfony
+            throw new Error\Error('WRONGUSERPASS');
+        }
+
         $searchScope = $this->ldapConfig->getOptionalString('search.scope', Query::SCOPE_SUB);
         Assert::oneOf($searchScope, [Query::SCOPE_BASE, Query::SCOPE_ONE, Query::SCOPE_SUB]);
 
         $timeout = $this->ldapConfig->getOptionalInteger('timeout', 3);
         Assert::natural($timeout);
 
+        $attributes = $this->ldapConfig->getOptionalValue(
+            'attributes',
+            // If specifically set to NULL return all attributes, if not set at all return nothing (safe default)
+            in_array('attributes', $this->ldapConfig->getOptions(), true) ? ['*'] : [],
+        );
+
         $searchBase = $this->ldapConfig->getArray('search.base');
+
         $options = [
             'scope' => $searchScope,
             'timeout' => $timeout,
+            'filter' => $attributes,
         ];
 
         $searchEnable = $this->ldapConfig->getOptionalBoolean('search.enable', false);
@@ -117,11 +143,11 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
             $dnPattern = $this->ldapConfig->getString('dnpattern');
             $dn = str_replace('%username%', $username, $dnPattern);
         } else {
-            $searchUsername = $this->ldapConfig->getString('search.username');
-            Assert::notWhitespaceOnly($searchUsername);
+            $searchUsername = $this->ldapConfig->getOptionalString('search.username', null);
+            Assert::nullOrNotWhitespaceOnly($searchUsername);
 
             $searchPassword = $this->ldapConfig->getOptionalString('search.password', null);
-            Assert::nullOrnotWhitespaceOnly($searchPassword);
+            Assert::nullOrNotWhitespaceOnly($searchPassword);
 
             try {
                 $this->connector->bind($searchUsername, $searchPassword);
@@ -139,9 +165,7 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
 
             try {
                 $entry = /** @scrutinizer-ignore-type */$this->connector->search($searchBase, $filter, $options, false);
-
                 $dn = $entry->getDn();
-
                 if($this->hasToChangePassword($this->processAttributes($entry))):
                     if($this->sysCanChangeUserPassword($dn, $password)):
                         // @TODO: short circuit to update the user password using system account
@@ -161,10 +185,33 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
         }
 
         try {
-            $this->connector->bind($dn, $password);
+
+            /* Verify the credentials */
+            if (!empty($sasl_args)) {
+                $this->connector->saslBind(
+                    $dn,
+                    $password,
+                    $sasl_args['mech'],
+                    $sasl_args['realm'],
+                    $sasl_args['authc_id'],
+                    $sasl_args['authz_id'],
+                    $sasl_args['props'],
+                );
+                $dn = $this->connector->whoami();
+            } else {
+                $this->connector->bind($dn, $password);
+            }
+
+            /* If the credentials were correct, rebind using a privileged account to read attributes */
+            $readUsername = $this->ldapConfig->getOptionalString('priv.username', null);
+            $readPassword = $this->ldapConfig->getOptionalString('priv.password', null);
+            if ($readUsername !== null) {
+                $this->connector->bind($readUsername, $readPassword);
+            }
 
             $options['scope'] = Query::SCOPE_BASE;
             $filter = '(objectClass=*)';
+
 
             $entry = $this->connector->search([$dn], $filter, $options, false);
             
@@ -174,6 +221,19 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
 
         return $this->processAttributes(/** @scrutinizer-ignore-type */$entry);
     }
+
+    /**
+     * Attempt to log in using the given username and password.
+     *
+     * @param string $username  The username the user wrote.
+     * @param string $password  The password the user wrote.
+     * @return array<mixed> Associative array with the users attributes.
+     */
+    protected function login(string $username, #[\SensitiveParameter]string $password): array
+    {
+        return $this->loginSasl($username, $password);
+    }
+
 
     /**
      * Returns an LDAP Connection
@@ -330,7 +390,7 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
         assert::true(false);
     }/**
      * @param \Symfony\Component\Ldap\Entry $entry
-     * @return array
+     * @return array<mixed>
      */
     private function processAttributes(Entry $entry): array
     {
@@ -349,6 +409,7 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
             array_keys($result),
             $this->ldapConfig->getOptionalArray('attributes.binary', []),
         );
+
         foreach ($binaries as $binary) {
             $result[$binary] = array_map('base64_encode', $result[$binary]);
         }
@@ -369,7 +430,7 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
 
         $filter = '';
         foreach ($searchAttributes as $attr) {
-            $filter .= '(' . $attr . '=' . $username . ')';
+            $filter .= '(' . $attr . '=' . $this->escapeFilterValue($username) . ')';
         }
         $filter = '(|' . $filter . ')';
 

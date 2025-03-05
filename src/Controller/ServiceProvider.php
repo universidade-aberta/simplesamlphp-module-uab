@@ -6,28 +6,33 @@ namespace SimpleSAML\Module\uab\Controller;
 
 //namespace \SimpleSAML\Module\saml\Controller;
 
-use \Exception;
-use \SAML2\Assertion;
-use \SAML2\Binding;
-use \SAML2\Constants;
-use \SAML2\Exception\Protocol\UnsupportedBindingException;
-use \SAML2\HTTPArtifact;
-use \SAML2\LogoutRequest;
-use \SAML2\LogoutResponse;
-use \SAML2\Response as SAML2_Response;
-use \SAML2\SOAP;
-use \SAML2\XML\saml\Issuer;
-use \SimpleSAML\Assert\Assert;
-use \SimpleSAML\Auth;
-use \SimpleSAML\Configuration;
-use \SimpleSAML\Error;
-use \SimpleSAML\HTTP\RunnableResponse;
-use \SimpleSAML\Logger;
-use \SimpleSAML\Module;
-use \SimpleSAML\Module\saml\Auth\Source\SP;
-use \SimpleSAML\Session;
-use \SimpleSAML\Store\StoreFactory;
-use \SimpleSAML\Utils;
+use Exception;
+use SAML2\Assertion;
+use SAML2\Binding;
+use SAML2\Constants;
+use SAML2\Exception\Protocol\UnsupportedBindingException;
+use SAML2\HTTPArtifact;
+use SAML2\HTTPPost;
+use SAML2\HTTPRedirect;
+use SAML2\LogoutRequest;
+use SAML2\LogoutResponse;
+use SAML2\Response as SAML2_Response;
+use SAML2\SOAP;
+use SAML2\XML\saml\Issuer;
+use SimpleSAML\Assert\Assert;
+use SimpleSAML\Auth;
+use SimpleSAML\Configuration;
+use SimpleSAML\Error;
+use SimpleSAML\HTTP\RunnableResponse;
+use SimpleSAML\Logger;
+use SimpleSAML\Metadata;
+use SimpleSAML\Module;
+use SimpleSAML\Module\saml\Auth\Source\SP;
+use SimpleSAML\Session;
+use SimpleSAML\Store\StoreFactory;
+use SimpleSAML\Utils;
+use SimpleSAML\XHTML\Template;
+use Symfony\Component\HttpFoundation\{Request, Response};
 
 use function array_merge;
 use function count;
@@ -52,17 +57,186 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
      *
      * It initializes the global configuration for the controllers implemented here.
      *
-     * @param \SimpleSAML\Configuration $config The configuration to use by the controllers.
-     * @param \SimpleSAML\Session $session The Session to use by the controllers.
+     * @param   Configuration  $config   The configuration to use by the controllers.
+     * @param   Session        $session  The Session to use by the controllers.
      */
     public function __construct(
-        Configuration $config,
-        Session $session
+        protected Configuration $config,
+        protected Session $session,
     ) {
-        $this->config = $config;
-        $this->session = $session;
         $this->authUtils = new Utils\Auth();
     }
+
+
+    /**
+     * Inject the \SimpleSAML\Auth\State dependency.
+     *
+     * @param \SimpleSAML\Auth\State $authState
+     */
+    public function setAuthState(Auth\State $authState): void
+    {
+        $this->authState = $authState;
+    }
+
+
+    /**
+     * Inject the \SimpleSAML\Utils\Auth dependency.
+     *
+     * @param \SimpleSAML\Utils\Auth $authUtils
+     */
+    public function setAuthUtils(Utils\Auth $authUtils): void
+    {
+        $this->authUtils = $authUtils;
+    }
+
+
+  /**
+   * Start single sign-on for an SP identified with the specified Authsource ID
+   *
+   * @param   \Symfony\Component\HttpFoundation\Request  $request
+   * @param   string                                     $sourceId
+   *
+   * @return \SimpleSAML\HTTP\RunnableResponse
+   * @throws Error\Exception
+   */
+    public function login(Request $request, string $sourceId): RunnableResponse
+    {
+        // Initialize all the dependencies
+        $authSource = new Auth\Simple($sourceId);
+        $spSource = $authSource->getAuthSource();
+
+        if (!($spSource instanceof SP)) {
+            throw new Error\Exception('Authsource must be of type saml:SP.');
+        }
+
+        $httpUtils = new Utils\HTTP();
+
+        $returnTo = $this->loginHandler($request, $authSource, $spSource, $httpUtils);
+
+        // Redirect to the returnTo destination
+        return new RunnableResponse([$httpUtils, 'redirectTrustedURL'], [$returnTo]);
+    }
+
+    /**
+     * @param   Request       $request
+     * @param   Auth\Simple   $authSource
+     * @param   Auth\Source   $spSource
+     * @param   Utils\HTTP    $httpUtils
+     *
+     * @return string
+     * @throws BadRequest
+     * @throws Error\Exception
+     */
+    protected function loginHandler(
+        Request $request,
+        Auth\Simple $authSource,
+        Auth\Source $spSource,
+        Utils\HTTP $httpUtils,
+    ): string {
+        $options = [];
+
+        if ($spSource->isRequestInitiation()) {
+            if ($request->query->has('target')) {
+                $options['ReturnTo'] = $httpUtils->checkURLAllowed($request->query->get('target'));
+            }
+            if ($request->query->has('forceAuthn')) {
+                $options['ForceAuthn'] = $request->query->getBoolean('forceAuthn');
+            }
+            if ($request->query->has('entityID')) {
+                $options['saml:idp'] = $request->query->get('entityID');
+            }
+            if ($request->query->has('isPassive')) {
+                $options['isPassive'] = $request->query->getBoolean('isPassive');
+            }
+        }
+
+        if (
+            !isset($options['ReturnTo'])
+            && !$request->query->has('ReturnTo')
+            && !$spSource->getMetadata()->hasValue('RelayState')
+        ) {
+            throw new Error\BadRequest('Missing ReturnTo parameter.');
+        }
+        if (!isset($options['ReturnTo'])) {
+            $options['ReturnTo'] = $httpUtils->checkURLAllowed(
+                $request->query->get('ReturnTo') ?? $spSource->getMetadata()->getString('RelayState'),
+            );
+        }
+
+        $authData = $authSource->getAuthDataArray();
+
+        if (
+            $authSource->isAuthenticated()
+            && $spSource->isRequestInitiation()
+        ) {
+            if (
+                // Check the IdP we are currently authenticated to
+                (isset($authData['saml:sp:IdP'], $options['saml:idp'])
+                 && $options['saml:idp'] !== $authData['saml:sp:IdP'])
+                ||
+                (isset($options['ForceAuthn']) && $options['ForceAuthn'])
+            ) {
+                // Force a re-authentication
+                $authSource->login($options);
+            }
+            // We are already authenticated, do nothing
+        }
+
+        /**
+         * Try to authenticate
+         */
+        $authSource->requireAuth($options);
+
+        // Return the redirect target
+        return $options['ReturnTo'];
+    }
+
+
+    /**
+     * Handler for response from IdP discovery service.
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return \SimpleSAML\HTTP\RunnableResponse
+     */
+    public function discoResponse(Request $request): RunnableResponse
+    {
+        if (!$request->query->has('AuthID')) {
+            throw new Error\BadRequest('Missing AuthID to discovery service response handler');
+        }
+        $authId = $request->query->get('AuthID');
+
+        if (!$request->query->has('idpentityid')) {
+            throw new Error\BadRequest('Missing idpentityid to discovery service response handler');
+        }
+        $idpEntityId = $request->query->get('idpentityid');
+
+        $state = $this->authState::loadState($authId, 'saml:sp:sso');
+
+        // Find authentication source
+        Assert::keyExists($state, 'saml:sp:AuthId');
+        $sourceId = $state['saml:sp:AuthId'];
+
+        $source = Auth\Source::getById($sourceId);
+        if ($source === null) {
+            throw new Exception('Could not find authentication source with id ' . $sourceId);
+        }
+
+        if (!($source instanceof SP)) {
+            throw new Error\Exception('Source type changed?');
+        }
+
+        return new RunnableResponse([$source, 'startSSO'], [$idpEntityId, $state]);
+    }
+
+
+    /**
+     * @return \SimpleSAML\XHTML\Template
+     */
+    public function wrongAuthnContextClassRef(): Template
+    {
+        return new Template($this->config, 'saml:sp/wrong_authncontextclassref.twig');
+    }
+
 
     /**
      * Handler for the Assertion Consumer Service.
@@ -79,7 +253,7 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
         try {
             $b = Binding::getCurrentBinding();
         } catch (UnsupportedBindingException $e) {
-            throw new Error\Error('ACSPARAMS', $e, 400);
+            throw new Error\Error(Error\ErrorCodes::ACSPARAMS, $e, 400);
         }
 
         if ($b instanceof HTTPArtifact) {
@@ -123,7 +297,7 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
             Logger::info(sprintf(
                 '%s - %s',
                 'Duplicate SAML 2 response detected',
-                'ignoring the response and redirecting the user to the correct page.'
+                'ignoring the response and redirecting the user to the correct page.',
             ));
             if (isset($prevAuth['redirect'])) {
                 return new RunnableResponse([$httpUtils, 'redirectTrustedURL'], [$prevAuth['redirect']]);
@@ -161,7 +335,7 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
             if ($state['saml:sp:AuthId'] !== $sourceId) {
                 throw new Error\Exception(
                     "The authentication source id in the URL doesn't match the authentication"
-                    . " source that sent the request."
+                    . " source that sent the request.",
                 );
             }
 
@@ -172,7 +346,7 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
                 $idplist = $idpMetadata->getOptionalArrayize('IDPList', []);
                 if (!in_array($state['ExpectedIssuer'], $idplist, true)) {
                     Logger::warning(
-                        'The issuer of the response not match to the identity provider we sent the request to.'
+                        'The issuer of the response not match to the identity provider we sent the request to.',
                     );
                 }
             }
@@ -353,7 +527,7 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
         try {
             $binding = Binding::getCurrentBinding();
         } catch (UnsupportedBindingException $e) {
-            throw new Error\Error('SLOSERVICEPARAMS', $e, 400);
+            throw new Error\Error(Error\ErrorCodes::SLOSERVICEPARAMS, $e, 400);
         }
         $message = $binding->receive();
 
@@ -393,13 +567,13 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
 
             if (!$message->isSuccess()) {
                 Logger::warning(
-                    'Unsuccessful logout. Status was: ' . Module\saml\Message::getResponseError($message)
+                    'Unsuccessful logout. Status was: ' . Module\saml\Message::getResponseError($message),
                 );
             }
 
             $state = $this->authState::loadState($relayState, 'saml:slosent');
             $state['saml:sp:LogoutStatus'] = $message->getStatus();
-            return new RunnableResponse([Auth\Source::class, 'completeLogout'], [$state]);
+            return new RunnableResponse([Auth\Source::class, 'completeLogout'], [&$state]);
         } elseif ($message instanceof LogoutRequest) {
             Logger::debug('module/saml2/sp/logout: Request from ' . $idpEntityId);
             Logger::stats('saml20-idp-SLO idpinit ' . $spEntityId . ' ' . $idpEntityId);
@@ -446,6 +620,9 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
             $lr->setRelayState($message->getRelayState());
             $lr->setInResponseTo($message->getId());
 
+            // If we set a key, we're sending a signed message
+            $signedMessage = $lr->getSignatureKey() ? true : false;
+
             if ($numLoggedOut < count($sessionIndexes)) {
                 Logger::warning('Logged out of ' . $numLoggedOut . ' of ' . count($sessionIndexes) . ' sessions.');
             }
@@ -454,8 +631,8 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
                 'SingleLogoutService',
                 [
                     Constants::BINDING_HTTP_REDIRECT,
-                    Constants::BINDING_HTTP_POST
-                ]
+                    Constants::BINDING_HTTP_POST,
+                ],
             );
 
             if (!($binding instanceof SOAP)) {
@@ -466,6 +643,20 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
                     $dst = $dst['Location'];
                 }
                 $binding->setDestination($dst);
+
+
+                if ($signedMessage && ($binding instanceof HTTPRedirect || $binding instanceof HTTPPost)) {
+                    /**
+                     * Bindings 3.4.5.2 - Security Considerations (HTTP-Redirect)
+                     * Bindings 3.5.5.2 - Security Considerations (HTTP-POST)
+                     *
+                     * If the message is signed, the Destination XML attribute in the root SAML element of the protocol
+                     * message MUST contain the URL to which the sender has instructed the user agent to deliver the
+                     * message. The recipient MUST then verify that the value matches the location at which the message
+                     * has been received.
+                     */
+                    $lr->setDestination($dst);
+                }
             } else {
                 $lr->setDestination($dst['Location']);
             }
@@ -474,5 +665,64 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
         } else {
             throw new Error\BadRequest('Unknown message received on logout endpoint: ' . get_class($message));
         }
+    }
+
+
+    /**
+     * Metadata endpoint for SAML SP
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param string $sourceId
+     * @return \Symfony\Component\HttpFoundation\Response|\SimpleSAML\HTTP\RunnableResponse
+     */
+    public function metadata(Request $request, string $sourceId): Response
+    {
+        $protectedMetadata = $this->config->getOptionalBoolean('admin.protectmetadata', false);
+        if ($protectedMetadata && !$this->authUtils->isAdmin()) {
+            return new RunnableResponse([$this->authUtils, 'requireAdmin']);
+        }
+
+        $source = Auth\Source::getById($sourceId);
+        if ($source === null) {
+            throw new Error\AuthSource($sourceId, 'Could not find authentication source.');
+        }
+
+        if (!($source instanceof SP)) {
+            throw new Error\AuthSource(
+                $sourceId,
+                'The authentication source is not a SAML Service Provider.',
+            );
+        }
+
+        $entityId = $source->getEntityId();
+        $spconfig = $source->getMetadata();
+        $metaArray20 = $source->getHostedMetadata();
+
+        $metaBuilder = new Metadata\SAMLBuilder($entityId);
+        $metaBuilder->addMetadataSP20($metaArray20, $source->getSupportedProtocols());
+        $metaBuilder->addOrganizationInfo($metaArray20);
+
+        $xml = $metaBuilder->getEntityDescriptorText();
+
+        // sign the metadata if enabled
+        $metaxml = Metadata\Signer::sign($xml, $spconfig->toArray(), 'SAML 2 SP');
+
+        $response = new Response();
+        $response->setEtag(hash('sha256', $metaxml));
+        $response->setCache([
+            'no_cache' => $protectedMetadata === true,
+            'public' => $protectedMetadata === false,
+            'private' => $protectedMetadata === true,
+        ]);
+
+        if ($response->isNotModified($request)) {
+            return $response;
+        }
+
+        $response->headers->set('Content-Type', 'application/samlmetadata+xml');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . basename($sourceId) . '.xml"');
+        $response->setContent($metaxml);
+
+        return $response;
     }
 }

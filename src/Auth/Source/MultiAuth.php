@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\uab\Auth\Source;
 
-use SAML2\Exception\Protocol\NoAuthnContextException;
 use Exception;
+use SAML2\Exception\Protocol\NoAuthnContextException;
 use SimpleSAML\Assert\Assert;
 use SimpleSAML\Auth;
+use SimpleSAML\Configuration;
 use SimpleSAML\Auth\ProcessingChain;
 use SimpleSAML\Auth\Source;
 use SimpleSAML\Auth\State;
@@ -102,21 +103,23 @@ class MultiAuth extends UserPassBase {
     {
         $state[self::AUTHID] = $this->authId;
         $state[self::SOURCESID] = $this->sources;
+        $arrayUtils = new Utils\Arrays();
 
         if (!array_key_exists('multiauth:preselect', $state) && isset($this->preselect)) {
             $state['multiauth:preselect'] = $this->preselect;
         }
 
         if (
-            isset($state['saml:RequestedAuthnContext']) &&
-            !is_null($state['saml:RequestedAuthnContext'])
+            array_key_exists('saml:RequestedAuthnContext', $state)
+            && !is_null($state['saml:RequestedAuthnContext'])
             && array_key_exists('AuthnContextClassRef', $state['saml:RequestedAuthnContext'])
         ) {
             $refs = array_values($state['saml:RequestedAuthnContext']['AuthnContextClassRef']);
             $new_sources = [];
-            foreach ($this->sources as $source) {
-                if (count(array_intersect($source['AuthnContextClassRef'], $refs)) >= 1) {
-                    $new_sources[] = $source;
+            foreach ($this->sources as $key => $source) {
+                $config_refs = $arrayUtils->arrayize($source['AuthnContextClassRef']);
+                if (count(array_intersect($config_refs, $refs)) >= 1) {
+                    $new_sources[$key] = $source;
                 }
             }
             $state[self::SOURCESID] = $new_sources;
@@ -124,10 +127,10 @@ class MultiAuth extends UserPassBase {
             $number_of_sources = count($new_sources);
             if ($number_of_sources === 0) {
                 throw new NoAuthnContextException(
-                    'No authentication sources exist for the requested AuthnContextClassRefs: ' . implode(', ', $refs)
+                    'No authentication sources exist for the requested AuthnContextClassRefs: ' . implode(', ', $refs),
                 );
             } elseif ($number_of_sources === 1) {
-                self::delegateAuthentication(array_key_first($new_sources), $state);
+                static::delegateAuthentication(array_key_first($new_sources), $state);
             }
         }
 
@@ -179,7 +182,7 @@ class MultiAuth extends UserPassBase {
             self::SESSION_SOURCE,
             $state[self::AUTHID],
             $authId,
-            Session::DATA_TIMEOUT_SESSION_END
+            Session::DATA_TIMEOUT_SESSION_END,
         );
 
         return new RunnableResponse([self::class, 'doAuthentication'], [$as, $state]);
