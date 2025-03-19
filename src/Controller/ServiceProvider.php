@@ -554,7 +554,7 @@ class ServiceProvider extends \SimpleSAML\Module\saml\Controller\ServiceProvider
         $destination = $message->getDestination();
         //@UAb: replace getSelfURLNoQuery for getSelfURLHost;
         //if ($destination !== null && $destination !== $httpUtils->getSelfURLNoQuery()) {
-        if ($destination !== null && $destination !== $httpUtils->getSelfURLHost()) {
+        if ($destination !== null && stripos($destination, $httpUtils->getSelfURLHost())!==0) {
             throw new Error\Exception('Destination in logout message is wrong.');
         }
 
