@@ -5,6 +5,7 @@
     "type": "simplesamlphp-module",
     "keywords": ["simplesamlphp", "uab"],
     "license": "GPL-3.0+",
+    "version": "0.0.2",
     "authors": [
         {
             "name": "Cláudio Esperança",
@@ -41,8 +42,8 @@
         "ext-ldap": "*",
 
         "simplesamlphp/composer-module-installer": "^1.4.0",
-        "simplesamlphp/simplesamlphp": "^2.3.6",
-        "simplesamlphp/simplesamlphp-module-ldap": "^2.4.4",
+        "simplesamlphp/simplesamlphp": "^2.3.7",
+        "simplesamlphp/simplesamlphp-module-ldap": "^2.4.6",
         "symfony/ldap": "^5.4 || ^6.4.13"
     },
     "require-dev": {

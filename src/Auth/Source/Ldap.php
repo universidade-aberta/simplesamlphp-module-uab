@@ -113,7 +113,7 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
         string $password,
         array $sasl_args = [],
     ): array {
-                if (preg_match('/^\s*$/', $password)) {
+        if (preg_match('/^\s*$/', $password)) {
             // The empty string is considered an anonymous bind to Symfony
             throw new Error\Error('WRONGUSERPASS');
         }
@@ -388,7 +388,10 @@ class Ldap extends \SimpleSAML\Module\ldap\Auth\Source\Ldap{
 
         // The previous function never returns, so this code is never executed.
         assert::true(false);
-    }/**
+    }
+
+
+    /**
      * @param \Symfony\Component\Ldap\Entry $entry
      * @return array<mixed>
      */
